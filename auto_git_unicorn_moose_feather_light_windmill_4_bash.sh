@@ -79,6 +79,32 @@ read_config() {
                 website="$line"
             fi
         done < "$config_file"
+    else
+        echo "No kigit.txt file found. Would you like to create it? (y/n)"
+        read create_kigit
+        if [ "$create_kigit" == "y" ]; then
+            cat <<EOL > kigit.txt
+#git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
+random
+#public git, y for yes n for no, standard no
+n
+#auto generate HTML page, y for yes n for no
+y
+#tags, separated by commas
+Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
+#description
+Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git
+#website URL
+http://example.com
+#GithubPartywebpageLink
+index.html
+EOL
+            echo "Created kigit.txt. Please edit this file and re-run the script."
+            exit 0
+        else
+            echo "kigit.txt is required for configuration. Exiting."
+            exit 1
+        fi
     fi
 
     if [ "$repo_name" == "random" ]; then
