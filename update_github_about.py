@@ -1,6 +1,6 @@
 import os
-import requests
 import subprocess
+import requests
 
 def get_git_config(key):
     try:
@@ -9,23 +9,38 @@ def get_git_config(key):
         print(f"Error retrieving Git configuration for {key}. Ensure Git is configured properly.")
         return None
 
-def update_github_about(repo_name, token):
+def read_kigit_config():
+    config_file = "kigit.txt"
+    tags = ""
+    description = ""
+    website = ""
+
+    if os.path.exists(config_file):
+        with open(config_file, 'r') as file:
+            for line in file:
+                if line.startswith("#"):
+                    continue
+                key, value = line.strip().split("=", 1)
+                if key == "tags":
+                    tags = value
+                elif key == "description":
+                    description = value
+                elif key == "website URL":
+                    website = value
+    return tags, description, website
+
+def update_github_about(repo_name, token, tags, description, website):
     url = f'https://api.github.com/repos/{repo_name}'
     headers = {
         'Authorization': f'token {token}',
         'Accept': 'application/vnd.github.v3+json'
     }
 
-    # Prompt user for repository details
-    description = input("Enter a description for the repository: ")
-    website = input("Enter a website URL for the repository (leave blank if none): ")
-    topics = input("Enter topics for the repository, separated by commas (e.g., python, automation): ").split(',')
-
     # Create data payload
     data = {
         'description': description,
         'homepage': website,
-        'topics': [topic.strip() for topic in topics if topic.strip()]
+        'topics': [tag.strip() for tag in tags.split(',')]
     }
 
     # Update the repository details
@@ -51,7 +66,8 @@ def main():
         print("GitHub token not found. Please set it in your environment variables or save it in the specified file.")
         return
 
-    update_github_about(f"{user}/{repo_name}", github_token)
+    tags, description, website = read_kigit_config()
+    update_github_about(f"{user}/{repo_name}", github_token, tags, description, website)
 
 if __name__ == "__main__":
     main()

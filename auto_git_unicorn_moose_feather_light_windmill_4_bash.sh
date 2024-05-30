@@ -50,6 +50,9 @@ read_config() {
     repo_name="random"
     public="n"
     auto_page="n"
+    tags=""
+    description=""
+    website=""
 
     if [ -f "$config_file" ]; then
         while IFS= read -r line; do
@@ -65,6 +68,15 @@ read_config() {
             elif [[ -z "$auto_page_set" ]]; then
                 auto_page_set=true
                 auto_page="$line"
+            elif [[ -z "$tags_set" ]]; then
+                tags_set=true
+                tags="$line"
+            elif [[ -z "$description_set" ]]; then
+                description_set=true
+                description="$line"
+            elif [[ -z "$website_set" ]]; then
+                website_set=true
+                website="$line"
             fi
         done < "$config_file"
     fi
@@ -187,7 +199,15 @@ random
 #public git, y for yes n for no, standard no
 n
 #auto generate HTML page, y for yes n for no
-n
+y
+#tags, separated by commas
+Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
+#description
+Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git
+#website URL
+http://example.com
+#GithubPartywebpageLink
+index.html
 EOL
             echo "Created kigit.txt. Please edit this file and re-run the script."
             exit 0

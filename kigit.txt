@@ -1,6 +1,0 @@
-#git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
-AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
-#public git, y for yes n for no, standard no
-y
-#auto generate HTML page, y for yes n for no
-y
