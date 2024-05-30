@@ -214,3 +214,6 @@ if [ "$auto_page_trigger" = true ] || [ ! -f "index.html" ]; then
 else
     echo "If you wish to also have that cool HTML page, you can run the following command to generate a neat webpage for your GitHub project: ./_extra_bonus.py"
 fi
+
+# Update the About section
+python3 update_github_about.py
