@@ -4,7 +4,7 @@
 This script automates the initial setup of a git repository with enhanced interactive features. It handles the creation of `.gitignore`, `README.md`, and the GitHub repository setup based on user input.
 
 ## Definition of MTLMBSM
-MTLMBSM stands for "Meh To Less Meh But Still Meh." It humorously captures the essence that while git and this script have their weaknesses, they still simplify some aspects of version control.
+MTLMBSM stands for "Meh To Less Meh But Still Meh." It humorously captures the essence that while git and this script have their weaknesses, they still simplify some aspects of version control. (if you are not sensing at least a glimpse to a smile here, this script may not serve you as intended 😆)
 
 ## Features
 - Checks and prompts for the creation of `kigit.txt`.
@@ -12,6 +12,8 @@ MTLMBSM stands for "Meh To Less Meh But Still Meh." It humorously captures the e
 - Creates a `.gitignore` with common ignore patterns and sensitive file protection.
 - Interactively sets up a `README.md` with a simple description.
 - Optionally updates `.bashrc` to include an alias for easy script execution.
+- Generates an HTML page from `README.md`.
+- Updates the "About" section of the GitHub repository with description, website, and topics.
 
 ## Setup
 To use this script, simply download it to your preferred directory, make it executable with `chmod +x`, and run it from your terminal.
