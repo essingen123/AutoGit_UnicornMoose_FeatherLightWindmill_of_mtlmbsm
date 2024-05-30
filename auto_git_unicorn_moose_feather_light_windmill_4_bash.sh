@@ -117,6 +117,7 @@ setup_github_repo() {
             echo "# Ignore sensitive files" >> .gitignore
             echo ".env" >> .gitignore
             echo "*.pem" >> .gitignore
+            echo ".git_very_secret_and_ignored_file_token" >> .gitignore
 
             echo "# Ignore log and build files" >> .gitignore
             echo "*.log" >> .gitignore
@@ -129,6 +130,12 @@ setup_github_repo() {
 
             git add .gitignore
             git commit -m "Add .gitignore"
+        fi
+    else
+        if ! grep -q ".git_very_secret_and_ignored_file_token" .gitignore; then
+            echo ".git_very_secret_and_ignored_file_token" >> .gitignore
+            git add .gitignore
+            git commit -m "Update .gitignore to include .git_very_secret_and_ignored_file_token"
         fi
     fi
 
