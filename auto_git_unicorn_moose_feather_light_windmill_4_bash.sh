@@ -47,6 +47,7 @@ check_github_token() {
 # Function to read the configuration file
 read_config() {
     config_file="kigit.txt"
+    update_flag="n"
     repo_name="random"
     public="n"
     auto_page="n"
@@ -56,34 +57,42 @@ read_config() {
 
     if [ -f "$config_file" ]; then
         while IFS= read -r line; do
-            if [[ "$line" == \#* ]]; then
-                continue
-            fi
-            if [[ -z "$repo_name_set" ]]; then
-                repo_name_set=true
-                repo_name="$line"
-            elif [[ -z "$public_set" ]]; then
-                public_set=true
-                public="$line"
-            elif [[ -z "$auto_page_set" ]]; then
-                auto_page_set=true
-                auto_page="$line"
-            elif [[ -z "$tags_set" ]]; then
-                tags_set=true
-                tags="$line"
-            elif [[ -z "$description_set" ]]; then
-                description_set=true
-                description="$line"
-            elif [[ -z "$website_set" ]]; then
-                website_set=true
-                website="$line"
-            fi
+            case "$line" in
+                "#update according to this file"*)
+                    update_flag="${line#*=}"
+                    update_flag="${update_flag// /}"
+                    ;;
+                "#git-reponame"*)
+                    repo_name="${line#*=}"
+                    repo_name="${repo_name// /}"
+                    ;;
+                "#public git"*)
+                    public="${line#*=}"
+                    public="${public// /}"
+                    ;;
+                "#auto generate HTML page"*)
+                    auto_page="${line#*=}"
+                    auto_page="${auto_page// /}"
+                    ;;
+                "#tags"*)
+                    tags="${line#*=}"
+                    ;;
+                "#description"*)
+                    description="${line#*=}"
+                    ;;
+                "#website URL"*)
+                    website="${line#*=}"
+                    website="${website// /}"
+                    ;;
+            esac
         done < "$config_file"
     else
         echo "No kigit.txt file found. Would you like to create it? (y/n)"
         read create_kigit
         if [ "$create_kigit" == "y" ]; then
             cat <<EOL > kigit.txt
+#update according to this file
+y
 #git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
 random
 #public git, y for yes n for no, standard no
@@ -129,6 +138,11 @@ setup_github_repo() {
     read_config
     add_alias_to_bashrc
     check_github_token
+
+    if [ "$update_flag" == "n" ]; then
+        echo "Configuration file update flag is set to 'n'. No updates will be made."
+        return
+    fi
 
     # Initialize git if not already initialized
     if [ ! -d ".git" ]; then
@@ -210,6 +224,9 @@ setup_github_repo() {
         fi
     fi
 
+    # Reset the update flag in kigit.txt to 'n' after updates
+    sed -i 's/#update according to this file=y/#update according to this file=n/' kigit.txt
+
     echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
 }
 
@@ -220,6 +237,8 @@ if [ ! -d ".git" ]; then
         read create_kigit
         if [ "$create_kigit" == "y" ]; then
             cat <<EOL > kigit.txt
+#update according to this file
+y
 #git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
 random
 #public git, y for yes n for no, standard no
