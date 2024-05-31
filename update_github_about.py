@@ -54,7 +54,7 @@ def update_github_about(repo_name, token, tags, description, website):
         print(f"Failed to update repository 'About' section: {response.status_code} {response.text}")
 
 def main():
-    user = get_git_config('user.name')
+    user = get_git_config('github.user')
     repo_url = get_git_config('remote.origin.url')
     repo_name = repo_url.split('/')[-1].replace('.git', '') if repo_url else None
     if not repo_name:
