@@ -20,13 +20,16 @@ def read_kigit_config():
             for line in file:
                 if line.startswith("#"):
                     continue
-                key, value = line.strip().split("=", 1)
-                if key == "tags":
-                    tags = value
-                elif key == "description":
-                    description = value
-                elif key == "website URL":
-                    website = value
+                if "=" in line:
+                    key, value = line.strip().split("=", 1)
+                    key = key.strip()
+                    value = value.strip()
+                    if key == "tags":
+                        tags = value
+                    elif key == "description":
+                        description = value
+                    elif key == "website URL":
+                        website = value
     return tags, description, website
 
 def update_github_about(repo_name, token, tags, description, website):

@@ -57,34 +57,36 @@ read_config() {
 
     if [ -f "$config_file" ]; then
         while IFS= read -r line; do
-            case "$line" in
-                "#update according to this file"*)
-                    update_flag="${line#*=}"
-                    update_flag="${update_flag// /}"
-                    ;;
-                "#git-reponame"*)
-                    repo_name="${line#*=}"
-                    repo_name="${repo_name// /}"
-                    ;;
-                "#public git"*)
-                    public="${line#*=}"
-                    public="${public// /}"
-                    ;;
-                "#auto generate HTML page"*)
-                    auto_page="${line#*=}"
-                    auto_page="${auto_page// /}"
-                    ;;
-                "#tags"*)
-                    tags="${line#*=}"
-                    ;;
-                "#description"*)
-                    description="${line#*=}"
-                    ;;
-                "#website URL"*)
-                    website="${line#*=}"
-                    website="${website// /}"
-                    ;;
-            esac
+            if [[ "$line" =~ ^# ]]; then
+                continue
+            fi
+            if [[ "$line" == *=* ]]; then
+                key="${line%%=*}"
+                value="${line#*=}"
+                case "$key" in
+                    "update according to this file")
+                        update_flag="${value// /}"
+                        ;;
+                    "git-reponame")
+                        repo_name="${value// /}"
+                        ;;
+                    "public git")
+                        public="${value// /}"
+                        ;;
+                    "auto generate HTML page")
+                        auto_page="${value// /}"
+                        ;;
+                    "tags")
+                        tags="$value"
+                        ;;
+                    "description")
+                        description="$value"
+                        ;;
+                    "website URL")
+                        website="${value// /}"
+                        ;;
+                esac
+            fi
         done < "$config_file"
     else
         echo "No kigit.txt file found. Would you like to create it? (y/n)"
@@ -225,18 +227,17 @@ setup_github_repo() {
     fi
 
     # Reset the update flag in kigit.txt to 'n' after updates
-    sed -i 's/#update according to this file=y/#update according to this file=n/' kigit.txt
+    sed -i 's/update according to this file=y/update according to this file=n/' kigit.txt
 
     echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
 }
 
 # Main logic
-if [ ! -d ".git" ]; then
-    if [ ! -f "kigit.txt" ]; then
-        echo "No kigit.txt file found. Would you like to create it? (y/n)"
-        read create_kigit
-        if [ "$create_kigit" == "y" ]; then
-            cat <<EOL > kigit.txt
+if [ ! -f "kigit.txt" ]; then
+    echo "No kigit.txt file found. Would you like to create it? (y/n)"
+    read create_kigit
+    if [ "$create_kigit" == "y" ]; then
+        cat <<EOL > kigit.txt
 #update according to this file
 y
 #git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
@@ -254,22 +255,26 @@ http://example.com
 #GithubPartywebpageLink
 index.html
 EOL
-            echo "Created kigit.txt. Please edit this file and re-run the script."
-            exit 0
-        else
-            echo "kigit.txt is required for configuration. Exiting."
-            exit 1
-        fi
+        echo "Created kigit.txt. Please edit this file and re-run the script."
+        exit 0
     else
-        echo "Git is not initialized and kigit.txt exists. Proceeding to setup the repository."
-        setup_github_repo
+        echo "kigit.txt is required for configuration. Exiting."
+        exit 1
     fi
+fi
+
+# Always read the configuration file to determine the update behavior
+read_config
+
+# Proceed with setup if .git does not exist or based on update flag
+if [ ! -d ".git" ]; then
+    echo "Git is not initialized. Proceeding to setup the repository."
+    setup_github_repo
+elif [ "$update_flag" == "y" ]; then
+    echo "Update flag is set to 'y'. Proceeding to setup the repository."
+    setup_github_repo
 else
-    # Git is already initialized, add, commit, and push changes
-    git add .
-    git commit -m "Syncing changes with GitHub"
-    git push origin master
-    echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
+    echo "Git is already initialized and update flag is set to 'n'. No updates will be made."
 fi
 
 # Check and potentially generate the HTML page
@@ -282,3 +287,10 @@ fi
 
 # Update the About section
 python3 update_github_about.py
+
+# Add all files and commit
+git add .
+git commit -m "Initial commit: Setting up GitHub repository"
+git remote add origin "https://github.com/$(git config user.name)/${repo_name}.git"
+git push --set-upstream origin master
+git push origin master

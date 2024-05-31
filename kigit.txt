@@ -1,0 +1,16 @@
+#update according to this file
+y
+#git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
+AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
+#public git, y for yes n for no, standard no
+y
+#auto generate HTML page, y for yes n for no
+y
+#tags, separated by commas
+Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
+#description
+Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git
+#website URL
+http://example.com
+#GithubPartywebpageLink
+index.html
