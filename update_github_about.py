@@ -72,5 +72,24 @@ def main():
     tags, description, website = read_kigit_config()
     update_github_about(f"{user}/{repo_name}", github_token, tags, description, website)
 
+    # Set up GitHub Pages
+    headers = {
+        'Authorization': f'token {github_token}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    pages_url = f'https://api.github.com/repos/{user}/{repo_name}/pages'
+    response = requests.get(pages_url, headers=headers)
+    if response.status_code == 404:
+        data = {
+            'source': {'branch': 'master', 'path': '/'}
+        }
+        response = requests.post(pages_url, headers=headers, json=data)
+        if response.status_code == 201:
+            print("GitHub Pages has been set up.")
+        else:
+            print(f"Failed to set up GitHub Pages: {response.status_code} {response.text}")
+    else:
+        print("GitHub Pages is already set up.")
+
 if __name__ == "__main__":
     main()

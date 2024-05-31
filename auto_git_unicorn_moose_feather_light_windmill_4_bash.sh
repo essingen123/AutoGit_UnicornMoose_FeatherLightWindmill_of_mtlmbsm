@@ -141,11 +141,6 @@ setup_github_repo() {
     add_alias_to_bashrc
     check_github_token
 
-    if [ "$update_flag" == "n" ]; then
-        echo "Configuration file update flag is set to 'n'. No updates will be made."
-        return
-    fi
-
     # Initialize git if not already initialized
     if [ ! -d ".git" ]; then
         git init
@@ -201,8 +196,7 @@ setup_github_repo() {
 
     # Add all files and commit
     git add .
-    git commit -m "Initial commit: Setting up GitHub repository"
-    git remote add origin "https://github.com/$(git config user.name)/${repo_name}.git"
+    git commit -m "Syncing changes with GitHub"
     git push --set-upstream origin master
     git push origin master
 
@@ -226,10 +220,12 @@ setup_github_repo() {
         fi
     fi
 
-    # Reset the update flag in kigit.txt to 'n' after updates
-    sed -i 's/update according to this file=y/update according to this file=n/' kigit.txt
+    if [ "$update_flag" == "y" ]; then
+        # Reset the update flag in kigit.txt to 'n' after updates
+        sed -i 's/update according to this file=y/update according to this file=n/' kigit.txt
 
-    echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
+        echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
+    fi
 }
 
 # Main logic
@@ -287,6 +283,7 @@ fi
 
 # Update the About section
 python3 update_github_about.py
+
 
 # Add all files and commit
 git add .
