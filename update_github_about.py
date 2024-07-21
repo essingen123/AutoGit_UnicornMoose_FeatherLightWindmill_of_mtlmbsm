@@ -54,7 +54,6 @@ def update_github_about(repo_name, token, tags, description, website):
         print(f"Failed to update repository 'About' section: {response.status_code} {response.text}")
 
 def main():
-    user = get_git_config('github.user')
     repo_url = get_git_config('remote.origin.url')
     repo_name = repo_url.split('/')[-1].replace('.git', '') if repo_url else None
     if not repo_name:
@@ -69,6 +68,7 @@ def main():
         print("GitHub token not found. Please set it in your environment variables or save it in the specified file.")
         return
 
+    user = repo_url.split('/')[-2]
     tags, description, website = read_kigit_config()
     update_github_about(f"{user}/{repo_name}", github_token, tags, description, website)
 

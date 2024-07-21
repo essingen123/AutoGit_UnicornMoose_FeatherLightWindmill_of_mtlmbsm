@@ -141,11 +141,6 @@ setup_github_repo() {
     add_alias_to_bashrc
     check_github_token
 
-    if [ "$update_flag" == "n" ]; then
-        echo "Configuration file update flag is set to 'n'. No updates will be made."
-        return
-    fi
-
     # Initialize git if not already initialized
     if [ ! -d ".git" ]; then
         git init
@@ -201,8 +196,7 @@ setup_github_repo() {
 
     # Add all files and commit
     git add .
-    git commit -m "Initial commit: Setting up GitHub repository"
-    git remote add origin "https://github.com/$(git config user.name)/${repo_name}.git"
+    git commit -m "Syncing changes with GitHub"
     git push --set-upstream origin master
     git push origin master
 
@@ -226,10 +220,12 @@ setup_github_repo() {
         fi
     fi
 
-    # Reset the update flag in kigit.txt to 'n' after updates
-    sed -i 's/update according to this file=y/update according to this file=n/' kigit.txt
+    if [ "$update_flag" == "y" ]; then
+        # Reset the update flag in kigit.txt to 'n' after updates
+        sed -i 's/update according to this file=y/update according to this file=n/' kigit.txt
 
-    echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
+        echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
+    fi
 }
 
 # Main logic
@@ -280,17 +276,22 @@ fi
 # Check and potentially generate the HTML page
 if [ "$auto_page_trigger" = true ] || [ ! -f "index.html" ]; then
     echo "index.html not found or auto page generation enabled. Generating HTML page from README.md..."
-    python3 _extra_bonus.py
+    local script_dir=$(dirname "$0")
+    python3 "${script_dir}/_extra_bonus.py"
 else
     echo "If you wish to also have that cool HTML page, you can run the following command to generate a neat webpage for your GitHub project: ./_extra_bonus.py"
 fi
 
 # Update the About section
-python3 update_github_about.py
+python3 $(dirname "$0")/update_github_about.py
 
-    # Add all files and commit
-    git add .
-    git commit -m "Initial commit: Setting up GitHub repository"
-    git remote add origin "https://github.com/$(git config user.name)/${repo_name}.git"
-    git push --set-upstream origin master
-    git push origin master
+
+# Set the GitHub Pages URL as the homepage of the repository
+github_username=$(git config user.name)
+repo_name=$(basename `git rev-parse --show-toplevel`)
+if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
+    gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name"
+    echo "GitHub Pages URL set as the homepage for the repository."
+else
+    echo "Could not determine GitHub username or repository name. Skipping homepage URL update."
+fi
