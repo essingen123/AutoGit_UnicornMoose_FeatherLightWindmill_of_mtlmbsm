@@ -289,14 +289,12 @@ if [ "$auto_page_trigger" = true ] || [ ! -f "index.html" ]; then
 else
     echo "If you wish to also have that cool HTML page, you can run the following command to generate a neat webpage for your GitHub project: ./_extra_bonus.py"
 fi
-
 # Update the About section
 python3 "${script_dir}/update_github_about.py"
 
 # Set the GitHub Pages URL as the homepage of the repository
 github_username=$(git config user.name)
 repo_url=$(git config --get remote.origin.url)
-repo_name=$(basename "$repo_url" .git)
 repo_name=$(basename "$repo_url" .git)
 
 echo "Determined GitHub Username: $github_username"
