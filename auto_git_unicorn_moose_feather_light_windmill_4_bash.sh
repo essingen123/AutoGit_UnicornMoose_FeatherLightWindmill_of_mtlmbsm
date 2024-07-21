@@ -216,7 +216,6 @@ setup_github_repo() {
     fi
 
     # Check if the repository already exists on GitHub
-    exit
     repo_exists=$(gh repo view "$repo_name" --json name --jq '.name' 2>/dev/null)
     if [ -z "$repo_exists" ]; then
         gh repo create "$repo_name" $visibility --enable-issues --enable-wiki
