@@ -14,3 +14,6 @@ Making x less meh for those that perceives a meh really real, so the purpose of 
 http://example.com
 #GithubPartywebpageLink
 index.html
+#verbose, y for yes n for no
+# Verbose output for each terminal run
+n
