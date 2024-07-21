@@ -333,10 +333,8 @@ python3 "${script_dir}/update_github_about.py"
 github_username=$(git config user.name)
 repo_url=$(git config --get remote.origin.url)
 repo_name=$(basename "$repo_url" .git)
-
 log "Determined GitHub Username: $github_username"
 log "Determined Repo Name: $repo_name"
-
 if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
     log "Setting GitHub Pages URL as the homepage for the repository..."
     log "API Call: gh api -X PATCH repos/$github_username/$repo_name -f homepage=https://$github_username.github.io/$repo_name"
@@ -345,3 +343,5 @@ if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
 else
     log "Could not determine GitHub username or repository name. Skipping homepage URL update."
 fi
+
+github_username=$(git config user.name)
