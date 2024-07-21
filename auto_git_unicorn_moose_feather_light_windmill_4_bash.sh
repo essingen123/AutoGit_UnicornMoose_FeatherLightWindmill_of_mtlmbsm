@@ -90,11 +90,9 @@ read_config() {
             elif [[ "$line" == "set303i" ]]; then
                 read -r line
                 verbose="${line// /}"
+                echo "TEMP TEST!!!!"
                 echo $verbose
-                exit 
-                break
-                halt
-                stop
+                exit 0
             fi
         done < "$config_file"
     else
