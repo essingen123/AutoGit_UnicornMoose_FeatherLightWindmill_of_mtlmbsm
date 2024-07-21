@@ -95,7 +95,7 @@ read_config() {
                     read -r next_line
                     website="${next_line}"
                     ;;
-                "set303i")
+                "# set303i")
                     read -r next_line
                     verbose="${next_line}"
                     ;;
