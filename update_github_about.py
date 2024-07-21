@@ -96,7 +96,7 @@ def create_html_page():
 
 def get_git_config(key):
     try:
-        return subprocess.check_output(['git', 'config', '--get', key]).decode('utf-8').strip()
+        return subprocess.check_output(['git', 'config', '--get', key], stderr=subprocess.DEVNULL).decode('utf-8').strip()
     except subprocess.CalledProcessError:
         log(f"Error retrieving Git configuration for {key}. Ensure Git is configured properly.")
         return None
@@ -187,6 +187,4 @@ if __name__ == "__main__":
             if "set303i" in line:
                 verbose = lines[i + 1].strip().lower()
 
-
-    
     main()
