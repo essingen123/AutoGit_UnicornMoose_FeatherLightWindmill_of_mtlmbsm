@@ -70,12 +70,16 @@ def setup_github_pages(user, repo_name, token):
         'Authorization': f'token {token}',
         'Accept': 'application/vnd.github.v3+json'
     }
+    print('meeeeh2')
+    exit
     pages_url = f'https://api.github.com/repos/{user}/{repo_name}/pages'
     response = requests.get(pages_url, headers=headers)
     if response.status_code == 404:
         data = {
             'source': {'branch': 'master', 'path': '/'}
         }
+        print('meeeeh3')
+        exit
         response = requests.post(pages_url, headers=headers, json=data)
         if response.status_code == 201:
             log("GitHub Pages has been set up.")
@@ -129,6 +133,8 @@ def read_kigit_config():
 
 def update_github_about(repo_name, token, tags, description, website):
     """Update the GitHub repository's About section with description, homepage, and topics."""
+    print('meeeeh4b')
+    exit
     url = f'https://api.github.com/repos/{repo_name}'
     headers = {
         'Authorization': f'token {token}',
@@ -143,6 +149,8 @@ def update_github_about(repo_name, token, tags, description, website):
     }
 
     # Update the repository details
+    print('meeeeh6')
+    exit
     response = requests.patch(url, headers=headers, json=data)
     if response.status_code == 200:
         log("Repository 'About' section updated successfully.")
