@@ -71,7 +71,7 @@ def setup_github_pages(user, repo_name, token):
         'Accept': 'application/vnd.github.v3+json'
     }
     print('meeeeh2')
-    exit
+    exit(0)
     pages_url = f'https://api.github.com/repos/{user}/{repo_name}/pages'
     response = requests.get(pages_url, headers=headers)
     if response.status_code == 404:
