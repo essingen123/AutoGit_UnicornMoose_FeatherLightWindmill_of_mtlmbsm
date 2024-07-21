@@ -49,6 +49,7 @@ check_github_token() {
         log "GitHub token is already set."
     fi
 }
+
 read_config() {
     config_file="${script_dir}/kigit.txt"
     update_flag="n"
@@ -65,40 +66,31 @@ read_config() {
             if [[ "$line" =~ ^# ]]; then
                 continue
             fi
-            case "$line" in
-                *"set303a"*)
-                    IFS= read -r next_line
-                    update_flag="${next_line}"
-                    ;;
-                *"set303b"*)
-                    IFS= read -r next_line
-                    repo_name="${next_line}"
-                    ;;
-                *"set303c"*)
-                    IFS= read -r next_line
-                    public="${next_line}"
-                    ;;
-                *"set303d"*)
-                    IFS= read -r next_line
-                    auto_page="${next_line}"
-                    ;;
-                *"set303e"*)
-                    IFS= read -r next_line
-                    tags="${next_line}"
-                    ;;
-                *"set303f"*)
-                    IFS= read -r next_line
-                    description="${next_line}"
-                    ;;
-                *"set303g"*)
-                    IFS= read -r next_line
-                    website="${next_line}"
-                    ;;
-                *"set303i"*)
-                    IFS= read -r next_line
-                    verbose="${next_line}"
-                    ;;
-            esac
+            if [[ "$line" == "set303a" ]]; then
+                read -r line
+                update_flag="${line// /}"
+            elif [[ "$line" == "set303b" ]]; then
+                read -r line
+                repo_name="${line// /}"
+            elif [[ "$line" == "set303c" ]]; then
+                read -r line
+                public="${line// /}"
+            elif [[ "$line" == "set303d" ]]; then
+                read -r line
+                auto_page="${line// /}"
+            elif [[ "$line" == "set303e" ]]; then
+                read -r line
+                tags="$line"
+            elif [[ "$line" == "set303f" ]]; then
+                read -r line
+                description="$line"
+            elif [[ "$line" == "set303g" ]]; then
+                read -r line
+                website="${line// /}"
+            elif [[ "$line" == "set303i" ]]; then
+                read -r line
+                verbose="${line// /}"
+            fi
         done < "$config_file"
     else
         log "No kigit.txt file found. Creating default configuration file."
@@ -132,7 +124,7 @@ Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
 
 # 📝
 # description
-#set303f
+# set303f
 Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 💡
 
 # 🌐
@@ -149,6 +141,7 @@ index.html
 # Verbose, output for each terminal run, y for yes and n for no
 # set303i
 n
+# DONT EDIT OUT THIS LAST LINE
 EOL
         log "Created kigit.txt. Please edit this file and re-run the script."
         exit 0
@@ -170,7 +163,6 @@ EOL
         auto_page_trigger=false
     fi
 }
-
 
 # Function to setup GitHub repository
 setup_github_repo() {
