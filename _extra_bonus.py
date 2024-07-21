@@ -3,14 +3,8 @@ import subprocess
 import requests
 import sys
 
-def get_git_config(key):
-    try:
-        return subprocess.check_output(['git', 'config', '--get', key]).decode('utf-8').strip()
-    except subprocess.CalledProcessError:
-        print(f"Error retrieving Git configuration for {key}. Ensure Git is configured properly.")
-        return None
-
 def install_requirements():
+    """Install necessary Python packages."""
     try:
         subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'markdown', 'requests'])
     except subprocess.CalledProcessError:
@@ -19,6 +13,7 @@ def install_requirements():
     return True
 
 def convert_readme_to_html():
+    """Convert README.md to HTML."""
     if os.path.exists("README.md"):
         import markdown
         with open("README.md", 'r') as readme_file:
@@ -30,6 +25,7 @@ def convert_readme_to_html():
         return None
 
 def generate_additional_html():
+    """Generate additional HTML content."""
     additional_html = """
     <script>
     function toggleVisibility(id) {
@@ -49,6 +45,7 @@ def generate_additional_html():
     return additional_html
 
 def check_github_pages(repo_name, token):
+    """Check if GitHub Pages is set up for the repository."""
     headers = {
         'Authorization': f'token {token}',
         'Accept': 'application/vnd.github.v3+json'
@@ -58,6 +55,7 @@ def check_github_pages(repo_name, token):
         setup_github_pages(repo_name, token)
 
 def setup_github_pages(repo_name, token):
+    """Set up GitHub Pages for the repository."""
     headers = {
         'Authorization': f'token {token}',
         'Accept': 'application/vnd.github.v3+json'
@@ -72,6 +70,7 @@ def setup_github_pages(repo_name, token):
         print("Failed to set up GitHub Pages.")
 
 def create_html_page():
+    """Create an HTML page from README.md."""
     readme_html = convert_readme_to_html()
     if readme_html:
         additional_html = generate_additional_html()
@@ -82,9 +81,15 @@ def create_html_page():
     else:
         print("Failed to create index.html.")
 
-
+def get_git_config(key):
+    try:
+        return subprocess.check_output(['git', 'config', '--get', key]).decode('utf-8').strip()
+    except subprocess.CalledProcessError:
+        print(f"Error retrieving Git configuration for {key}. Ensure Git is configured properly.")
+        return None
 
 def main():
+    """Main function to generate HTML page and check GitHub Pages setup."""
     # Ensure required packages are installed
     if not install_requirements():
         return

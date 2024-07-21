@@ -1,12 +1,14 @@
 #!/bin/bash
 
 # Path for the script
-script_path="$(pwd)/$(basename "$0")"
+script_path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "$0")"
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Function to update .bashrc with new alias or environment variable
 update_bashrc() {
     local entry="$1"
     local file="$HOME/.bashrc"
+    echo "Updating .bashrc with entry: $entry"
 
     if ! grep -qF "$entry" "$file"; then
         echo "$entry" >> "$file"
@@ -19,6 +21,7 @@ update_bashrc() {
 # Check and add alias to .bashrc
 add_alias_to_bashrc() {
     local alias_cmd="alias g='${script_path}'"
+    echo "Adding alias to .bashrc: $alias_cmd"
     update_bashrc "$alias_cmd"
     echo "Alias 'g' added to .bashrc. Please restart your terminal or source ~/.bashrc."
 }
@@ -46,7 +49,7 @@ check_github_token() {
 
 # Function to read the configuration file
 read_config() {
-    config_file="kigit.txt"
+    config_file="${script_dir}/kigit.txt"
     update_flag="n"
     repo_name="random"
     public="n"
@@ -92,7 +95,7 @@ read_config() {
         echo "No kigit.txt file found. Would you like to create it? (y/n)"
         read create_kigit
         if [ "$create_kigit" == "y" ]; then
-            cat <<EOL > kigit.txt
+            cat <<EOL > "$config_file"
 #update according to this file
 y
 #git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
@@ -137,7 +140,6 @@ EOL
 
 # Function to setup GitHub repository
 setup_github_repo() {
-    read_config
     add_alias_to_bashrc
     check_github_token
 
@@ -219,77 +221,55 @@ setup_github_repo() {
             git push origin master
         fi
     fi
+}
 
-    if [ "$update_flag" == "y" ]; then
-        # Reset the update flag in kigit.txt to 'n' after updates
-        sed -i 's/update according to this file=y/update according to this file=n/' kigit.txt
-
-        echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
-    fi
+# Function to sync the repository
+sync_github_repo() {
+    # Add all files and commit
+    git add .
+    git commit -m "Syncing changes with GitHub"
+    git push origin master
 }
 
 # Main logic
-if [ ! -f "kigit.txt" ]; then
-    echo "No kigit.txt file found. Would you like to create it? (y/n)"
-    read create_kigit
-    if [ "$create_kigit" == "y" ]; then
-        cat <<EOL > kigit.txt
-#update according to this file
-y
-#git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
-random
-#public git, y for yes n for no, standard no
-n
-#auto generate HTML page, y for yes n for no
-y
-#tags, separated by commas
-Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
-#description
-Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git
-#website URL
-http://example.com
-#GithubPartywebpageLink
-index.html
-EOL
-        echo "Created kigit.txt. Please edit this file and re-run the script."
-        exit 0
-    else
-        echo "kigit.txt is required for configuration. Exiting."
-        exit 1
-    fi
-fi
-
-# Always read the configuration file to determine the update behavior
 read_config
 
 # Proceed with setup if .git does not exist or based on update flag
 if [ ! -d ".git" ]; then
     echo "Git is not initialized. Proceeding to setup the repository."
     setup_github_repo
-elif [ "$update_flag" == "y" ]; then
-    echo "Update flag is set to 'y'. Proceeding to setup the repository."
-    setup_github_repo
 else
-    echo "Git is already initialized and update flag is set to 'n'. No updates will be made."
+    echo "Git is already initialized."
+    if [ "$update_flag" == "y" ]; then
+        echo "Update flag is set to 'y'. Proceeding to setup the repository."
+        setup_github_repo
+    else
+        echo "Update flag set to 'n'. Syncing repository."
+        sync_github_repo
+    fi
 fi
 
 # Check and potentially generate the HTML page
 if [ "$auto_page_trigger" = true ] || [ ! -f "index.html" ]; then
     echo "index.html not found or auto page generation enabled. Generating HTML page from README.md..."
-    local script_dir=$(dirname "$0")
     python3 "${script_dir}/_extra_bonus.py"
 else
     echo "If you wish to also have that cool HTML page, you can run the following command to generate a neat webpage for your GitHub project: ./_extra_bonus.py"
 fi
 
 # Update the About section
-python3 $(dirname "$0")/update_github_about.py
-
+python3 "${script_dir}/update_github_about.py"
 
 # Set the GitHub Pages URL as the homepage of the repository
 github_username=$(git config user.name)
 repo_name=$(basename `git rev-parse --show-toplevel`)
+
+echo "Determined GitHub Username: $github_username"
+echo "Determined Repo Name: $repo_name"
+
 if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
+    echo "Setting GitHub Pages URL as the homepage for the repository..."
+    echo "API Call: gh api -X PATCH repos/$github_username/$repo_name -f homepage=https://$github_username.github.io/$repo_name"
     gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name"
     echo "GitHub Pages URL set as the homepage for the repository."
 else
