@@ -179,5 +179,15 @@ def main():
     setup_github_pages(user, repo_name, github_token)
 
 if __name__ == "__main__":
-    verbose = os.getenv("VERBOSE", "y").lower() == "y"
+    # Read the verbose setting from kigit.txt
+    verbose = "n"
+    with open("kigit.txt", "r") as file:
+        lines = file.readlines()
+        for i, line in enumerate(lines):
+            if "set303i" in line:
+                verbose = lines[i + 1].strip().lower()
+
+    # Check if verbose is set to 'y'
+    verbose = verbose == "y"
+    
     main()
