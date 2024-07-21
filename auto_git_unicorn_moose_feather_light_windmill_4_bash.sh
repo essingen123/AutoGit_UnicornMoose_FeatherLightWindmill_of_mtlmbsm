@@ -63,9 +63,9 @@ read_config() {
 
     if [ -f "$config_file" ]; then
         while IFS= read -r line; do
-            if [[ "$line" =~ ^# ]]; then
-                continue
-            fi
+            # if [[ "$line" =~ ^# ]]; then
+            #     continue
+            # fi
             case "$line" in
                 "set303a")
                     read -r next_line
@@ -95,7 +95,7 @@ read_config() {
                     read -r next_line
                     website="${next_line}"
                     ;;
-                "# set303i")
+                "set303i")
                     read -r next_line
                     verbose="${next_line}"
                     ;;
@@ -348,11 +348,6 @@ log "Determined Repo Name: $repo_name"
 if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
     log "Setting GitHub Pages URL as the homepage for the repository..."
     log "API Call: gh api -X PATCH repos/$github_username/$repo_name -f homepage=https://$github_username.github.io/$repo_name"
-    echo "verbose:"
-    echo $verbose
-    echo "cat:ing out kilgit.txt here:"
-    cat kigit.txt
-    exit 0
     if [ "$verbose" == "y" ]; then
         gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name"
     else
