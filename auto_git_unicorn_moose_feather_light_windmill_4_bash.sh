@@ -63,35 +63,33 @@ read_config() {
 
     if [ -f "$config_file" ]; then
         while IFS= read -r line; do
-            # Skip lines that are comments or empty
-            if [[ "$line" =~ ^# ]] || [[ -z "$line" ]]; then
+            if [[ "$line" =~ ^# ]]; then
                 continue
             fi
-            # Read the following line for each set keyword
-            if [[ "$line" == "set303a" ]]; then
-                read -r line
-                update_flag="${line// /}"
-            elif [[ "$line" == "set303b" ]]; then
-                read -r line
-                repo_name="${line// /}"
-            elif [[ "$line" == "set303c" ]]; then
-                read -r line
-                public="${line// /}"
-            elif [[ "$line" == "set303d" ]]; then
-                read -r line
-                auto_page="${line// /}"
-            elif [[ "$line" == "set303e" ]]; then
-                read -r line
-                tags="$line"
-            elif [[ "$line" == "set303f" ]]; then
-                read -r line
-                description="$line"
-            elif [[ "$line" == "set303g" ]]; then
-                read -r line
-                website="${line// /}"
-            elif [[ "$line" == "set303i" ]]; then
-                read -r line
-                verbose="${line// /}"
+            if [[ "$line" == *"set303a"* ]]; then
+                read -r next_line
+                update_flag="${next_line}"
+            elif [[ "$line" == *"set303b"* ]]; then
+                read -r next_line
+                repo_name="${next_line}"
+            elif [[ "$line" == *"set303c"* ]]; then
+                read -r next_line
+                public="${next_line}"
+            elif [[ "$line" == *"set303d"* ]]; then
+                read -r next_line
+                auto_page="${next_line}"
+            elif [[ "$line" == *"set303e"* ]]; then
+                read -r next_line
+                tags="${next_line}"
+            elif [[ "$line" == *"set303f"* ]]; then
+                read -r next_line
+                description="${next_line}"
+            elif [[ "$line" == *"set303g"* ]]; then
+                read -r next_line
+                website="${next_line}"
+            elif [[ "$line" == *"set303i"* ]]; then
+                read -r next_line
+                verbose="${next_line}"
                 echo "TEMP TEST!!!!"
                 echo $verbose
                 exit 0
