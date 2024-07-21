@@ -58,6 +58,8 @@ def check_github_pages(repo_name, token):
         'Authorization': f'token {token}',
         'Accept': 'application/vnd.github.v3+json'
     }
+    print('meeeeh')
+    exit
     response = requests.get(f'https://api.github.com/repos/{repo_name}/pages', headers=headers)
     if response.status_code == 404:
         setup_github_pages(repo_name, token)
