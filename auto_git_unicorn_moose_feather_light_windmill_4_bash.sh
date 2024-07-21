@@ -49,6 +49,11 @@ check_github_token() {
         log "GitHub token is already set."
     fi
 }
+
+
+
+
+
 read_config() {
     config_file="${script_dir}/kigit.txt"
     update_flag="n"
@@ -61,45 +66,34 @@ read_config() {
     verbose="n"
 
     if [ -f "$config_file" ]; then
-        while IFS= read -r line; do
-            if [[ "$line" =~ ^# ]]; then
+        while IFS='=' read -r key value; do
+            if [[ "$key" =~ ^# ]]; then
                 continue
             fi
-            case "$line" in
-                *"set303a"*)
-                    IFS= read -r next_line
-                    update_flag="${next_line}"
+            case "$key" in
+                "update according to this file")
+                    update_flag="${value// /}"
                     ;;
-                *"set303b"*)
-                    IFS= read -r next_line
-                    repo_name="${next_line}"
+                "git-reponame")
+                    repo_name="${value// /}"
                     ;;
-                *"set303c"*)
-                    IFS= read -r next_line
-                    public="${next_line}"
+                "public git")
+                    public="${value// /}"
                     ;;
-                *"set303d"*)
-                    IFS= read -r next_line
-                    auto_page="${next_line}"
+                "auto generate HTML page")
+                    auto_page="${value// /}"
                     ;;
-                *"set303e"*)
-                    IFS= read -r next_line
-                    tags="${next_line}"
+                "tags")
+                    tags="${value}"
                     ;;
-                *"set303f"*)
-                    IFS= read -r next_line
-                    description="${next_line}"
+                "description")
+                    description="${value}"
                     ;;
-                *"set303g"*)
-                    IFS= read -r next_line
-                    website="${next_line}"
+                "website URL")
+                    website="${value// /}"
                     ;;
-                *"set303i"*)
-                    IFS= read -r next_line
-                    verbose="${next_line}"
-                    echo "TEMP TEST!!!!"
-                    echo $verbose
-                    exit 0
+                "Verbose, output for each terminal run, y for yes and n for no")
+                    verbose="${value// /}"
                     ;;
             esac
         done < "$config_file"
@@ -111,47 +105,38 @@ read_config() {
 
 # 💻
 # update according to this file 
-# set303a 
-y
+update according to this file=y
 
 # 📝# git-reponame, leave next line as random and it will be random word otherwise write a github repo name in 
-# set303b
-AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
+git-reponame=AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
 
 # 🔒
 # public git, y for yes n for no, standard no
-# set303c
-n
+public git=n
 
 # 📄
 # auto generate HTML page, y for yes n for no
-# set303d
-y
+auto generate HTML page=y
 
 # 🗑️
 # tags, separated by commas
-# set303e
-Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
+tags=Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
 
 # 📝
 # description
-#set303f
-Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 💡
+description=Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 💡
 
 # 🌐
 # website URL
-# set303g
-http://example.com
+website URL=http://example.com
 
 # 🎉
 # GithubPartywebpageLink
-# set303h
-index.html
+GithubPartywebpageLink=index.html
 
 # 💬
 # Verbose, output for each terminal run, y for yes and n for no
-# yepanotheroneset303iThisShouldworkto:
-n
+Verbose, output for each terminal run, y for yes and n for no=n
 EOL
         log "Created kigit.txt. Please edit this file and re-run the script."
         exit 0
@@ -173,6 +158,9 @@ EOL
         auto_page_trigger=false
     fi
 }
+
+
+
 
 
 # Function to setup GitHub repository
