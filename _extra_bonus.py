@@ -76,11 +76,12 @@ def create_html_page():
     if readme_html:
         additional_html = generate_additional_html()
         full_html = f"<html><head><title>Repository Info</title></head><body>{readme_html}{additional_html}</body></html>"
-        with open(os.path.join(os.path.dirname(__file__), 'index.html'), 'w') as html_file:
+        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'index.html'), 'w') as html_file:
             html_file.write(full_html)
         print("index.html created successfully.")
     else:
         print("Failed to create index.html.")
+
 
 
 def main():
