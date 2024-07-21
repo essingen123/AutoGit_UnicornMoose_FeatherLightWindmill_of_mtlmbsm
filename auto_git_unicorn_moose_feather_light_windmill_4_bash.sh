@@ -94,6 +94,8 @@ read_config() {
                     ;;
                 "Verbose, output for each terminal run, y for yes and n for no")
                     verbose="${value// /}"
+                    echo "works, ok!"
+                    exit 0
                     ;;
             esac
         done < "$config_file"
