@@ -49,7 +49,6 @@ check_github_token() {
         log "GitHub token is already set."
     fi
 }
-
 read_config() {
     config_file="${script_dir}/kigit.txt"
     update_flag="n"
@@ -66,34 +65,43 @@ read_config() {
             if [[ "$line" =~ ^# ]]; then
                 continue
             fi
-            if [[ "$line" == *"set303a"* ]]; then
-                read -r next_line
-                update_flag="${next_line}"
-            elif [[ "$line" == *"set303b"* ]]; then
-                read -r next_line
-                repo_name="${next_line}"
-            elif [[ "$line" == *"set303c"* ]]; then
-                read -r next_line
-                public="${next_line}"
-            elif [[ "$line" == *"set303d"* ]]; then
-                read -r next_line
-                auto_page="${next_line}"
-            elif [[ "$line" == *"set303e"* ]]; then
-                read -r next_line
-                tags="${next_line}"
-            elif [[ "$line" == *"set303f"* ]]; then
-                read -r next_line
-                description="${next_line}"
-            elif [[ "$line" == *"set303g"* ]]; then
-                read -r next_line
-                website="${next_line}"
-            elif [[ "$line" == *"set303i"* ]]; then
-                read -r next_line
-                verbose="${next_line}"
-                echo "TEMP TEST!!!!"
-                echo $verbose
-                exit 0
-            fi
+            case "$line" in
+                *"set303a"*)
+                    IFS= read -r next_line
+                    update_flag="${next_line}"
+                    ;;
+                *"set303b"*)
+                    IFS= read -r next_line
+                    repo_name="${next_line}"
+                    ;;
+                *"set303c"*)
+                    IFS= read -r next_line
+                    public="${next_line}"
+                    ;;
+                *"set303d"*)
+                    IFS= read -r next_line
+                    auto_page="${next_line}"
+                    ;;
+                *"set303e"*)
+                    IFS= read -r next_line
+                    tags="${next_line}"
+                    ;;
+                *"set303f"*)
+                    IFS= read -r next_line
+                    description="${next_line}"
+                    ;;
+                *"set303g"*)
+                    IFS= read -r next_line
+                    website="${next_line}"
+                    ;;
+                *"set303i"*)
+                    IFS= read -r next_line
+                    verbose="${next_line}"
+                    echo "TEMP TEST!!!!"
+                    echo $verbose
+                    exit 0
+                    ;;
+            esac
         done < "$config_file"
     else
         log "No kigit.txt file found. Creating default configuration file."
@@ -127,7 +135,7 @@ Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
 
 # 📝
 # description
-# set303f
+#set303f
 Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 💡
 
 # 🌐
@@ -142,7 +150,7 @@ index.html
 
 # 💬
 # Verbose, output for each terminal run, y for yes and n for no
-# set303i
+# yepanotheroneset303iThisShouldworkto:
 n
 EOL
         log "Created kigit.txt. Please edit this file and re-run the script."
