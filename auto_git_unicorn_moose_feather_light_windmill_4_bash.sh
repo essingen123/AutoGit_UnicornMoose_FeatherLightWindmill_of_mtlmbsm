@@ -7,13 +7,6 @@
 script_path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "$0")"
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Function to log messages
-log() {
-    if [ "$verbose" == "y" ]; then
-        echo "$1"
-    fi
-}
-
 # Function to update .bashrc with new alias or environment variable
 update_bashrc() {
     local entry="$1"
@@ -57,7 +50,6 @@ check_github_token() {
     fi
 }
 
-# Function to read configuration
 read_config() {
     config_file="${script_dir}/kigit.txt"
     update_flag="n"
@@ -71,32 +63,45 @@ read_config() {
 
     if [ -f "$config_file" ]; then
         while IFS= read -r line; do
-            case "$line" in
-                *"set303a"*)
-                    update_flag="${line#*set303a }"
-                    ;;
-                *"set303b"*)
-                    repo_name="${line#*set303b }"
-                    ;;
-                *"set303c"*)
-                    public="${line#*set303c }"
-                    ;;
-                *"set303d"*)
-                    auto_page="${line#*set303d }"
-                    ;;
-                *"set303e"*)
-                    tags="${line#*set303e }"
-                    ;;
-                *"set303f"*)
-                    description="${line#*set303f }"
-                    ;;
-                *"set303g"*)
-                    website="${line#*set303g }"
-                    ;;
-                *"set303i"*)
-                    verbose="${line#*set303i }"
-                    ;;
-            esac
+            # ABSOLUTLEY NOT OK, THIS ONE WOULD BREAK THE LOGIC:
+            # if [[ "$line" =~ ^# ]]; then
+            #     continue
+            # fi
+        case "$line" in
+            *"set303a"*)
+                read -r next_line
+                update_flag="${next_line}"
+                ;;
+            *"set303b"*)
+                read -r next_line
+                repo_name="${next_line}"
+                ;;
+            *"set303c"*)
+                read -r next_line
+                public="${next_line}"
+                ;;
+            *"set303d"*)
+                read -r next_line
+                auto_page="${next_line}"
+                ;;
+            *"set303e"*)
+                read -r next_line
+                tags="${next_line}"
+                ;;
+            *"set303f"*)
+                read -r next_line
+                description="${next_line}"
+                ;;
+            *"set303g"*)
+                read -r next_line
+                website="${next_line}"
+                ;;
+            *"set303i"*)
+                echo "VERBOSE SET :"
+                read -r next_line
+                verbose="${next_line}"
+                ;;
+        esac
         done < "$config_file"
     else
         log "No kigit.txt file found. Creating default configuration file."
@@ -301,6 +306,12 @@ sync_github_repo() {
     git push origin master
 }
 
+log() {
+    if [ "$verbose" == "y" ]; then
+        echo "$1"
+    fi
+}
+
 # Main logic
 read_config
 
@@ -331,7 +342,7 @@ fi
 python3 "${script_dir}/update_github_about.py"
 
 # Set the GitHub Pages URL as the homepage of the repository
-github_username=$(git config --get user.name)
+github_username=$(git config user.name)
 repo_url=$(git config --get remote.origin.url)
 repo_name=$(basename "$repo_url" .git)
 log "Determined GitHub Username: $github_username"
