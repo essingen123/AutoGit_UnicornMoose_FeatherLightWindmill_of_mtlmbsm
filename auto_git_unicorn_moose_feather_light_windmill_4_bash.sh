@@ -166,6 +166,7 @@ EOL
     fi
 }
 
+
 # Function to setup GitHub repository
 setup_github_repo() {
     add_alias_to_bashrc
