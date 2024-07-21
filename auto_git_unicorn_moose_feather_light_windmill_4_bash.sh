@@ -53,7 +53,6 @@ check_github_token() {
 
 
 
-
 read_config() {
     config_file="${script_dir}/kigit.txt"
     update_flag="n"
@@ -66,38 +65,40 @@ read_config() {
     verbose="n"
 
     if [ -f "$config_file" ]; then
-        while IFS='=' read -r key value; do
-            if [[ "$key" =~ ^# ]]; then
+        while IFS= read -r line; do
+            if [[ "$line" =~ ^# ]]; then
                 continue
             fi
-            case "$key" in
-                "update according to this file")
-                    update_flag="${value// /}"
-                    ;;
-                "git-reponame")
-                    repo_name="${value// /}"
-                    ;;
-                "public git")
-                    public="${value// /}"
-                    ;;
-                "auto generate HTML page")
-                    auto_page="${value// /}"
-                    ;;
-                "tags")
-                    tags="${value}"
-                    ;;
-                "description")
-                    description="${value}"
-                    ;;
-                "website URL")
-                    website="${value// /}"
-                    ;;
-                "Verbose, output for each terminal run, y for yes and n for no")
-                    verbose="${value// /}"
-                    echo "works, ok!"
-                    exit 0
-                    ;;
-            esac
+            if [[ "$line" == *=* ]]; then
+                key="${line%%=*}"
+                value="${line#*=}"
+                case "$key" in
+                    "update according to this file")
+                        update_flag="${value// /}"
+                        ;;
+                    "git-reponame")
+                        repo_name="${value// /}"
+                        ;;
+                    "public git")
+                        public="${value// /}"
+                        ;;
+                    "auto generate HTML page")
+                        auto_page="${value// /}"
+                        ;;
+                    "tags")
+                        tags="${value}"
+                        ;;
+                    "description")
+                        description="${value}"
+                        ;;
+                    "website URL")
+                        website="${value// /}"
+                        ;;
+                    "Verbose, output for each terminal run, y for yes and n for no")
+                        verbose="${value// /}"
+                        ;;
+                esac
+            fi
         done < "$config_file"
     else
         log "No kigit.txt file found. Creating default configuration file."
@@ -160,6 +161,7 @@ EOL
         auto_page_trigger=false
     fi
 }
+
 
 
 
