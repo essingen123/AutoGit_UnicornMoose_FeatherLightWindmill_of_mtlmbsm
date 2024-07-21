@@ -1,3 +1,5 @@
+# file:
+# auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
 #!/bin/bash
 
 # Path for the script
@@ -201,6 +203,30 @@ setup_github_repo() {
     git commit -m "Syncing changes with GitHub"
     git push --set-upstream origin master
     git push origin master
+
+# Function to update the README file
+update_readme() {
+    if [ -f README.md ]; then
+        echo "Updating README.md file."
+        echo "# ${repo_name}" > README.md
+        echo "Updated project description:"
+        read updated_project_description
+        echo "${updated_project_description}" >> README.md
+        echo "" >> README.md
+        echo "This project is licensed under the MIT License." >> README.md
+        echo "Definition of MTLMBSM: Meh To Less Meh But Still Meh." >> README.md
+        echo "![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)" >> README.md
+        git add README.md
+        git commit -m "Update README file"
+        git push origin master
+    fi
+}
+
+# Function to generate a neat webpage for the GitHub project
+generate_html_page() {
+    echo "Generating HTML page from README.md..."
+    python3 "${script_dir}/_extra_bonus.py"
+}
 
     # Add or update README file
     if [ ! -f README.md ]; then
