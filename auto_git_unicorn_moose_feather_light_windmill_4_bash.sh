@@ -96,8 +96,11 @@ read_config() {
                     website="${next_line}"
                     ;;
                 "set303i")
+                    echo "VERBOSE SET :"
                     read -r next_line
                     verbose="${next_line}"
+                    echo $verbose
+                    exit 0
                     ;;
             esac
         done < "$config_file"
