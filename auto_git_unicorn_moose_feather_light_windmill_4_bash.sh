@@ -63,9 +63,11 @@ read_config() {
 
     if [ -f "$config_file" ]; then
         while IFS= read -r line; do
-            if [[ "$line" =~ ^# ]]; then
+            # Skip lines that are comments or empty
+            if [[ "$line" =~ ^# ]] || [[ -z "$line" ]]; then
                 continue
             fi
+            # Read the following line for each set keyword
             if [[ "$line" == "set303a" ]]; then
                 read -r line
                 update_flag="${line// /}"
