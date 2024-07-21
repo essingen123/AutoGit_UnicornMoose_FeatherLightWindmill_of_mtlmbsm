@@ -49,10 +49,6 @@ check_github_token() {
         log "GitHub token is already set."
     fi
 }
-
-
-
-
 read_config() {
     config_file="${script_dir}/kigit.txt"
     update_flag="n"
@@ -69,36 +65,40 @@ read_config() {
             if [[ "$line" =~ ^# ]]; then
                 continue
             fi
-            if [[ "$line" == *=* ]]; then
-                key="${line%%=*}"
-                value="${line#*=}"
-                case "$key" in
-                    "update according to this file")
-                        update_flag="${value// /}"
-                        ;;
-                    "git-reponame")
-                        repo_name="${value// /}"
-                        ;;
-                    "public git")
-                        public="${value// /}"
-                        ;;
-                    "auto generate HTML page")
-                        auto_page="${value// /}"
-                        ;;
-                    "tags")
-                        tags="${value}"
-                        ;;
-                    "description")
-                        description="${value}"
-                        ;;
-                    "website URL")
-                        website="${value// /}"
-                        ;;
-                    "Verbose, output for each terminal run, y for yes and n for no")
-                        verbose="${value// /}"
-                        ;;
-                esac
-            fi
+            case "$line" in
+                *"set303a"*)
+                    IFS= read -r next_line
+                    update_flag="${next_line}"
+                    ;;
+                *"set303b"*)
+                    IFS= read -r next_line
+                    repo_name="${next_line}"
+                    ;;
+                *"set303c"*)
+                    IFS= read -r next_line
+                    public="${next_line}"
+                    ;;
+                *"set303d"*)
+                    IFS= read -r next_line
+                    auto_page="${next_line}"
+                    ;;
+                *"set303e"*)
+                    IFS= read -r next_line
+                    tags="${next_line}"
+                    ;;
+                *"set303f"*)
+                    IFS= read -r next_line
+                    description="${next_line}"
+                    ;;
+                *"set303g"*)
+                    IFS= read -r next_line
+                    website="${next_line}"
+                    ;;
+                *"set303i"*)
+                    IFS= read -r next_line
+                    verbose="${next_line}"
+                    ;;
+            esac
         done < "$config_file"
     else
         log "No kigit.txt file found. Creating default configuration file."
@@ -108,38 +108,47 @@ read_config() {
 
 # 💻
 # update according to this file 
-update according to this file=y
+# set303a 
+y
 
 # 📝# git-reponame, leave next line as random and it will be random word otherwise write a github repo name in 
-git-reponame=AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
+# set303b
+AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
 
 # 🔒
 # public git, y for yes n for no, standard no
-public git=n
+# set303c
+n
 
 # 📄
 # auto generate HTML page, y for yes n for no
-auto generate HTML page=y
+# set303d
+y
 
 # 🗑️
 # tags, separated by commas
-tags=Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
+# set303e
+Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
 
 # 📝
 # description
-description=Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 💡
+#set303f
+Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 💡
 
 # 🌐
 # website URL
-website URL=http://example.com
+# set303g
+http://example.com
 
 # 🎉
 # GithubPartywebpageLink
-GithubPartywebpageLink=index.html
+# set303h
+index.html
 
 # 💬
 # Verbose, output for each terminal run, y for yes and n for no
-Verbose, output for each terminal run, y for yes and n for no=n
+# set303i
+n
 EOL
         log "Created kigit.txt. Please edit this file and re-run the script."
         exit 0
@@ -161,10 +170,6 @@ EOL
         auto_page_trigger=false
     fi
 }
-
-
-
-
 
 
 # Function to setup GitHub repository
