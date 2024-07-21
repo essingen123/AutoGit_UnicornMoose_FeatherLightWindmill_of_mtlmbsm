@@ -66,40 +66,84 @@ read_config() {
             if [[ "$line" =~ ^# ]]; then
                 continue
             fi
-            if [[ "$line" == *=* ]]; then
-                key="${line%%=*}"
-                value="${line#*=}"
-                case "$key" in
-                    "set303a update according to this file")
-                        update_flag="${value// /}"
-                        ;;
-                    "set303b git-reponame")
-                        repo_name="${value// /}"
-                        ;;
-                    "set303c public git")
-                        public="${value// /}"
-                        ;;
-                    "set303d auto generate HTML page")
-                        auto_page="${value// /}"
-                        ;;
-                    "set303e tags")
-                        tags="$value"
-                        ;;
-                    "set303f description")
-                        description="$value"
-                        ;;
-                    "set303g website URL")
-                        website="${value// /}"
-                        ;;
-                    "set303i Verbose")
-                        verbose="${value// /}"
-                        ;;
-                esac
+            if [[ "$line" == "set303a" ]]; then
+                read -r line
+                update_flag="${line// /}"
+            elif [[ "$line" == "set303b" ]]; then
+                read -r line
+                repo_name="${line// /}"
+            elif [[ "$line" == "set303c" ]]; then
+                read -r line
+                public="${line// /}"
+            elif [[ "$line" == "set303d" ]]; then
+                read -r line
+                auto_page="${line// /}"
+            elif [[ "$line" == "set303e" ]]; then
+                read -r line
+                tags="$line"
+            elif [[ "$line" == "set303f" ]]; then
+                read -r line
+                description="$line"
+            elif [[ "$line" == "set303g" ]]; then
+                read -r line
+                website="${line// /}"
+            elif [[ "$line" == "set303i" ]]; then
+                read -r line
+                verbose="${line// /}"
             fi
         done < "$config_file"
     else
-        echo "No kigit.txt file found. Configuration is required. Exiting."
-        exit 1
+        echo "No kigit.txt file found. Creating default configuration file."
+        cat <<EOL > "$config_file"
+# This is a config file for the auto_git_unicorn_moose_feather .. 🦄
+# File: kigit.txt
+
+# 💻
+# update according to this file 
+# set303a 
+y
+
+# 📝# git-reponame, leave next line as random and it will be random word otherwise write a github repo name in 
+# set303b
+AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
+
+# 🔒
+# public git, y for yes n for no, standard no
+# set303c
+n
+
+# 📄
+# auto generate HTML page, y for yes n for no
+# set303d
+y
+
+# 🗑️
+# tags, separated by commas
+# set303e
+Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
+
+# 📝
+# description
+# set303f
+Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 💡
+
+# 🌐
+# website URL
+# set303g
+http://example.com
+
+# 🎉
+# GithubPartywebpageLink
+# set303h
+index.html
+
+# 💬
+# Verbose, output for each terminal run, y for yes and n for no
+# set303i
+n
+EOL
+        echo "Created kigit.txt. Please edit this file and re-run the script."
+        exit 0
     fi
 
     if [ "$repo_name" == "random" ]; then

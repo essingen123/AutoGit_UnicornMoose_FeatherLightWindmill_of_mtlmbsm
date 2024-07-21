@@ -1,18 +1,46 @@
-#set303a update according to this file
+# This is a config file for the auto_git_unicorn_moose_feather .. 🦄
+# File: kigit.txt
+
+# 💻
+# update according to this file 
+# set303a 
 y
-#set303b git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
+
+# 📝# git-reponame, leave next line as random and it will be random word otherwise write a github repo name in 
+# set303b
 AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
-#set303c public git, y for yes n for no, standard no
+
+# 🔒
+# public git, y for yes n for no, standard no
+# set303c
 n
-#set303d auto generate HTML page, y for yes n for no
+
+# 📄
+# auto generate HTML page, y for yes n for no
+# set303d
 y
-#set303e tags, separated by commas
+
+# 🗑️
+# tags, separated by commas
+# set303e
 Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
-#set303f description
-Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git
-##set303g website URL
+
+# 📝
+# description
+# set303f
+Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 💡
+
+# 🌐
+# website URL
+# set303g
 http://example.com
-#set303h GithubPartywebpageLink
+
+# 🎉
+# GithubPartywebpageLink
+# set303h
 index.html
-#set303i Verbose, output for each terminal run, y for yes and n for no
+
+# 💬
+# Verbose, output for each terminal run, y for yes and n for no
+# set303i
 n
