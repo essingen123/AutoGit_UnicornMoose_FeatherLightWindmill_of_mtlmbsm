@@ -187,7 +187,6 @@ if __name__ == "__main__":
             if "set303i" in line:
                 verbose = lines[i + 1].strip().lower()
 
-    # Check if verbose is set to 'y'
-    verbose = verbose == "y"
+
     
     main()
