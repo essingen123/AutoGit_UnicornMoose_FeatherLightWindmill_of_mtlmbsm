@@ -348,6 +348,11 @@ log "Determined Repo Name: $repo_name"
 if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
     log "Setting GitHub Pages URL as the homepage for the repository..."
     log "API Call: gh api -X PATCH repos/$github_username/$repo_name -f homepage=https://$github_username.github.io/$repo_name"
+    echo "verbose:"
+    echo $verbose
+    echo "cat:ing out kilgit.txt here:"
+    cat kigit.txt
+    exit 0
     if [ "$verbose" == "y" ]; then
         gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name"
     else
