@@ -1,18 +1,18 @@
-#update according to this file
+#set303a update according to this file
 y
-#git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
+#set303b git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
 AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
-#public git, y for yes n for no, standard no
+#set303c public git, y for yes n for no, standard no
 n
-#auto generate HTML page, y for yes n for no
+#set303d auto generate HTML page, y for yes n for no
 y
-#tags, separated by commas
+#set303e tags, separated by commas
 Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
-#description
+#set303f description
 Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git
-#website URL
+##set303g website URL
 http://example.com
-#GithubPartywebpageLink
+#set303h GithubPartywebpageLink
 index.html
-# Verbose, output for each terminal run, y for yes and n for no
+#set303i Verbose, output for each terminal run, y for yes and n for no
 n
