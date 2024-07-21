@@ -5,7 +5,7 @@ import sys
 
 # file: update_github_about.py
 
-verbose = "y"
+verbose = "n"
 
 def log(message):
     if verbose == "y":
