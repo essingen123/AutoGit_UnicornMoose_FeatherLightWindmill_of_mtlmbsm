@@ -338,7 +338,7 @@ log "Determined Repo Name: $repo_name"
 if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
     log "Setting GitHub Pages URL as the homepage for the repository..."
     log "API Call: gh api -X PATCH repos/$github_username/$repo_name -f homepage=https://$github_username.github.io/$repo_name"
-    gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name"
+#    gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name"
     log "GitHub Pages URL set as the homepage for the repository."
 else
     log "Could not determine GitHub username or repository name. Skipping homepage URL update."
