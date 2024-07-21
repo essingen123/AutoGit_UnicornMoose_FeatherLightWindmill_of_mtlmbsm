@@ -90,6 +90,11 @@ read_config() {
             elif [[ "$line" == "set303i" ]]; then
                 read -r line
                 verbose="${line// /}"
+                echo $verbose
+                exit 
+                break
+                halt
+                stop
             fi
         done < "$config_file"
     else
@@ -338,7 +343,11 @@ log "Determined Repo Name: $repo_name"
 if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
     log "Setting GitHub Pages URL as the homepage for the repository..."
     log "API Call: gh api -X PATCH repos/$github_username/$repo_name -f homepage=https://$github_username.github.io/$repo_name"
-#    gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name"
+    if [ "$verbose" == "y" ]; then
+        gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name"
+    else
+        gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name" >/dev/null 2>&1
+    fi
     log "GitHub Pages URL set as the homepage for the repository."
 else
     log "Could not determine GitHub username or repository name. Skipping homepage URL update."
