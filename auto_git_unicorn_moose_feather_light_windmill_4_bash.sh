@@ -1,5 +1,3 @@
-# file:
-# auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
 #!/bin/bash
 
 # Path for the script
@@ -203,6 +201,7 @@ setup_github_repo() {
     git commit -m "Syncing changes with GitHub"
     git push --set-upstream origin master
     git push origin master
+}
 
 # Function to update the README file
 update_readme() {
@@ -228,33 +227,32 @@ generate_html_page() {
     python3 "${script_dir}/_extra_bonus.py"
 }
 
-    # Add or update README file
-    if [ ! -f README.md ]; then
-        echo "No README.md found. Would you like to create one? (y/n)"
-        read create_readme
-        if [[ "$create_readme" == "y" ]]; then
-            echo "Creating README.md file."
-            echo "# ${repo_name}" > README.md
-            echo "Enter a short project description:"
-            read project_description
-            echo "${project_description}" >> README.md
-            echo "" >> README.md
-            echo "This project is licensed under the MIT License." >> README.md
-            echo "Definition of MTLMBSM: Meh To Less Meh But Still Meh." >> README.md
-            echo "![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)" >> README.md
-            git add README.md
-            git commit -m "Add README file"
-            git push origin master
-        fi
+# Add or update README file
+if [ ! -f README.md ]; then
+    echo "No README.md found. Would you like to create one? (y/n)"
+    read create_readme
+    if [[ "$create_readme" == "y" ]]; then
+        echo "Creating README.md file."
+        echo "# ${repo_name}" > README.md
+        echo "Enter a short project description:"
+        read project_description
+        echo "${project_description}" >> README.md
+        echo "" >> README.md
+        echo "This project is licensed under the MIT License." >> README.md
+        echo "Definition of MTLMBSM: Meh To Less Meh But Still Meh." >> README.md
+        echo "![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)" >> README.md
+        git add README.md
+        git commit -m "Add README file"
+        git push origin master
     fi
+fi
 
-    if [ "$update_flag" == "y" ]; then
-        # Reset the update flag in kigit.txt to 'n' after updates
-        sed -i 's/update according to this file=y/update according to this file=n/' "$config_file"
+if [ "$update_flag" == "y" ]; then
+    # Reset the update flag in kigit.txt to 'n' after updates
+    sed -i 's/update according to this file=y/update according to this file=n/' "$config_file"
 
-        echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
-    fi
-}
+    echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
+fi
 
 # Function to sync the repository
 sync_github_repo() {
@@ -263,24 +261,6 @@ sync_github_repo() {
     git commit -m "Syncing changes with GitHub"
     git push origin master
 }
-
-
-
-
-
-
-# Argument parsing
-while getopts "v" opt; do
-    case $opt in
-        v)
-            verbose="y"
-            ;;
-        ?)
-            echo "Invalid option: -$OPTARG" &>2
-            exit 1
-            ;;
-    esac
-done
 
 # Argument parsing
 while getopts "v" opt; do
