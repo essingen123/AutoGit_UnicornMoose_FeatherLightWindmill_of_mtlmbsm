@@ -66,43 +66,41 @@ read_config() {
             # if [[ "$line" =~ ^# ]]; then
             #     continue
             # fi
-            case "$line" in
-                "set303a")
-                    read -r next_line
-                    update_flag="${next_line}"
-                    ;;
-                "set303b")
-                    read -r next_line
-                    repo_name="${next_line}"
-                    ;;
-                "set303c")
-                    read -r next_line
-                    public="${next_line}"
-                    ;;
-                "set303d")
-                    read -r next_line
-                    auto_page="${next_line}"
-                    ;;
-                "set303e")
-                    read -r next_line
-                    tags="${next_line}"
-                    ;;
-                "set303f")
-                    read -r next_line
-                    description="${next_line}"
-                    ;;
-                "set303g")
-                    read -r next_line
-                    website="${next_line}"
-                    ;;
-                "set303i")
-                    echo "VERBOSE SET :"
-                    read -r next_line
-                    verbose="${next_line}"
-                    echo $verbose
-                    exit 0
-                    ;;
-            esac
+        case "$line" in
+            *"set303a"*)
+                read -r next_line
+                update_flag="${next_line}"
+                ;;
+            *"set303b"*)
+                read -r next_line
+                repo_name="${next_line}"
+                ;;
+            *"set303c"*)
+                read -r next_line
+                public="${next_line}"
+                ;;
+            *"set303d"*)
+                read -r next_line
+                auto_page="${next_line}"
+                ;;
+            *"set303e"*)
+                read -r next_line
+                tags="${next_line}"
+                ;;
+            *"set303f"*)
+                read -r next_line
+                description="${next_line}"
+                ;;
+            *"set303g"*)
+                read -r next_line
+                website="${next_line}"
+                ;;
+            *"set303i"*)
+                echo "VERBOSE SET :"
+                read -r next_line
+                verbose="${next_line}"
+                ;;
+        esac
         done < "$config_file"
     else
         log "No kigit.txt file found. Creating default configuration file."
