@@ -8,21 +8,6 @@ source ./github_setup.sh
 source ./git_operations.sh
 source ./bashrc_update.sh
 
-# Function to check and add alias
-check_and_add_alias() {
-    local alias_cmd="alias g='${script_path}'"
-    if ! type g >/dev/null 2>&1; then
-        if ! grep -qF "$alias_cmd" "$HOME/.bashrc"; then
-            echo "$alias_cmd" >> "$HOME/.bashrc"
-            log "Alias 'g' added to .bashrc. Please restart your terminal or source ~/.bashrc."
-        else
-            log "Alias 'g' already exists in .bashrc."
-        fi
-    else
-        log "Alias 'g' is already defined in the system."
-    fi
-}
-
 # Main script logic
 read_config
 if [ ! -d ".git" ]; then
@@ -47,6 +32,3 @@ else
 fi
 
 update_github_about
-
-# Check and add alias
-check_and_add_alias
