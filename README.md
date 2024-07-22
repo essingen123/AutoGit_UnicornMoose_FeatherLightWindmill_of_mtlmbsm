@@ -16,6 +16,8 @@ MTLMBSM stands for "Meh To Less Meh But Still Meh," humorously capturing the ess
 - **.bashrc Update**: Optionally updates `.bashrc` to include an alias for easy script execution.
 - **HTML Page Generation**: Generates an HTML page from `README.md`.
 - **GitHub Repository Setup**: Updates the "About" section of the GitHub repository with description, website, and topics.
+- **Automation**: Automates commits and pushes using a cron job setup.
+- **Selective Branch Management**: Allows specifying a branch for commits in the `kigit.txt` file.
 
 ## Setup
 To use this script, simply download it to your preferred directory, make it executable with `chmod +x`, and run it from your terminal.
