@@ -44,4 +44,15 @@ index.html
 # Verbose, output for each terminal run, y for yes and n for no
 # set303i
 y
+
+# 🌳
+# Branch to commit to, 'main' or a new branch name
+# set303j
+main
+
+# 💬
+# Default commit message
+# set303k
+This is my standard commit message to save time: Hmm.. just look at the data to reveal the updates
+
 # DONT EDIT OUT THIS LAST LINE
