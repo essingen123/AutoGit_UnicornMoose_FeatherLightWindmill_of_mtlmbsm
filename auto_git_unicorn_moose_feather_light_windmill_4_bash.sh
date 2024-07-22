@@ -1,47 +1,40 @@
 #!/bin/bash
 
-#file:
-#auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
-
 # Main script to orchestrate other scripts
-# Include other scripts
-source ./config_handler.sh
-source ./error_handler.sh
-source ./github_setup.sh
-source ./git_operations.sh
-source ./bashrc_update.sh
 
-# Function to update the GitHub About section
-update_github_about() {
-    log "Updating the GitHub About section..."
-    python3 "${script_dir}/update_github_about.py"
-}
+# Determine the script's directory
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+current_dir="$(pwd)"
+
+# Include other scripts
+source "$script_dir/config_handler.sh"
+source "$script_dir/error_handler.sh"
+source "$script_dir/github_setup.sh"
+source "$script_dir/git_operations.sh"
+source "$script_dir/bashrc_update.sh"
 
 # Main script logic
-read_config
-if [ ! -d ".git" ]; then
+read_config "$current_dir/kigit.txt"
+
+if [ ! -d "$current_dir/.git" ]; then
     log "Git is not initialized. Proceeding to setup the repository."
-    setup_github_repo
+    setup_github_repo "$current_dir"
 else
     log "Git is already initialized."
     if [ "$update_flag" == "y" ]; then
         log "Update flag is set to 'y'. Proceeding to setup the repository."
-        setup_github_repo
+        setup_github_repo "$current_dir"
     else
         log "Update flag set to 'n'. Syncing repository."
-        sync_github_repo
+        sync_github_repo "$current_dir"
     fi
 fi
 
-if [ "$auto_page_trigger" = true ] || [ ! -f "index.html" ]; then
+if [ "$auto_page_trigger" = true ] || [ ! -f "$current_dir/index.html" ]; then
     log "index.html not found or auto page generation enabled. Generating HTML page from README.md..."
-    generate_html_page
+    generate_html_page "$current_dir"
 else
     log "If you wish to also have that cool HTML page, you can run the following command to generate a neat webpage for your GitHub project: ./_extra_bonus.py"
 fi
 
-# Ensure the script directory variable is set correctly
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# Call the function to update the GitHub About section
-update_github_about
+update_github_about "$current_dir"
