@@ -1,18 +1,23 @@
 #!/bin/bash
 
-# filename:
-# auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
+# filename: auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
 
 # Path for the script
 script_path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "$0")"
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Function to log messages if verbose is enabled
+log() {
+    if [ "$verbose" == "y" ]; then
+        echo "$1"
+    fi
+}
 
 # Function to update .bashrc with new alias or environment variable
 update_bashrc() {
     local entry="$1"
     local file="$HOME/.bashrc"
     log "Updating .bashrc with entry: $entry"
-
     if ! grep -qF "$entry" "$file"; then
         echo "$entry" >> "$file"
         log "Added $entry to $file"
@@ -66,19 +71,19 @@ read_config() {
             case "$line" in
                 *"set303a"*)
                     read -r next_line
-                    update_flag="${next_line// /}"
+                    update_flag="${next_line}"
                     ;;
                 *"set303b"*)
                     read -r next_line
-                    repo_name="${next_line// /}"
+                    repo_name="${next_line}"
                     ;;
                 *"set303c"*)
                     read -r next_line
-                    public="${next_line// /}"
+                    public="${next_line}"
                     ;;
                 *"set303d"*)
                     read -r next_line
-                    auto_page="${next_line// /}"
+                    auto_page="${next_line}"
                     ;;
                 *"set303e"*)
                     read -r next_line
@@ -90,11 +95,11 @@ read_config() {
                     ;;
                 *"set303g"*)
                     read -r next_line
-                    website="${next_line// /}"
+                    website="${next_line}"
                     ;;
                 *"set303i"*)
                     read -r next_line
-                    verbose="${next_line// /}"
+                    verbose="${next_line}"
                     ;;
             esac
         done < "$config_file"
@@ -237,7 +242,7 @@ setup_github_repo() {
 
     # Add all files and commit
     git add .
-    git commit -m "Syncing changes with GitHub"
+    git commit -m "${1:-Syncing changes with GitHub}"
     git push --set-upstream origin master
     git push origin master
 }
@@ -297,14 +302,8 @@ fi
 sync_github_repo() {
     # Add all files and commit
     git add .
-    git commit -m "Syncing changes with GitHub"
+    git commit -m "${1:-Syncing changes with GitHub}"
     git push origin master
-}
-
-log() {
-    if [ "$verbose" == "y" ]; then
-        echo "$1"
-    fi
 }
 
 # Main logic
@@ -313,22 +312,22 @@ read_config
 # Proceed with setup if .git does not exist or based on update flag
 if [ ! -d ".git" ]; then
     log "Git is not initialized. Proceeding to setup the repository."
-    setup_github_repo
+    setup_github_repo "$@"
 else
     log "Git is already initialized."
     if [ "$update_flag" == "y" ]; then
         log "Update flag is set to 'y'. Proceeding to setup the repository."
-        setup_github_repo
+        setup_github_repo "$@"
     else
         log "Update flag set to 'n'. Syncing repository."
-        sync_github_repo
+        sync_github_repo "$@"
     fi
 fi
 
 # Check and potentially generate the HTML page
 if [ "$auto_page_trigger" = true ] || [ ! -f "index.html" ]; then
     log "index.html not found or auto page generation enabled. Generating HTML page from README.md..."
-    python3 "${script_dir}/_extra_bonus.py"
+    generate_html_page
 else
     log "If you wish to also have that cool HTML page, you can run the following command to generate a neat webpage for your GitHub project: ./_extra_bonus.py"
 fi
@@ -354,5 +353,3 @@ if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
 else
     log "Could not determine GitHub username or repository name. Skipping homepage URL update."
 fi
-
-github_username=$(git config user.name)
