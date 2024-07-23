@@ -1,7 +1,147 @@
 #!/bin/bash
+import os
+import subprocess
+
+# Define the kigit.txt content
+kigit_content = """# This is a config file for the auto_git_unicorn_moose_feather .. 🦄
+# File: kigit.txt
+
+# 💻
+# update according to this file 
+# set303a 
+y
+
+# 📝# git-reponame, leave next line as random and it will be random word otherwise write a github repo name in 
+# set303b
+random
+
+# 🔒
+# public git, y for yes n for no, standard no
+# set303c
+n
+
+# 📄
+# auto generate HTML page, y for yes n for no
+# set303d
+y
+
+# 🗑️
+# tags, separated by commas
+# set303e
+Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
+
+# 📝
+# description
+# set303f
+Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 💡
+
+# 🌐
+# website URL
+# set303g
+http://example.com
+
+# 🎉
+# GithubPartywebpageLink
+# set303h
+index.html
+
+# 💬
+# Verbose, output for each terminal run, y for yes and n for no
+# set303i
+y
+# DONT EDIT OUT THIS LAST LINE
+"""
+
+# Create kigit.txt if it does not exist in the project directory
+project_dir = os.getcwd()
+kigit_path = os.path.join(project_dir, "kigit.txt")
+
+if not os.path.exists(kigit_path):
+    with open(kigit_path, "w") as file:
+        file.write(kigit_content)
+    print("kigit.txt created with default configuration.")
+
+# Ensure the alias 'g' is correctly set in the user's .bashrc
+bashrc_path = os.path.expanduser("~/.bashrc")
+
+with open(bashrc_path, "r") as file:
+    bashrc_content = file.readlines()
+
+# Remove any existing 'g' alias definitions
+bashrc_content = [line for line in bashrc_content if not line.startswith("alias g=")]
+
+# Add the new 'g' alias definition
+bashrc_content.append(f"alias g='{os.path.join(project_dir, 'auto_git_unicorn_moose_feather_light_windmill_4_bash.sh')}'\n")
+
+with open(bashrc_path, "w") as file:
+    file.writelines(bashrc_content)
+
+print("Alias 'g' added to .bashrc.")
+
+# Source the updated .bashrc
+subprocess.run(["source ~/.bashrc"], shell=True, check=True)
+
+print("Sourced the updated .bashrc successfully.")
 
 # Configuration handler
 read_config() {
+
+#!/bin/sh
+
+kigit_content="# This is a config file for the auto_git_unicorn_moose_feather .. 🦄
+# File: kigit.txt
+
+# 💻
+# update according to this file 
+# set303a 
+y
+
+# 📝# git-reponame, leave next line as random and it will be random word otherwise write a github repo name in 
+# set303b
+random
+
+# 🔒
+# public git, y for yes n for no, standard no
+# set303c
+n
+
+# 📄
+# auto generate HTML page, y for yes n for no
+# set303d
+y
+
+# 🗑️
+# tags, separated by commas
+# set303e
+Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
+
+# 📝
+# description
+# set303f
+Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 💡
+
+# 🌐
+# website URL
+# set303g
+http://example.com
+
+# 🎉
+# GithubPartywebpageLink
+# set303h
+index.html
+
+# 💬
+# Verbose, output for each terminal run, y for yes and n for no
+# set303i
+y
+# DONT EDIT OUT THIS LAST LINE"
+
+if [ ! -f "kigit.txt" ]; then
+    echo "$kigit_content" > kigit.txt
+    echo "kigit.txt created with default configuration."
+fi
+
+    
     config_file="${script_dir}/kigit.txt"
     update_flag="n"
     repo_name="random"

@@ -13,6 +13,8 @@ log() {
     fi
 }
 
+
+
 # Include other scripts
 source "$script_dir/config_handler.sh"
 source "$script_dir/error_handler.sh"
