@@ -48,7 +48,7 @@ y
 # 🌳
 # Branch to commit to, 'main' or a new branch name
 # set303j
-main
+master
 
 # 💬
 # Default commit message
