@@ -108,9 +108,20 @@ echo "Git repository setup complete."
 
 echo "Creating or updating GitHub repository..."
 create_or_update_repo() {
-    local repo_name=${repo_name}
-    local repo_exists=$(gh repo view "$repo_name" --json name --jq '.name' 2>/dev/null)
+    local repo_name="${repo_name}"
+    echo "Checking if repository exists: $repo_name"
+    local repo_exists
+    repo_exists=$(gh repo view "$repo_name" --json name --jq '.name' 2>&1)
     
+    if [ $? -ne 0 ]; then
+        echo "Failed to check if repository exists. Output from gh command:"
+        echo "$repo_exists"
+        echo "Ensure the GitHub CLI is installed and you are authenticated."
+        exit 1
+    fi
+
+    echo "gh command output: $repo_exists"
+
     if [ -z "$repo_exists" ]; then
         echo "Creating GitHub repository: $repo_name"
         gh repo create "$repo_name" --${public} --enable-issues --enable-wiki || error "Failed to create GitHub repository"
@@ -172,9 +183,14 @@ sync_repo() {
     commit_msg="${commit_msg//\~date/$(date +%Y%m%d%H%M%S)}"
     commit_msg="${commit_msg//\~data/$(git status --porcelain | wc -l) files changed}"
     
-    git add .
-    git commit -m "$commit_msg" || true
-    git push origin "$branch"
+    echo "Adding files to git..."
+    git add . || { echo "Failed to add files to git"; exit 1; }
+
+    echo "Committing changes..."
+    git commit -m "$commit_msg" || { echo "Failed to commit changes"; exit 1; }
+
+    echo "Pushing changes to origin $branch..."
+    git push origin "$branch" || { echo "Failed to push changes"; exit 1; }
 }
 sync_repo
 echo "Repository synced."
