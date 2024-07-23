@@ -264,6 +264,44 @@ sync_github_repo() {
     git push origin master
 }
 
+
+
+
+
+
+# Argument parsing
+while getopts "v" opt; do
+    case $opt in
+        v)
+            verbose="y"
+            ;;
+        ?)
+            echo "Invalid option: -$OPTARG" &>2
+            exit 1
+            ;;
+    esac
+done
+
+# Argument parsing
+while getopts "v" opt; do
+    case $opt in
+        v)
+            verbose="y"
+            ;;
+        ?)
+            echo "Invalid option: -$OPTARG" >&2
+            exit 1
+            ;;
+    esac
+done
+
+# Function to log messages if verbose is enabled
+log() {
+    if [ "$verbose" == "y" ]; then
+        echo "$1"
+    fi
+}
+
 # Main logic
 read_config
 
@@ -272,12 +310,12 @@ if [ ! -d ".git" ]; then
     echo "Git is not initialized. Proceeding to setup the repository."
     setup_github_repo
 else
-    echo "Git is already initialized."
+    log "Git is already initialized."
     if [ "$update_flag" == "y" ]; then
         echo "Update flag is set to 'y'. Proceeding to setup the repository."
         setup_github_repo
     else
-        echo "Update flag set to 'n'. Syncing repository."
+        log "Update flag set to 'n'. Syncing repository."
         sync_github_repo
     fi
 fi
@@ -297,7 +335,6 @@ python3 "${script_dir}/update_github_about.py"
 github_username=$(git config user.name)
 repo_url=$(git config --get remote.origin.url)
 repo_name=$(basename "$repo_url" .git)
-repo_name=$(basename "$repo_url" .git)
 
 echo "Determined GitHub Username: $github_username"
 echo "Determined Repo Name: $repo_name"
@@ -306,7 +343,7 @@ if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
     echo "Setting GitHub Pages URL as the homepage for the repository..."
     echo "API Call: gh api -X PATCH repos/$github_username/$repo_name -f homepage=https://$github_username.github.io/$repo_name"
     gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name"
-    echo "GitHub Pages URL set as the homepage for the repository."
+    log "GitHub Pages URL set as the homepage for the repository."
 else
     echo "Could not determine GitHub username or repository name. Skipping homepage URL update."
 fi
