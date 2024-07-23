@@ -1,6 +1,7 @@
-# file:
-# auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
 #!/bin/bash
+
+# filename:
+# auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
 
 # Path for the script
 script_path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "$0")"
@@ -49,7 +50,6 @@ check_github_token() {
     fi
 }
 
-# Function to read the configuration file
 read_config() {
     config_file="${script_dir}/kigit.txt"
     update_flag="n"
@@ -59,6 +59,7 @@ read_config() {
     tags=""
     description=""
     website=""
+    verbose="n"
 
     if [ -f "$config_file" ]; then
         while IFS= read -r line; do
@@ -69,58 +70,36 @@ read_config() {
                 key="${line%%=*}"
                 value="${line#*=}"
                 case "$key" in
-                    "update according to this file")
+                    "set303a update according to this file")
                         update_flag="${value// /}"
                         ;;
-                    "git-reponame")
+                    "set303b git-reponame")
                         repo_name="${value// /}"
                         ;;
-                    "public git")
+                    "set303c public git")
                         public="${value// /}"
                         ;;
-                    "auto generate HTML page")
+                    "set303d auto generate HTML page")
                         auto_page="${value// /}"
                         ;;
-                    "tags")
+                    "set303e tags")
                         tags="$value"
                         ;;
-                    "description")
+                    "set303f description")
                         description="$value"
                         ;;
-                    "website URL")
+                    "set303g website URL")
                         website="${value// /}"
+                        ;;
+                    "set303i Verbose")
+                        verbose="${value// /}"
                         ;;
                 esac
             fi
         done < "$config_file"
     else
-        echo "No kigit.txt file found. Would you like to create it? (y/n)"
-        read create_kigit
-        if [ "$create_kigit" == "y" ]; then
-            cat <<EOL > "$config_file"
-#update according to this file
-y
-#git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
-random
-#public git, y for yes n for no, standard no
-n
-#auto generate HTML page, y for yes n for no
-y
-#tags, separated by commas
-Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
-#description
-Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git
-#website URL
-http://example.com
-#GithubPartywebpageLink
-index.html
-EOL
-            echo "Created kigit.txt. Please edit this file and re-run the script."
-            exit 0
-        else
-            echo "kigit.txt is required for configuration. Exiting."
-            exit 1
-        fi
+        echo "No kigit.txt file found. Configuration is required. Exiting."
+        exit 1
     fi
 
     if [ "$repo_name" == "random" ]; then
@@ -196,6 +175,13 @@ setup_github_repo() {
     repo_exists=$(gh repo view "$repo_name" --json name --jq '.name' 2>/dev/null)
     if [ -z "$repo_exists" ]; then
         gh repo create "$repo_name" $visibility --enable-issues --enable-wiki
+    else
+        echo "Repository already exists. Fetching current description."
+        current_description=$(gh api repos/"$github_username"/"$repo_name" --jq .description)
+        if [ -n "$current_description" ] && ! grep -q "set303f description" "$config_file"; then
+            echo "set303f description=$current_description" >> "$config_file"
+            echo "Updated kigit.txt with current repository description."
+        fi
     fi
 
     # Add all files and commit
@@ -203,6 +189,7 @@ setup_github_repo() {
     git commit -m "Syncing changes with GitHub"
     git push --set-upstream origin master
     git push origin master
+}
 
 # Function to update the README file
 update_readme() {
@@ -228,33 +215,32 @@ generate_html_page() {
     python3 "${script_dir}/_extra_bonus.py"
 }
 
-    # Add or update README file
-    if [ ! -f README.md ]; then
-        echo "No README.md found. Would you like to create one? (y/n)"
-        read create_readme
-        if [[ "$create_readme" == "y" ]]; then
-            echo "Creating README.md file."
-            echo "# ${repo_name}" > README.md
-            echo "Enter a short project description:"
-            read project_description
-            echo "${project_description}" >> README.md
-            echo "" >> README.md
-            echo "This project is licensed under the MIT License." >> README.md
-            echo "Definition of MTLMBSM: Meh To Less Meh But Still Meh." >> README.md
-            echo "![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)" >> README.md
-            git add README.md
-            git commit -m "Add README file"
-            git push origin master
-        fi
+# Add or update README file
+if [ ! -f README.md ]; then
+    echo "No README.md found. Would you like to create one? (y/n)"
+    read create_readme
+    if [[ "$create_readme" == "y" ]]; then
+        echo "Creating README.md file."
+        echo "# ${repo_name}" > README.md
+        echo "Enter a short project description:"
+        read project_description
+        echo "${project_description}" >> README.md
+        echo "" >> README.md
+        echo "This project is licensed under the MIT License." >> README.md
+        echo "Definition of MTLMBSM: Meh To Less Meh But Still Meh." >> README.md
+        echo "![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)" >> README.md
+        git add README.md
+        git commit -m "Add README file"
+        git push origin master
     fi
+fi
 
-    if [ "$update_flag" == "y" ]; then
-        # Reset the update flag in kigit.txt to 'n' after updates
-        sed -i 's/update according to this file=y/update according to this file=n/' "$config_file"
+if [ "$update_flag" == "y" ]; then
+    # Reset the update flag in kigit.txt to 'n' after updates
+    sed -i 's/update according to this file=y/update according to this file=n/' "$config_file"
 
-        echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
-    fi
-}
+    echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
+fi
 
 # Function to sync the repository
 sync_github_repo() {
@@ -264,38 +250,6 @@ sync_github_repo() {
     git push origin master
 }
 
-
-
-
-
-
-# Argument parsing
-while getopts "v" opt; do
-    case $opt in
-        v)
-            verbose="y"
-            ;;
-        ?)
-            echo "Invalid option: -$OPTARG" &>2
-            exit 1
-            ;;
-    esac
-done
-
-# Argument parsing
-while getopts "v" opt; do
-    case $opt in
-        v)
-            verbose="y"
-            ;;
-        ?)
-            echo "Invalid option: -$OPTARG" >&2
-            exit 1
-            ;;
-    esac
-done
-
-# Function to log messages if verbose is enabled
 log() {
     if [ "$verbose" == "y" ]; then
         echo "$1"
