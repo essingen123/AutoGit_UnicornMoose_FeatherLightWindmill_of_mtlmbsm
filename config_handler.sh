@@ -1,9 +1,8 @@
 #!/bin/bash
-import os
-import subprocess
 
-# Define the kigit.txt content
-kigit_content = """# This is a config file for the auto_git_unicorn_moose_feather .. 🦄
+#!/bin/sh
+
+kigit_content="# This is a config file for the auto_git_unicorn_moose_feather .. 🦄
 # File: kigit.txt
 
 # 💻
@@ -49,8 +48,12 @@ index.html
 # Verbose, output for each terminal run, y for yes and n for no
 # set303i
 y
-# DONT EDIT OUT THIS LAST LINE
-"""
+# DONT EDIT OUT THIS LAST LINE"
+
+if [ ! -f "kigit.txt" ]; then
+    echo "$kigit_content" > kigit.txt
+    echo "kigit.txt created with default configuration."
+fi
 
 # Create kigit.txt if it does not exist in the project directory
 project_dir = os.getcwd()
