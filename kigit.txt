@@ -25,3 +25,27 @@ set303k=Automated commit message.
 set303l=y
 
 # DONT EDIT OUT THIS LAST LINE
+set303a=default
+set303i=default
+set303b=default
+set303c=default
+set303d=default
+set303e=default
+set303f=default
+set303g=default
+set303h=default
+set303j=default
+set303k=default
+set303l=default
+set303a=default
+set303i=default
+set303b=default
+set303c=default
+set303d=default
+set303e=default
+set303f=default
+set303g=default
+set303h=default
+set303j=default
+set303k=default
+set303l=default
