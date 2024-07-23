@@ -1,7 +1,6 @@
-#!/bin/bash
-
-# filename:
+# file:
 # auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
+#!/bin/bash
 
 # Path for the script
 script_path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "$0")"
@@ -11,45 +10,46 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 update_bashrc() {
     local entry="$1"
     local file="$HOME/.bashrc"
-    log "Updating .bashrc with entry: $entry"
+    echo "Updating .bashrc with entry: $entry"
 
     if ! grep -qF "$entry" "$file"; then
         echo "$entry" >> "$file"
-        log "Added $entry to $file"
+        echo "Added $entry to $file"
     else
-        log "$entry already exists in $file"
+        echo "$entry already exists in $file"
     fi
 }
 
 # Check and add alias to .bashrc
 add_alias_to_bashrc() {
     local alias_cmd="alias g='${script_path}'"
-    log "Adding alias to .bashrc: $alias_cmd"
+    echo "Adding alias to .bashrc: $alias_cmd"
     update_bashrc "$alias_cmd"
-    log "Alias 'g' added to .bashrc. Please restart your terminal or source ~/.bashrc."
+    echo "Alias 'g' added to .bashrc. Please restart your terminal or source ~/.bashrc."
 }
 
 # Prompt for GitHub token and update a hidden file if needed
 check_github_token() {
     local token_file="$HOME/.git_very_secret_and_ignored_file_token"
     if [ ! -f "$token_file" ]; then
-        log "GitHub token not found in your environment."
+        echo "GitHub token not found in your environment."
         read -p "Would you like to enter your GitHub token? (It will be saved in a hidden file for future sessions) (y/n) " yn
         if [[ "$yn" == "y" ]]; then
             read -s -p "Enter your GitHub token: " token
             echo
             echo "$token" > "$token_file"
             chmod 600 "$token_file"
-            log "GitHub token set for this session and saved for future sessions."
+            echo "GitHub token set for this session and saved for future sessions."
         else
-            log "GitHub token is required. Exiting."
+            echo "GitHub token is required. Exiting."
             exit 1
         fi
     else
-        log "GitHub token is already set."
+        echo "GitHub token is already set."
     fi
 }
 
+# Function to read the configuration file
 read_config() {
     config_file="${script_dir}/kigit.txt"
     update_flag="n"
@@ -59,102 +59,68 @@ read_config() {
     tags=""
     description=""
     website=""
-    verbose="n"
 
     if [ -f "$config_file" ]; then
         while IFS= read -r line; do
-            # if [[ "$line" =~ ^# ]]; then
-            #     continue
-            # fi
-        case "$line" in
-            *"set303a"*)
-                read -r next_line
-                update_flag="${next_line}"
-                ;;
-            *"set303b"*)
-                read -r next_line
-                repo_name="${next_line}"
-                ;;
-            *"set303c"*)
-                read -r next_line
-                public="${next_line}"
-                ;;
-            *"set303d"*)
-                read -r next_line
-                auto_page="${next_line}"
-                ;;
-            *"set303e"*)
-                read -r next_line
-                tags="${next_line}"
-                ;;
-            *"set303f"*)
-                read -r next_line
-                description="${next_line}"
-                ;;
-            *"set303g"*)
-                read -r next_line
-                website="${next_line}"
-                ;;
-            *"set303i"*)
-                echo "VERBOSE SET :"
-                read -r next_line
-                verbose="${next_line}"
-                ;;
-        esac
+            if [[ "$line" =~ ^# ]]; then
+                continue
+            fi
+            if [[ "$line" == *=* ]]; then
+                key="${line%%=*}"
+                value="${line#*=}"
+                case "$key" in
+                    "update according to this file")
+                        update_flag="${value// /}"
+                        ;;
+                    "git-reponame")
+                        repo_name="${value// /}"
+                        ;;
+                    "public git")
+                        public="${value// /}"
+                        ;;
+                    "auto generate HTML page")
+                        auto_page="${value// /}"
+                        ;;
+                    "tags")
+                        tags="$value"
+                        ;;
+                    "description")
+                        description="$value"
+                        ;;
+                    "website URL")
+                        website="${value// /}"
+                        ;;
+                esac
+            fi
         done < "$config_file"
     else
-        log "No kigit.txt file found. Creating default configuration file."
-        cat <<EOL > "$config_file"
-# This is a config file for the auto_git_unicorn_moose_feather .. 🦄
-# File: kigit.txt
-
-# 💻
-# update according to this file 
-# set303a 
+        echo "No kigit.txt file found. Would you like to create it? (y/n)"
+        read create_kigit
+        if [ "$create_kigit" == "y" ]; then
+            cat <<EOL > "$config_file"
+#update according to this file
 y
-
-# 📝# git-reponame, leave next line as random and it will be random word otherwise write a github repo name in 
-# set303b
-AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
-
-# 🔒
-# public git, y for yes n for no, standard no
-# set303c
+#git-reponame, leave next line as random and it will be random word otherwise write a github repo name in
+random
+#public git, y for yes n for no, standard no
 n
-
-# 📄
-# auto generate HTML page, y for yes n for no
-# set303d
+#auto generate HTML page, y for yes n for no
 y
-
-# 🗑️
-# tags, separated by commas
-# set303e
+#tags, separated by commas
 Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
-
-# 📝
-# description
-# set303f
-Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 💡
-
-# 🌐
-# website URL
-# set303g
+#description
+Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git
+#website URL
 http://example.com
-
-# 🎉
-# GithubPartywebpageLink
-# set303h
+#GithubPartywebpageLink
 index.html
-
-# 💬
-# Verbose, output for each terminal run, y for yes and n for no
-# set303i
-n
-# DONT EDIT OUT THIS LAST LINE
 EOL
-        log "Created kigit.txt. Please edit this file and re-run the script."
-        exit 0
+            echo "Created kigit.txt. Please edit this file and re-run the script."
+            exit 0
+        else
+            echo "kigit.txt is required for configuration. Exiting."
+            exit 1
+        fi
     fi
 
     if [ "$repo_name" == "random" ]; then
@@ -182,16 +148,16 @@ setup_github_repo() {
     # Initialize git if not already initialized
     if [ ! -d ".git" ]; then
         git init
-        log "Git repository initialized."
+        echo "Git repository initialized."
     fi
 
     # Create or update .gitignore
     if [ ! -f ".gitignore" ]; then
-        log "No .gitignore file found. Would you like to create one? (y/n)"
+        echo "No .gitignore file found. Would you like to create one? (y/n)"
         read create_ignore
         if [[ "$create_ignore" == "y" ]]; then
             touch .gitignore
-            log "Creating .gitignore with common patterns."
+            echo "Creating .gitignore with common patterns."
             echo "# Ignore OS-specific files" >> .gitignore
             echo ".DS_Store" >> .gitignore
             echo "Thumbs.db" >> .gitignore
@@ -230,13 +196,6 @@ setup_github_repo() {
     repo_exists=$(gh repo view "$repo_name" --json name --jq '.name' 2>/dev/null)
     if [ -z "$repo_exists" ]; then
         gh repo create "$repo_name" $visibility --enable-issues --enable-wiki
-    else
-        log "Repository already exists. Fetching current description."
-        current_description=$(gh api repos/"$github_username"/"$repo_name" --jq .description)
-        if [ -n "$current_description" ] && ! grep -q "set303f description" "$config_file"; then
-            echo "set303f description=$current_description" >> "$config_file"
-            log "Updated kigit.txt with current repository description."
-        fi
     fi
 
     # Add all files and commit
@@ -244,12 +203,11 @@ setup_github_repo() {
     git commit -m "Syncing changes with GitHub"
     git push --set-upstream origin master
     git push origin master
-}
 
 # Function to update the README file
 update_readme() {
     if [ -f README.md ]; then
-        log "Updating README.md file."
+        echo "Updating README.md file."
         echo "# ${repo_name}" > README.md
         echo "Updated project description:"
         read updated_project_description
@@ -266,36 +224,37 @@ update_readme() {
 
 # Function to generate a neat webpage for the GitHub project
 generate_html_page() {
-    log "Generating HTML page from README.md..."
+    echo "Generating HTML page from README.md..."
     python3 "${script_dir}/_extra_bonus.py"
 }
 
-# Add or update README file
-if [ ! -f README.md ]; then
-    log "No README.md found. Would you like to create one? (y/n)"
-    read create_readme
-    if [[ "$create_readme" == "y" ]]; then
-        log "Creating README.md file."
-        echo "# ${repo_name}" > README.md
-        echo "Enter a short project description:"
-        read project_description
-        echo "${project_description}" >> README.md
-        echo "" >> README.md
-        echo "This project is licensed under the MIT License." >> README.md
-        echo "Definition of MTLMBSM: Meh To Less Meh But Still Meh." >> README.md
-        echo "![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)" >> README.md
-        git add README.md
-        git commit -m "Add README file"
-        git push origin master
+    # Add or update README file
+    if [ ! -f README.md ]; then
+        echo "No README.md found. Would you like to create one? (y/n)"
+        read create_readme
+        if [[ "$create_readme" == "y" ]]; then
+            echo "Creating README.md file."
+            echo "# ${repo_name}" > README.md
+            echo "Enter a short project description:"
+            read project_description
+            echo "${project_description}" >> README.md
+            echo "" >> README.md
+            echo "This project is licensed under the MIT License." >> README.md
+            echo "Definition of MTLMBSM: Meh To Less Meh But Still Meh." >> README.md
+            echo "![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)" >> README.md
+            git add README.md
+            git commit -m "Add README file"
+            git push origin master
+        fi
     fi
-fi
 
-if [ "$update_flag" == "y" ]; then
-    # Reset the update flag in kigit.txt to 'n' after updates
-    sed -i 's/update according to this file=y/update according to this file=n/' "$config_file"
+    if [ "$update_flag" == "y" ]; then
+        # Reset the update flag in kigit.txt to 'n' after updates
+        sed -i 's/update according to this file=y/update according to this file=n/' "$config_file"
 
-    log "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
-fi
+        echo "Git sync unicorn moose blazing away a turn in that windmill party! 🎉"
+    fi
+}
 
 # Function to sync the repository
 sync_github_repo() {
@@ -305,36 +264,30 @@ sync_github_repo() {
     git push origin master
 }
 
-log() {
-    if [ "$verbose" == "y" ]; then
-        echo "$1"
-    fi
-}
-
 # Main logic
 read_config
 
 # Proceed with setup if .git does not exist or based on update flag
 if [ ! -d ".git" ]; then
-    log "Git is not initialized. Proceeding to setup the repository."
+    echo "Git is not initialized. Proceeding to setup the repository."
     setup_github_repo
 else
-    log "Git is already initialized."
+    echo "Git is already initialized."
     if [ "$update_flag" == "y" ]; then
-        log "Update flag is set to 'y'. Proceeding to setup the repository."
+        echo "Update flag is set to 'y'. Proceeding to setup the repository."
         setup_github_repo
     else
-        log "Update flag set to 'n'. Syncing repository."
+        echo "Update flag set to 'n'. Syncing repository."
         sync_github_repo
     fi
 fi
 
 # Check and potentially generate the HTML page
 if [ "$auto_page_trigger" = true ] || [ ! -f "index.html" ]; then
-    log "index.html not found or auto page generation enabled. Generating HTML page from README.md..."
+    echo "index.html not found or auto page generation enabled. Generating HTML page from README.md..."
     python3 "${script_dir}/_extra_bonus.py"
 else
-    log "If you wish to also have that cool HTML page, you can run the following command to generate a neat webpage for your GitHub project: ./_extra_bonus.py"
+    echo "If you wish to also have that cool HTML page, you can run the following command to generate a neat webpage for your GitHub project: ./_extra_bonus.py"
 fi
 
 # Update the About section
@@ -342,21 +295,16 @@ python3 "${script_dir}/update_github_about.py"
 
 # Set the GitHub Pages URL as the homepage of the repository
 github_username=$(git config user.name)
-repo_url=$(git config --get remote.origin.url)
-repo_name=$(basename "$repo_url" .git)
-log "Determined GitHub Username: $github_username"
-log "Determined Repo Name: $repo_name"
-if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
-    log "Setting GitHub Pages URL as the homepage for the repository..."
-    log "API Call: gh api -X PATCH repos/$github_username/$repo_name -f homepage=https://$github_username.github.io/$repo_name"
-    if [ "$verbose" == "y" ]; then
-        gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name"
-    else
-        gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name" >/dev/null 2>&1
-    fi
-    log "GitHub Pages URL set as the homepage for the repository."
-else
-    log "Could not determine GitHub username or repository name. Skipping homepage URL update."
-fi
+repo_name=$(basename `git rev-parse --show-toplevel`)
 
-github_username=$(git config user.name)
+echo "Determined GitHub Username: $github_username"
+echo "Determined Repo Name: $repo_name"
+
+if [ -n "$github_username" ] && [ -n "$repo_name" ]; then
+    echo "Setting GitHub Pages URL as the homepage for the repository..."
+    echo "API Call: gh api -X PATCH repos/$github_username/$repo_name -f homepage=https://$github_username.github.io/$repo_name"
+    gh api -X PATCH repos/$github_username/$repo_name -f homepage="https://$github_username.github.io/$repo_name"
+    echo "GitHub Pages URL set as the homepage for the repository."
+else
+    echo "Could not determine GitHub username or repository name. Skipping homepage URL update."
+fi
