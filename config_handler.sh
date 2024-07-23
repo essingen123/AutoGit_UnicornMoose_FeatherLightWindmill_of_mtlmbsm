@@ -2,7 +2,7 @@
 
 # Configuration handler
 read_config() {
-    config_file="${script_dir}/kigit.txt"
+    config_file="${1}"
     update_flag="n"
     repo_name="random"
     public="n"
@@ -44,7 +44,6 @@ read_config() {
                     website="${next_line}"
                     ;;
                 *"set303i"*)
-                    echo "VERBOSE SET :"
                     read -r next_line
                     verbose="${next_line}"
                     ;;

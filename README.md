@@ -7,7 +7,7 @@ This script automates the initial setup of a Git repository with enhanced intera
 MTLMBSM stands for "Meh To Less Meh But Still Meh," humorously capturing the essence that while Git and this script have their weaknesses, they still simplify certain aspects of version control. (If you're not sensing at least a glimpse of a smile here, this script may not serve you as intended 😆)
 
 ## Features
-- **Config File Handling**: Loosely validates the `kigit.txt` file, ensuring ease of use and default settings.
+- **Config File Handling**: Creates and Loosely validates the `kigit.txt` file for all interaction to run in automation, ensuring ease of use and default settings.
 - **Error Handling**: Implements a centralized error handling mechanism for consistent error management.
 - **Modular Design**: Breaks down the script into independent chunks, focusing on separate tasks for better maintainability.
 - **Initialization**: Initializes a Git repository if not already initialized.
