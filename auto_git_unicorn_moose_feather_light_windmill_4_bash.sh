@@ -295,7 +295,9 @@ python3 "${script_dir}/update_github_about.py"
 
 # Set the GitHub Pages URL as the homepage of the repository
 github_username=$(git config user.name)
-repo_name=$(basename `git rev-parse --show-toplevel`)
+repo_url=$(git config --get remote.origin.url)
+repo_name=$(basename "$repo_url" .git)
+repo_name=$(basename "$repo_url" .git)
 
 echo "Determined GitHub Username: $github_username"
 echo "Determined Repo Name: $repo_name"
