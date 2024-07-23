@@ -2,7 +2,7 @@
 
 # Configuration handler
 read_config() {
-    config_file="${1}"
+    config_file="${script_dir}/kigit.txt"
     update_flag="n"
     repo_name="random"
     public="n"
@@ -11,6 +11,8 @@ read_config() {
     description=""
     website=""
     verbose="n"
+    branch="main"
+    commit_message="Syncing changes with GitHub"
 
     if [ -f "$config_file" ]; then
         while IFS= read -r line; do
@@ -47,6 +49,14 @@ read_config() {
                     read -r next_line
                     verbose="${next_line}"
                     ;;
+                *"set303j"*)
+                    read -r next_line
+                    branch="${next_line}"
+                    ;;
+                *"set303k"*)
+                    read -r next_line
+                    commit_message="${next_line}"
+                    ;;
             esac
         done < "$config_file"
     else
@@ -58,7 +68,7 @@ read_config() {
 # 💻
 # update according to this file 
 # set303a 
-n
+y
 
 # 📝# git-reponame, leave next line as random and it will be random word otherwise write a github repo name in 
 # set303b
@@ -72,7 +82,7 @@ n
 # 📄
 # auto generate HTML page, y for yes n for no
 # set303d
-n
+y
 
 # 🗑️
 # tags, separated by commas
@@ -89,10 +99,26 @@ Making x less meh for those that perceives a meh really real, so the purpose of 
 # set303g
 http://example.com
 
+# 🎉
+# GithubPartywebpageLink
+# set303h
+index.html
+
 # 💬
 # Verbose, output for each terminal run, y for yes and n for no
 # set303i
 n
+
+# 🌳
+# Branch to commit to, 'main' or a new branch name
+# set303j
+main
+
+# 💬
+# Default commit message
+# set303k
+This is my standard commit message to save time: Hmm.. just look at the data to reveal the updates
+
 # DONT EDIT OUT THIS LAST LINE
 EOL
         log "Created kigit.txt. Please edit this file and re-run the script."
