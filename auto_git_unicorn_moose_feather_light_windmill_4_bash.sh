@@ -1,110 +1,118 @@
 #!/bin/bash
-# set -e  # Comment out for debugging
+#filename:auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
+# Code of Conduct: USER EMPOWERMENT, CREATIVE GENIUS, NO HALT ON ERRORS, CENTRALIZED CONTROL, MINIMALISTIC, MAX PERFORMANCE & FUN, NO MODULE OVERHEAD OR EXCESS COMMENTS
 
-echo "Running file: $(basename "$0")"
+command -v gh > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/"; exit 1; }
+command -v pip > /dev/null && pip install markdown 2>/dev/null
 
-script_path=$(dirname "$0")/${0##*/}
-script_dir=$(dirname "$0")
-config_file="$script_dir/kigit.txt"
-token_file="$HOME/.git_token_secret"
+# Fun and colorful output with emojis
+fun_echo() { echo -e "\e[1;${3:-32}m$2 $1 \e[0m"; }
 
-log() { [ "$verbose" == "y" ] && echo "$1"; }
-
-initialize_kigit() {
-    echo "Initializing kigit configuration..."
-    cat > "$config_file" <<EOL
-# config file
-#Update(💡)
-set303a=n
-#Verbose
-set303i=y
-#reponame(a new name makes a new repo, empty for this folders paths name)
-set303b=AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
-#public
-set303c=n
-#gen html page
-set303d=y
-#tags
-set303e=Python, Bash Clash, Bash, Automation, Automagic, un-PEP8-perhaps
-#desc
-set303f=Making x less meh for those that perceives a meh really real, so the purpose of this repo is simply to make a move in the direction of a meh-factor-compensatory-instigator. x=git 
-#website
-set303g=
-#GithubPartywebpageLink
-set303h=index.html
-#Branch (a new name makes a new branch)
-set303j=master
-#autocommit message ~date ~data is auto generating relevant things
-set303k=AutoCommit, ~date ~data
-# Change ownership of all files to current user
-set303l=y
-EOL
-    echo "Created kigit.txt. Please edit this file and re-run the script."
-    exit 0
+# Error handling with style
+handle_error() {
+    local error_code=$? last_command=$(history 1 | sed 's/^ *[0-9]* *//')
+    fun_echo "Oops! Error in: '$last_command' (code: $error_code). Continue? (y/n)" "💥" 31
+    read -r choice
+    [[ $choice =~ ^[Yy]$ ]] || exit 1
 }
+trap 'handle_error' ERR
 
+# Fun greetings and initialization
+fun_echo "Welcome to the Auto Git Unicorn Moose Feather Light Windmill Script! 🦄🦌💨" "🎉" 35
+fun_echo "Running: $(basename "$0")" "📂" 36
+
+# Ensure we're in a Git repo
+[[ $(git rev-parse --is-inside-work-tree 2>/dev/null) ]] || { fun_echo "Run this in a Git repo!" "❗" 31; exit 1; }
+
+# Fetch GitHub token with flair
 fetch_github_token() {
-    echo "Fetching GitHub token..."
-    if [ -f "$token_file" ]; then
-        token=$(cat "$token_file")
-        echo "GitHub token fetched."
+    local token_file=~/.git_token_secret
+    if [[ -f "$token_file" ]]; then
+        github_token=$(<"$token_file")
+        fun_echo "GitHub token found!" "🔑" 33
     else
-        echo "GitHub token not found. Please provide your GitHub token."
+        fun_echo "Let's set up your GitHub token!" "🔒" 34
         read -sp "Enter GitHub token: " token
-        echo "$token" > "$token_file"
-        chmod 600 "$token_file"
-        echo "GitHub token saved."
+        echo "$token" > "$token_file" && chmod 600 "$token_file"
+        github_token="$token"
+        fun_echo "GitHub token saved securely!" "🔐" 32
     fi
 }
 
+# Read or create kigit.txt with pizzazz
 read_kigit_config() {
-    echo "Starting to read kigit configuration..."
+    local config_file=kigit.txt
     declare -A config
-    if [ ! -f "$config_file" ]; then
-        initialize_kigit
+    if [[ ! -f "$config_file" ]]; then
+        cat > "$config_file" <<EOL
+# This is a config file for the auto_git_unicorn_moose_feather .. 🦄
+# File: kigit.txt
+
+# 💻 Update(💡)
+set303a=y
+
+# 💬 Verbose, output for each terminal run, y for yes and n for no
+set303i=y
+
+# 📝 git-reponame (empty for current folder name, 'random' for a random name)
+set303b=$(basename "$PWD")
+
+# 🔒 public git, y for yes n for no, standard no
+set303c=n
+
+# 📄 auto generate HTML page, y for yes n for no
+set303d=y
+
+# 🗑️ tags, separated by commas
+set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
+
+# 📝 description
+set303f=A work in progress with automation testing for Git leveraging python, bash etc
+
+# 🌐 website URL
+set303g=
+
+# 🎉 GithubPartywebpageLink
+set303h=index.html
+
+# 🌳 Branch to commit to, 'main' or a new branch name
+set303j=master
+
+# 💬 Default commit message (use ~date and ~data for auto-generated content)
+set303k=Automated ~date ~data
+
+# 🔧 Change ownership of all files to current user
+set303l=y
+
+# DONT EDIT OUT THIS LAST LINE
+EOL
+        fun_echo "Created default kigit.txt. Please edit and rerun the script." "✨" 35
+        exit 0
+    else
+        while IFS= read -r line; do
+            [[ "$line" =~ ^#.*$ ]] && continue
+            key=$(echo "$line" | cut -d'=' -f1 | tr -d '[:space:]')
+            value=$(echo "$line" | cut -d'=' -f2- | sed 's/^[[:space:]]*//')
+            config["$key"]="${value:-default_value}"
+        done < "$config_file"
     fi
-
-    local keys=("set303a" "set303i" "set303b" "set303c" "set303d" "set303e" "set303f" "set303g" "set303h" "set303j" "set303k" "set303l")
-    while IFS= read -r line; do
-        key=$(echo "$line" | cut -d'=' -f1 | tr -d '[:space:]')
-        value=$(echo "$line" | cut -d'=' -f2- | sed 's/^[[:space:]]*//')
-        echo "Debug: key=${key}, value=${value}"
-        if [[ "$key" =~ ^set303 ]]; then
-            config["${key#*set303}"]="$value"
-        fi
-    done < "$config_file"
-
-    for key in "${keys[@]}"; do
-        if [ -z "${config[$key]}" ]; then
-            config[$key]="default"
-            echo "Appending missing config: $key=default"
-            echo "$key=default" >> "$config_file"
-        fi
-    done
-    echo "Configuration read."
 }
 
+# Change ownership with style
 change_ownership() {
-    local user=$(whoami)
-    echo "Changing ownership of all files to $user..."
-    sudo chown -R "$user":"$user" "$script_dir"
-    echo "Ownership changed."
+    [[ ${config[set303l]} =~ ^[Yy]$ ]] && { sudo chown -R $(whoami) .; fun_echo "Changed ownership to $(whoami)!" "🔧" 36; }
 }
 
+# Setup Git repository with flair
 setup_git() {
-    echo "Setting up Git repository..."
-    [ ! -d ".git" ] && git init
-    
-    [ ! -f ".gitignore" ] && cat > .gitignore <<EOL
-# Ignore OS-specific files
+    [[ -d .git ]] || { git init; fun_echo "Initialized a new Git repository!" "🌟" 33; }
+    if [[ ! -f .gitignore ]]; then
+        cat > .gitignore <<EOL
 .DS_Store
 Thumbs.db
-# IDE files
 .idea/
 .vscode/
-# Sensitive files
 .env
-# Build files
 build/
 dist/
 *.o
@@ -112,35 +120,113 @@ dist/
 *.dll
 *.so
 EOL
-    git add .gitignore
-    git commit -m "Add .gitignore" || true
-    echo "Git repository setup complete."
-}
-
-create_or_update_repo() {
-    local repo_name=${config[b]}
-    echo "Checking if repository exists: $repo_name"
-    local repo_exists=$(gh repo view "$repo_name" --json name --jq '.name' 2>/dev/null)
-    
-    if [ -z "$repo_exists" ]; then
-        echo "Creating GitHub repository: $repo_name"
-        gh repo create "$repo_name" --${config[c]} --enable-issues --enable-wiki || error "Failed to create GitHub repository"
-    else
-        echo "Repository $repo_name already exists."
+        git add .gitignore && git commit -m "Add .gitignore" || true
+        fun_echo "Created and added .gitignore!" "📄" 32
     fi
-    echo "GitHub repository created or updated."
 }
 
-# Main script execution
+# Fetch data from GitHub repo to kigit.txt with style
+fetch_github_data() {
+    local repo_name=${config[set303b]} repo_exists
+    repo_exists=$(gh repo view "$repo_name" --json name --jq '.name' 2>/dev/null)
+    if [[ -n "$repo_exists" ]]; then
+        local repo_data=$(gh repo view "$repo_name" --json description,homepage,topics --jq '.description + "|||" + .homepage + "|||" + (.topics | join(","))')
+        IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
+        [[ -z ${config[set303f]} ]] && config[set303f]=$fetched_description
+        [[ -z ${config[set303g]} ]] && config[set303g]=$fetched_homepage
+        [[ -z ${config[set303e]} ]] && config[set303e]=$fetched_topics
+        fun_echo "Fetched data from GitHub repo: $repo_name" "📦" 34
+    else
+        fun_echo "Creating new GitHub repo: $repo_name" "✨" 35
+        create_or_update_repo
+    fi
+}
+
+# Create or update GitHub repository with pizzazz
+create_or_update_repo() {
+    local repo_name=${config[set303b]} repo_exists
+    repo_exists=$(gh repo view "$repo_name" --json name --jq '.name' 2>/dev/null)
+    if [[ -z "$repo_exists" ]]; then
+        gh repo create "$repo_name" --${config[set303c]:-private} --description "${config[set303f]}" --homepage "${config[set303g]}" || { fun_echo "Failed to create GitHub repository" "❌" 31; exit 1; }
+        fun_echo "Created GitHub repository: $repo_name" "🚀" 32
+    else
+        gh repo edit "$repo_name" --description "${config[set303f]}" --homepage "${config[set303g]}" --add-topic "${config[set303e]//,/ --add-topic }" || { fun_echo "Failed to update GitHub repository" "❌" 31; exit 1; }
+        fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
+    fi
+}
+
+# Ensure the correct branch with style
+ensure_branch() {
+    local branch=${config[set303j]:-master}
+    git checkout -b "$branch" 2>/dev/null || git checkout "$branch"
+    fun_echo "Switched to branch: $branch!" "🌿" 32
+}
+
+# Update files based on config with flair
+update_files() {
+    if [[ ! -f README.md ]] || [[ ${config[set303a]} =~ ^[Yy]$ ]]; then
+        cat > README.md <<EOL
+# ${config[set303b]}
+
+${config[set303f]}
+
+Tags: ${config[set303e]}
+
+![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)
+
+## What is MTLMBSM? 🤔
+MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe how this script simplifies and automates aspects of version control and GitHub interactions.
+
+## Features 🎉
+- Automagic operation (unless there's an error or missing configuration)
+- Flexible configuration through kigit.txt
+- Repository creation and management
+- Automatic README.md and .gitignore generation
+- HTML page generation from README.md
+- Customizable commit messages
+- And much more!
+
+## License 📜
+This project is licensed under the MIT License.
+EOL
+        git add README.md && git commit -m "Update README.md" || true
+        fun_echo "README.md has been updated!" "📖" 34
+    fi
+}
+
+# Sync changes with GitHub in style
+sync_repo() {
+    local commit_msg=${config[set303k]//\~date/$(date +%Y%m%d%H%M%S)}
+    commit_msg=${commit_msg//\~data/$(git status --porcelain | wc -l) files changed}
+    git add . && git commit -m "$commit_msg" || true
+    git push -u origin "${config[set303j]:-master}"
+    fun_echo "Changes synced with GitHub!" "🌍" 32
+}
+
+# Create HTML page if needed with pizzazz
+create_html_page() {
+    [[ ${config[set303d]} =~ ^[Yy]$ ]] && python3 -c "
+import os, markdown
+readme_path = 'README.md'
+if os.path.exists(readme_path):
+    with open(readme_path, 'r') as f, open('${config[set303h]:-index.html}', 'w') as h:
+        h.write(f\"<html><head><title>${config[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
+    print('${config[set303h]:-index.html} created successfully.')
+else:
+    print('README.md not found. Cannot create ${config[set303h]:-index.html}.')
+" && fun_echo "HTML page created from README.md!" "🌐" 35
+}
+
+# Main script execution with flair
 fetch_github_token
 read_kigit_config
 change_ownership
 setup_git
+fetch_github_data
 create_or_update_repo
+ensure_branch
+update_files
+sync_repo
+create_html_page
 
-# Simplified Git commands for testing
-git add .
-git commit -m "Auto commit"
-git push origin master
-
-echo "Script execution completed."
+fun_echo "Script executed successfully! Have a magical day! 🌈✨" "🎉" 36
