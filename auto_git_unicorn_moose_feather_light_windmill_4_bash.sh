@@ -109,12 +109,11 @@ EOL
         exit 0
     else
         while IFS='=' read -r key value; do
-            # Skip empty lines or lines starting with '#'
             [[ -z "$key" || "$key" =~ ^#.*$ ]] && continue
             key=$(echo "$key" | tr -d '[:space:]')
             value=$(echo "$value" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
 
-            # Normalize yes/no values for internal use
+            # Parse and normalize values but do not sanitize them in the file
             case "$value" in
                 [yY]*|[fF]orce:[yY]*) value="y" ;;
                 [nN]*|[fF]orce:[nN]*) value="n" ;;
@@ -125,6 +124,7 @@ EOL
     fi
     declare -p kilian_air_autogit_unicornmoose_303_temp_global
 }
+
 
 # Change ownership with style
 change_ownership() {
@@ -283,16 +283,21 @@ update_kigit_txt() {
     local temp_file=$(mktemp)
     while IFS= read -r line; do
         if [[ $line =~ ^[[:space:]]*set303[a-z]= ]]; then
-            key=$(echo "$line" | cut -d'=' -f1)
-            # Only add missing settings, don't overwrite existing ones
-            [[ -z "${kilian_air_autogit_unicornmoose_303_temp_global[$key]}" ]] && echo "$line" >> "$temp_file"
+            key=$(echo "$line" | cut -d'=' -f1 | tr -d '[:space:]')
+            if [[ ${kilian_air_autogit_unicornmoose_303_temp_global[$key]} != force:* ]]; then
+                echo "$key=${kilian_air_autogit_unicornmoose_303_temp_global[$key]:-}" >> "$temp_file"
+            else
+                echo "$line" >> "$temp_file"
+            fi
         else
             echo "$line" >> "$temp_file"
         fi
     done < "$config_file"
     mv "$temp_file" "$config_file"
-    fun_echo "Updated kigit.txt with current settings (added missing settings only)" "📝" 35
+    fun_echo "Updated kigit.txt with current settings" "📝" 35
 }
+
+
 
 # Create g_first_run.py
 create_g_first_run() {
