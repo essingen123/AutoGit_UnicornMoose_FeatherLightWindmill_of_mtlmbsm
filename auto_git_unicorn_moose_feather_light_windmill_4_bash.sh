@@ -34,6 +34,14 @@ trap 'handle_error' ERR
 fun_echo "Welcome to the Auto Git Unicorn Moose Feather Light Windmill Script! 🦄🦌💨" "🎉" 35
 fun_echo "Running: $(basename "$0")" "📂" 36
 
+# Developer mode check
+developer_mode_file=kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG.txt
+developer_mode=n
+if [[ -f "$developer_mode_file" ]]; then
+    source "$developer_mode_file"
+    developer_mode=$(grep -E '^kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG=' "$developer_mode_file" | cut -d'=' -f2)
+fi
+
 # Ensure we're in a Git repo or create one if not
 [[ $(git rev-parse --is-inside-work-tree 2>/dev/null) ]] || {
     fun_echo "No Git repository detected. Initializing a new Git repo..." "🌟" 33
@@ -297,10 +305,9 @@ update_kigit_txt() {
     fun_echo "Updated kigit.txt with current settings" "📝" 35
 }
 
-
-
 # Create g_first_run.py
 create_g_first_run() {
+    [[ "$developer_mode" == "y" || -f "auto_git_unicorn_moose_feather_light_windmill_4_bash.sh" ]] && {
     cat > g_first_run.py <<EOL
 import os
 import subprocess
@@ -322,6 +329,7 @@ except subprocess.CalledProcessError:
         print("Error occurred even with sudo. Please check the script and try again.")
 EOL
     fun_echo "Created g_first_run.py" "🐍" 34
+    }
 }
 
 # Main script execution with flair
