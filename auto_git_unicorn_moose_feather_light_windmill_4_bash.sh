@@ -139,7 +139,7 @@ EOL
             kilian_air_autogit_unicornmoose_303_temp_global["$key"]="${value:-}"
         done < "$config_file"
         local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
-        local owner="${GITHUB_USER:-$(git config github.user)}"
+        local owner="${GITHUB_USER:-$(git config user.name)}"
         repo_full_name="$owner/$repo_name"
     fi
     declare -p kilian_air_autogit_unicornmoose_303_temp_global
@@ -185,7 +185,7 @@ EOL
 # Check if repo exists
 repo_exists() {
     local repo_name=$1
-    local owner="${GITHUB_USER:-$(git config github.user)}"
+    local owner="${GITHUB_USER:-$(git config user.name)}"
     echo "Checking if repo exists: $repo_full_name"
     gh repo view "$repo_full_name" &>/dev/null
     echo "Repo check result: $?"
@@ -193,7 +193,7 @@ repo_exists() {
 
 handle_repository() {
     local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
-    local owner="${GITHUB_USER:-$(git config github.user)}"
+    local owner="${GITHUB_USER:-$(git config user.name)}"
     repo_full_name="$owner/$repo_name"
 
     local visibility="--private"
