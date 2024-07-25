@@ -30,6 +30,21 @@ handle_error() {
 
 trap 'handle_error' ERR
 
+# Developer mode and core directory check
+developer_mode_file=kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG.txt
+developer_mode=n
+main_script_file="auto_git_unicorn_moose_feather_light_windmill_4_bash.sh"
+YES_THIS_IS_THE_UNICORN_MOOSE_HOLY_MOLY_CORE_DIR=n
+
+if [[ -f "$developer_mode_file" ]]; then
+    source "$developer_mode_file"
+    developer_mode=$(grep -E '^kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG=' "$developer_mode_file" | cut -d'=' -f2)
+fi
+
+if [[ -f "$main_script_file" ]]; then
+    YES_THIS_IS_THE_UNICORN_MOOSE_HOLY_MOLY_CORE_DIR=y
+fi
+
 # Fun greetings and initialization
 fun_echo "Welcome to the Auto Git Unicorn Moose Feather Light Windmill Script! 🦄🦌💨" "🎉" 35
 fun_echo "Running: $(basename "$0")" "📂" 36
@@ -55,17 +70,6 @@ fetch_github_token() {
         fun_echo "GitHub token saved securely!" "🔐" 32
     fi
 }
-
-# Developer mode check
-developer_mode_file=kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG.txt
-developer_mode=n
-if [[ -f "$developer_mode_file" ]]; then
-    source "$developer_mode_file"
-    developer_mode=$(grep -E '^kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG=' "$developer_mode_file" | cut -d'=' -f2)
-fi
-
-# Main script file check
-main_script_file="auto_git_unicorn_moose_feather_light_windmill_4_bash.sh"
 
 # Declare the config array as global
 declare -gA kilian_air_autogit_unicornmoose_303_temp_global
@@ -239,19 +243,20 @@ Tags: ${kilian_air_autogit_unicornmoose_303_temp_global[set303e]}
 ![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)
 
 ## What is MTLMBSM? 🤔
-MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe how this script simplifies and automates aspects of version control and GitHub interactions.
+MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe how 
+this script simplifies and automates aspects of version control and GitHub interactions; which also serves as a filter; since if this is yet not automagically enforcing a smile near the observer, this script may not be suitable at all; almost like an admin requirement certification wise thing. 
 
 ## Features 🎉
-- Automagic operation (unless there's an error or missing configuration)
+- Automagic operation (YES, PREFERABLY even if there's an error or missing configuration, in authentic unicorn moose manners! )
 - Flexible configuration through kigit.txt
-- Repository creation and management
-- Automatic README.md and .gitignore generation
-- HTML page generation from README.md
-- Customizable commit messages
-- And much more!
+- Repository creation & management
+- Automatic README.md & .gitignore generation etc intended
+- (Yet to be more arty) web page generative actions from README.md etc
+- Customizable commit messages (-ish)
+- And much more, and perhaps even quite differently so (not so awesome) when LLMs misinterpret the "enhance" statement!
 
 ## License 📜
-This project is licensed under a license not written here yet.
+This project is licensed under a license not written here yet.. but sure, this has probably taken out a 100 hours of LLM discoteque ettiqeuette etc.
 EOL
         git add README.md && git commit -m "Create README.md" || true
         fun_echo "README.md has been created!" "📖" 34
