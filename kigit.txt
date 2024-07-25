@@ -10,9 +10,9 @@ set303c=n
 #gen html page
 set303d=y
 #tags
-set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
+set303e=
 #desc
-set303f=A work in progress with automation testing for Git leveraging python, bash etc
+set303f=
 #website
 set303g=
 #GithubPartywebpageLink
