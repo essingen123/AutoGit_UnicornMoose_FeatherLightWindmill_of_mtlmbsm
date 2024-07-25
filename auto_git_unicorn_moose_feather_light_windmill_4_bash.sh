@@ -1,5 +1,5 @@
 #!/bin/bash
-# filename: auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
+# filename: auto_git_unicorn_moose_feather_light_windmill_5_bash.sh
 
 command -v gh > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/"; exit 1; }
 command -v pip > /dev/null && pip install markdown 2>/dev/null
@@ -52,7 +52,7 @@ set303b=$(basename "$PWD")
 # 🔒 public git, y for yes n for no, standard no
 set303c=n
 
-# 📄 auto generate HTML page, y for yes n for no
+# 📄 auto generate HTML page, y for yes and n for no
 set303d=y
 
 # 🗑️ tags, separated by commas
@@ -126,13 +126,18 @@ EOL
     fi
 }
 
+# Check if repo exists
+repo_exists() {
+    local repo_name=$1
+    local owner="${GITHUB_USER:-$(git config github.user)}"
+    gh repo view "$owner/$repo_name" --json name --jq '.name' &>/dev/null
+}
+
 # Fetch data from GitHub repo to kigit.txt with style
 fetch_github_data() {
     local repo_name=${config[set303b]}
     local owner="${GITHUB_USER:-$(git config github.user)}"
-    local repo_exists
-    repo_exists=$(gh repo view "$owner/$repo_name" --json name --jq '.name' 2>/dev/null)
-    if [[ -n "$repo_exists" ]]; then
+    if repo_exists "$repo_name"; then
         local repo_data
         repo_data=$(gh repo view "$owner/$repo_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
         IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
@@ -185,7 +190,7 @@ ensure_branch() {
 
 # Update files based on config with flair
 update_files() {
-    if [[ ! -f README.md ]] || [[ ${config[set303a]} =~ ^[Yy]$ ]]; then
+    if [[ ! -f README.md ]]; then
         cat > README.md <<EOL
 # ${config[set303b]}
 
@@ -210,8 +215,14 @@ MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe h
 ## License 📜
 This project is licensed under the MIT License.
 EOL
+        git add README.md && git commit -m "Create README.md" || true
+        fun_echo "README.md has been created!" "📖" 34
+    elif [[ ${config[set303a]} =~ ^[Yy]$ ]]; then
+        # Update README.md content here if needed
         git add README.md && git commit -m "Update README.md" || true
         fun_echo "README.md has been updated!" "📖" 34
+    else
+        fun_echo "README.md already exists and update not forced. Skipping." "ℹ️" 33
     fi
 }
 
@@ -242,16 +253,12 @@ else:
 update_kigit_txt() {
     local config_file=kigit.txt
     local temp_file=$(mktemp)
-    while IFS='=' read -r key value; do
-        if [[ -n "$key" && ! "$key" =~ ^#.*$ ]]; then
-            key=$(echo "$key" | tr -d '[:space:]')
-            if [[ -n "${config[$key]}" ]]; then
-                echo "$key=${config[$key]}"
-            else
-                echo "$key=$value"
-            fi
+    while IFS= read -r line; do
+        if [[ $line =~ ^[[:space:]]*set303[a-z]= ]]; then
+            key=$(echo "$line" | cut -d'=' -f1)
+            echo "$key=${config[$key]:-}"
         else
-            echo "$key=$value"
+            echo "$line"
         fi
     done < "$config_file" > "$temp_file"
     mv "$temp_file" "$config_file"

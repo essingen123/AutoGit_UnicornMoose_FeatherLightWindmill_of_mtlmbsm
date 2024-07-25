@@ -1,27 +1,27 @@
-# config file=
-#Update(💡)=
+# config file
+#Update(💡)
 set303a=y
-#Verbose=
+#Verbose
 set303i=y
-#reponame(a new name makes a new repo, empty for this folders paths name)=
-set303b=AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm_20240725022718_20240725022744
-#public=
+#reponame(a new name makes a new repo, empty for this folders paths name)
+set303b=force:AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
+#public
 set303c=n
-#gen html page=
+#gen html page
 set303d=y
-#tags=
+#tags
 set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
-#desc=
+#desc
 set303f=A work in progress with automation testing for Git leveraging python, bash etc
-#website=
+#website
 set303g=
-#GithubPartywebpageLink=
+#GithubPartywebpageLink
 set303h=index.html
-#Branch (a new name makes a new branch)=
+#Branch (a new name makes a new branch)
 set303j=master
-#autocommit message ~date ~data is auto generating relevant things=
+#autocommit message ~date ~data is auto generating relevant things
 set303k=Automated ~date ~data
-# Change ownership of all files to current user=
+# Change ownership of all files to current user
 set303l=y
-=
-# DONT EDIT OUT THIS LAST LINE=
+
+# DONT EDIT OUT THIS LAST LINE
