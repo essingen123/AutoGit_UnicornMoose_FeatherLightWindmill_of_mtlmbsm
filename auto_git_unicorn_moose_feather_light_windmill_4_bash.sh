@@ -20,17 +20,16 @@ fun_echo() { echo -e "\e[1;${3:-32}m$2 $1 \e[0m"; }
 
 # Enhanced error handling with retry and skip options
 handle_error() {
-    local error_code=$?
-    local last_command=$(fc -ln -1 | cut -d' ' -f2-)
-    fun_echo "Error in command: '$last_command' (exit code: $error_code). Retry (r), Skip (s), or Quit (q)?" "💥" 31
+    fun_echo "Error: $?" "💥" 31
     read -r choice
     case "$choice" in
-        r|R) eval "$last_command" ;;
+        r|R) eval "trap - ERR" ;;
         s|S) return 0 ;;
         q|Q) exit 1 ;;
         *) fun_echo "Invalid choice. Exiting." "🚫" 31; exit 1 ;;
     esac
 }
+
 
 
 
