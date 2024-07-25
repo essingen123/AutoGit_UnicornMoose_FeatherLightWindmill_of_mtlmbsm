@@ -1,5 +1,7 @@
 #!/bin/bash
-# filename: auto_git_unicorn_moose_feather_light_windmill_5_bash.sh
+#filename:auto_git_unicorn_moose_feather_light_windmill_4_bash.sh (<-please keep this name is it is now please)
+# Code of Conduct: USER EMPOWERMENT, CREATIVE GENIUS, NO HALT ON ERRORS, CENTRALIZED CONTROL, MINIMALISTIC, MAX PERFORMANCE & FUN, NO MODULE OVERHEAD OR EXCESS COMMENTS
+# Update if exists.. and create if a new name is given etc; the logic is quite evident here :)
 
 command -v gh > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/"; exit 1; }
 command -v pip > /dev/null && pip install markdown 2>/dev/null
@@ -135,51 +137,45 @@ repo_exists() {
     echo "Repo check result: $?"
 }
 
-# Fetch data from GitHub repo to kigit.txt with style
-fetch_github_data() {
+handle_repository() {
     local repo_name=${config[set303b]}
     local owner="${GITHUB_USER:-$(git config github.user)}"
-    echo "Fetching GitHub data for repo: $owner/$repo_name"
+    local visibility="--private"
+    [[ ${config[set303c]} =~ ^[Yy]$ ]] && visibility="--public"
+
     if repo_exists "$repo_name"; then
+        fun_echo "Repository $repo_name already exists. Updating..." "📦" 34
+        update_repo
+    else
+        fun_echo "Creating new repository: $repo_name" "🚀" 32
+        if gh repo create "$repo_name" $visibility --description "${config[set303f]}" --homepage "${config[set303g]}"; then
+            fun_echo "Created GitHub repository: $repo_name" "🚀" 32
+            update_repo
+        else
+            fun_echo "Failed to create repository. Please check your permissions and try again." "❌" 31
+            exit 1
+        fi
+    fi
+}
+
+update_repo() {
+    local repo_name=${config[set303b]}
+    local owner="${GITHUB_USER:-$(git config github.user)}"
+    echo "Updating GitHub repo: $owner/$repo_name"
+    
+    if gh repo edit "$owner/$repo_name" --description "${config[set303f]}" --homepage "${config[set303g]}" --add-topic "${config[set303e]//,/ --add-topic }"; then
+        fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
+        
+        # Fetch and update local config if not forced
         local repo_data
         repo_data=$(gh repo view "$owner/$repo_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
         IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
         
-        # Update kigit.txt unless forced
         [[ ${config[set303f]} != force:* ]] && config[set303f]=$fetched_description
         [[ ${config[set303g]} != force:* ]] && config[set303g]=$fetched_homepage
         [[ ${config[set303e]} != force:* ]] && config[set303e]=$fetched_topics
-        
-        fun_echo "Fetched data from existing GitHub repo: $repo_name" "📦" 34
-        update_repo
     else
-        create_repo
-    fi
-}
-
-# Create GitHub repository with pizzazz
-create_repo() {
-    local repo_name=${config[set303b]}
-    local visibility="--private"
-    [[ ${config[set303c]} =~ ^[Yy]$ ]] && visibility="--public"
-    echo "Creating GitHub repo: $repo_name with visibility $visibility"
-    if ! gh repo create "$repo_name" $visibility --description "${config[set303f]}" --homepage "${config[set303g]}"; then
-        fun_echo "Failed to create repository with name $repo_name. Attempting update instead." "⚠️" 33
-        update_repo
-    else
-        fun_echo "Created GitHub repository: $repo_name" "🚀" 32
-    fi
-}
-
-# Update GitHub repository with pizzazz
-update_repo() {
-    local repo_name=${config[set303b]}
-    local owner="${GITHUB_USER:-$(git config github.user)}"
-    echo "Updating GitHub repo: $owner/$repo_name with description ${config[set303f]} and homepage ${config[set303g]}"
-    if ! gh repo edit "$owner/$repo_name" --description "${config[set303f]}" --homepage "${config[set303g]}" --add-topic "${config[set303e]//,/ --add-topic }"; then
         fun_echo "Failed to update GitHub repository" "❌" 31
-    else
-        fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
     fi
 }
 
@@ -277,7 +273,7 @@ fetch_github_token
 read_kigit_config
 change_ownership
 setup_git
-fetch_github_data
+handle_repository
 ensure_branch
 update_files
 sync_repo
