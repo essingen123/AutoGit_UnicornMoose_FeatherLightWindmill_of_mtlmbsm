@@ -5,6 +5,7 @@
 # Author: Kilian Lindberg
 # Inspirational code inspiration contributions: Bing Copilot, Mistral, Claude, OpenAI ChatGPTs, and other LLMs.
 # Avoid chaos by minimizing errors and filled context windows.
+# NOTE: The script sanitizes input values for internal processing (e.g., trimming spaces) but does not modify or sanitize the 'kigit.txt' file itself. This ensures user inputs are preserved as originally written.
 
 # Check for required commands and install if missing
 command -v gh > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/"; exit 1; }
@@ -113,7 +114,7 @@ EOL
             key=$(echo "$key" | tr -d '[:space:]')
             value=$(echo "$value" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
 
-            # Normalize yes/no values
+            # Normalize yes/no values for internal use
             case "$value" in
                 [yY]*|[fF]orce:[yY]*) value="y" ;;
                 [nN]*|[fF]orce:[nN]*) value="n" ;;
@@ -255,7 +256,7 @@ EOL
 
 # Sync changes with GitHub in style
 sync_repo() {
-    local commit_msg=${kilian_air_autogit_unicornmoose_303_temp_global[set303k]//\~date/$(date +%Y%m%d%H%M%S)}
+    local commit_msg=${kilian_air_autogit_unicornmoose_303_temp_global[set303k]//\~date/$(date '+%Y-%m-%d')}
     commit_msg=${commit_msg//\~data/$(git status --porcelain | wc -l) files changed}
     git add . && git commit -m "$commit_msg" || true
     git push -u origin "${kilian_air_autogit_unicornmoose_303_temp_global[set303j]:-master}"
@@ -283,13 +284,14 @@ update_kigit_txt() {
     while IFS= read -r line; do
         if [[ $line =~ ^[[:space:]]*set303[a-z]= ]]; then
             key=$(echo "$line" | cut -d'=' -f1)
-            echo "$key=${kilian_air_autogit_unicornmoose_303_temp_global[$key]:-}"
+            # Only add missing settings, don't overwrite existing ones
+            [[ -z "${kilian_air_autogit_unicornmoose_303_temp_global[$key]}" ]] && echo "$line" >> "$temp_file"
         else
-            echo "$line"
+            echo "$line" >> "$temp_file"
         fi
-    done < "$config_file" > "$temp_file"
+    done < "$config_file"
     mv "$temp_file" "$config_file"
-    fun_echo "Updated kigit.txt with current settings" "📝" 35
+    fun_echo "Updated kigit.txt with current settings (added missing settings only)" "📝" 35
 }
 
 # Create g_first_run.py
