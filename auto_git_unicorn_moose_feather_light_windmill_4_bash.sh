@@ -138,6 +138,9 @@ EOL
 
             kilian_air_autogit_unicornmoose_303_temp_global["$key"]="${value:-}"
         done < "$config_file"
+        local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
+        local owner="${GITHUB_USER:-$(git config github.user)}"
+        repo_full_name="$owner/$repo_name"
     fi
     declare -p kilian_air_autogit_unicornmoose_303_temp_global
 }
@@ -212,8 +215,7 @@ handle_repository() {
 }
 
 update_repo() {
-    local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
-    local owner="${GITHUB_USER:-$(git config github.user)}"
+    
     echo "Updating GitHub repo: $repo_full_name"
 
     if gh repo edit "$repo_full_name" --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}" --add-topic "${kilian_air_autogit_unicornmoose_303_temp_global[set303e]//,/ --add-topic }"; then
