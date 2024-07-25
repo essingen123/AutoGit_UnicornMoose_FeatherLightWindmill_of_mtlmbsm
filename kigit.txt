@@ -22,6 +22,6 @@ set303j=master
 #autocommit message ~date ~data is auto generating relevant things
 set303k=Automated ~date ~data
 # Change ownership of all files to current user
-set303l=y
+set303l=n
 
 # DONT EDIT OUT THIS LAST LINE

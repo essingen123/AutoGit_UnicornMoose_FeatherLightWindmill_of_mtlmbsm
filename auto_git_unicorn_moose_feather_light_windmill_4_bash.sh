@@ -142,8 +142,16 @@ EOL
 
 # Change ownership with style
 change_ownership() {
-    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303l]} =~ ^[Yy]$ ]] && { sudo chown -R $(whoami) .; fun_echo "Changed ownership to $(whoami)!" "🔧" 36; }
+    if [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303l]} =~ ^[Nn]$ ]]
+    then
+        return 0
+    elif [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303l]} =~ ^[Yy]$ ]]
+    then
+        sudo chown -R $(whoami) .; fun_echo "Changed ownership to $(whoami)!" "🔧" 36;
+    fi
 }
+
+
 
 # Setup Git repository with flair
 setup_git() {
