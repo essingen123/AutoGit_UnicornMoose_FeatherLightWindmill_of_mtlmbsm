@@ -21,10 +21,7 @@ fun_echo() { echo -e "\e[1;${3:-32}m$2 $1 \e[0m"; }
 # Enhanced error handling with retry and skip options
 handle_error() {
     local error_code=$?
-    local last_command=$(history | tail -n 2 | head -n 1 | sed 's/^ *[0-9]* *//')
-    if [ -z "$last_command" ]; then
-        last_command=$?
-    fi
+    local last_command=$(fc -ln -1 | cut -d' ' -f2-)
     fun_echo "Error in command: '$last_command' (exit code: $error_code). Retry (r), Skip (s), or Quit (q)?" "💥" 31
     read -r choice
     case "$choice" in
@@ -34,6 +31,7 @@ handle_error() {
         *) fun_echo "Invalid choice. Exiting." "🚫" 31; exit 1 ;;
     esac
 }
+
 
 
 trap 'handle_error' ERR
