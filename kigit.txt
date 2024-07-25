@@ -25,3 +25,6 @@ set303k=Automated ~date ~data
 set303l=y
 
 # DONT EDIT OUT THIS LAST LINE
+set303e=default_value
+set303f=default_value
+set303g=default_value

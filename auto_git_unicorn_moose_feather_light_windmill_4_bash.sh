@@ -47,7 +47,7 @@ setup_alias() {
 }
 
 # Declare the config array as global
-declare -gA config
+declare -gA kilian_air_autogit_unicornmoose_303_temp_global
 
 # Read or create kigit.txt with pizzazz
 read_kigit_config() {
@@ -90,16 +90,26 @@ EOL
         while IFS='=' read -r key value; do
             [[ -z "$key" || "$key" =~ ^#.*$ ]] && continue
             key=$(echo "$key" | tr -d '[:space:]')
-            value=$(echo "$value" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
-            config["$key"]="${value:-}"
+            value=$(echo "$value" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//; s/[[:punct:]]//g')
+            kilian_air_autogit_unicornmoose_303_temp_global["$key"]="${value:-}"
         done < "$config_file"
     fi
-    declare -p config
+    
+    # Ensure all necessary settings are present
+    required_keys=("set303a" "set303i" "set303b" "set303c" "set303d" "set303e" "set303f" "set303g" "set303h" "set303j" "set303k" "set303l")
+    for k in "${required_keys[@]}"; do
+        if [[ -z "${kilian_air_autogit_unicornmoose_303_temp_global[$k]}" ]]; then
+            echo "$k=default_value" >> "$config_file" # Add missing key with default value
+            kilian_air_autogit_unicornmoose_303_temp_global["$k"]="default_value"
+        fi
+    done
+    
+    declare -p kilian_air_autogit_unicornmoose_303_temp_global
 }
 
 # Change ownership with style
 change_ownership() {
-    [[ ${config[set303l]} =~ ^[Yy]$ ]] && { sudo chown -R $(whoami) .; fun_echo "Changed ownership to $(whoami)!" "🔧" 36; }
+    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303l]} =~ ^[Yy]$ ]] && { sudo chown -R $(whoami) .; fun_echo "Changed ownership to $(whoami)!" "🔧" 36; }
 }
 
 # Setup Git repository with flair
@@ -122,17 +132,17 @@ repo_exists() {
 }
 
 handle_repository() {
-    local repo_name=${config[set303b]}
+    local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
     local owner="${GITHUB_USER:-$(git config user.name)}"
     local visibility="--private"
-    [[ ${config[set303c]} =~ ^[Yy]$ ]] && visibility="--public"
+    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303c]} =~ ^[Yy]$ ]] && visibility="--public"
 
     if repo_exists "$repo_name"; then
         fun_echo "Repository $repo_name already exists. Updating..." "📦" 34
         update_repo
     else
         fun_echo "Creating new repository: $repo_name" "🚀" 32
-        if gh repo create "$repo_name" $visibility --description "${config[set303f]}" --homepage "${config[set303g]}"; then
+        if gh repo create "$repo_name" $visibility --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}"; then
             fun_echo "Created GitHub repository: $repo_name" "🚀" 32
             update_repo
         else
@@ -143,20 +153,20 @@ handle_repository() {
 }
 
 update_repo() {
-    local repo_name=${config[set303b]}
+    local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
     local owner="${GITHUB_USER:-$(git config user.name)}"
     echo "Updating GitHub repo: $owner/$repo_name"
     
-    if gh repo edit "$owner/$repo_name" --description "${config[set303f]}" --homepage "${config[set303g]}" --add-topic "${config[set303e]//,/ --add-topic }"; then
+    if gh repo edit "$owner/$repo_name" --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}" --add-topic "${kilian_air_autogit_unicornmoose_303_temp_global[set303e]//,/ --add-topic }"; then
         fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
         
         local repo_data
         repo_data=$(gh repo view "$owner/$repo_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
         IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
         
-        [[ ${config[set303f]} != force:* ]] && config[set303f]=$fetched_description
-        [[ ${config[set303g]} != force:* ]] && config[set303g]=$fetched_homepage
-        [[ ${config[set303e]} != force:* ]] && config[set303e]=$fetched_topics
+        [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303f]} != force:* ]] && kilian_air_autogit_unicornmoose_303_temp_global[set303f]=$fetched_description
+        [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303g]} != force:* ]] && kilian_air_autogit_unicornmoose_303_temp_global[set303g]=$fetched_homepage
+        [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303e]} != force:* ]] && kilian_air_autogit_unicornmoose_303_temp_global[set303e]=$fetched_topics
     else
         fun_echo "Failed to update GitHub repository" "❌" 31
     fi
@@ -164,7 +174,7 @@ update_repo() {
 
 # Ensure the correct branch with style
 ensure_branch() {
-    local branch=${config[set303j]:-main}
+    local branch=${kilian_air_autogit_unicornmoose_303_temp_global[set303j]:-main}
     if ! git rev-parse --verify "$branch" &>/dev/null; then
         git checkout -b "$branch"
         fun_echo "Created and switched to new branch: $branch" "🌿" 32
@@ -176,13 +186,13 @@ ensure_branch() {
 
 # Update files based on config with flair
 update_files() {
-    if [[ ! -f README.md ]] || [[ ${config[set303a]} =~ ^[Yy]$ ]]; then
+    if [[ ! -f README.md ]] || [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303a]} =~ ^[Yy]$ ]]; then
         cat > README.md <<EOL
-# ${config[set303b]}
+# ${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
 
-${config[set303f]}
+${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}
 
-Tags: ${config[set303e]}
+Tags: ${kilian_air_autogit_unicornmoose_303_temp_global[set303e]}
 
 ![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)
 
@@ -210,24 +220,24 @@ EOL
 
 # Sync changes with GitHub in style
 sync_repo() {
-    local commit_msg=${config[set303k]//\~date/$(date +%Y%m%d%H%M%S)}
+    local commit_msg=${kilian_air_autogit_unicornmoose_303_temp_global[set303k]//\~date/$(date +%Y%m%d%H%M%S)}
     commit_msg=${commit_msg//\~data/$(git status --porcelain | wc -l) files changed}
     git add . && git commit -m "$commit_msg" || true
-    git push -u origin "${config[set303j]:-main}"
+    git push -u origin "${kilian_air_autogit_unicornmoose_303_temp_global[set303j]:-main}"
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
 
 # Create HTML page if needed with pizzazz
 create_html_page() {
-    [[ ${config[set303d]} =~ ^[Yy]$ ]] && python3 -c "
+    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303d]} =~ ^[Yy]$ ]] && python3 -c "
 import os, markdown
 readme_path = 'README.md'
 if os.path.exists(readme_path):
-    with open(readme_path, 'r') as f, open('${config[set303h]:-index.html}', 'w') as h:
-        h.write(f\"<html><head><title>${config[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
-    print('${config[set303h]:-index.html} created successfully.')
+    with open(readme_path, 'r') as f, open('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}', 'w') as h:
+        h.write(f\"<html><head><title>${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
+    print('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html} created successfully.')
 else:
-    print('README.md not found. Cannot create ${config[set303h]:-index.html}.')
+    print('README.md not found. Cannot create ${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}.')
 " && fun_echo "HTML page created from README.md!" "🌐" 35
 }
 
@@ -238,7 +248,7 @@ update_kigit_txt() {
     while IFS= read -r line; do
         if [[ $line =~ ^[[:space:]]*set303[a-z]= ]]; then
             key=$(echo "$line" | cut -d'=' -f1)
-            echo "$key=${config[$key]:-}"
+            echo "$key=${kilian_air_autogit_unicornmoose_303_temp_global[$key]:-}"
         else
             echo "$line"
         fi
@@ -258,5 +268,8 @@ update_files
 sync_repo
 create_html_page
 update_kigit_txt
- 
+
+# Optionally unset the global array at the end
+unset kilian_air_autogit_unicornmoose_303_temp_global
+
 fun_echo "Script executed successfully! Have a magical day! 🌈✨" "🎉" 36
