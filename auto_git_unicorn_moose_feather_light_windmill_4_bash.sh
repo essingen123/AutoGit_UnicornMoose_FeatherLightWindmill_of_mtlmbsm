@@ -31,6 +31,21 @@ fetch_github_token() {
     fi
 }
 
+# Setup alias
+setup_alias() {
+    local alias_name="g"
+    local script_path=$(realpath "$0")
+    local bashrc_path="$HOME/.bashrc"
+    
+    if ! grep -q "alias $alias_name=" "$bashrc_path"; then
+        echo "alias $alias_name='$script_path'" >> "$bashrc_path"
+        fun_echo "Alias '$alias_name' added to .bashrc" "🔧" 36
+        fun_echo "Please run 'source ~/.bashrc' or restart your terminal to use the alias." "📢" 33
+    else
+        fun_echo "Alias '$alias_name' already exists in .bashrc" "ℹ️" 34
+    fi
+}
+
 # Declare the config array as global
 declare -gA config
 
@@ -41,7 +56,7 @@ read_kigit_config() {
         cat > "$config_file" <<EOL
 # config file (kigit.txt)
 #Update(💡)
-set303a=y
+set303a=n
 #Verbose
 set303i=y
 #reponame(a new name makes a new repo, empty for this folders paths name)
@@ -51,23 +66,25 @@ set303c=n
 #gen html page
 set303d=y
 #tags
-set303e=Git, Bash, Automation, Automagic
+set303e=Git, Bash, Automation
 #desc
-set303f=A work in progress with automation testing for Git leveraging python, bash etc
+set303f=A GitHub repository created and managed by the Auto Git Unicorn Moose Feather Light Windmill Script
 #website
 set303g=
 #GithubPartywebpageLink
 set303h=index.html
 #Branch (a new name makes a new branch)
-set303j=master
+set303j=main
 #autocommit message ~date ~data is auto generating relevant things
-set303k=Automated ~date ~data
+set303k=Automated update ~date - ~data
 # Change ownership of all files to current user
-set303l=y
+set303l=n
 
 # DONT EDIT OUT THIS LAST LINE
 EOL
         fun_echo "Created default kigit.txt. Please edit and rerun the script." "✨" 35
+        fetch_github_token
+        setup_alias
         exit 0
     else
         while IFS='=' read -r key value; do
@@ -147,7 +164,7 @@ update_repo() {
 
 # Ensure the correct branch with style
 ensure_branch() {
-    local branch=${config[set303j]:-master}
+    local branch=${config[set303j]:-main}
     if ! git rev-parse --verify "$branch" &>/dev/null; then
         git checkout -b "$branch"
         fun_echo "Created and switched to new branch: $branch" "🌿" 32
@@ -196,7 +213,7 @@ sync_repo() {
     local commit_msg=${config[set303k]//\~date/$(date +%Y%m%d%H%M%S)}
     commit_msg=${commit_msg//\~data/$(git status --porcelain | wc -l) files changed}
     git add . && git commit -m "$commit_msg" || true
-    git push -u origin "${config[set303j]:-master}"
+    git push -u origin "${config[set303j]:-main}"
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
 
