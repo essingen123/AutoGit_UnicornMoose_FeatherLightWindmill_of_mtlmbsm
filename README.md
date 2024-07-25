@@ -1,8 +1,8 @@
-# AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm_20240725022718_20240725022744_20240725022755
+# AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm3
 
-A work in progress with automation testing for Git leveraging python, bash etc
 
-Tags: Git, Bash, Automation, Automagic, un-PEP8-perhaps
+
+Tags: 
 
 ![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)
 
