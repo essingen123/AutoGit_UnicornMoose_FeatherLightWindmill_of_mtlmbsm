@@ -23,10 +23,7 @@ handle_error() {
     local error_code=$?
     local last_command=$(history | tail -n 2 | head -n 1 | sed 's/^ *[0-9]* *//')
     if [ -z "$last_command" ]; then
-        last_command=$?
-    fi
-    if [ -z "$last_command" ]; then
-        last_command=$(fc -ln -1 | cut -d' ' -f2-)
+        last_command=$(fc -ln -1 | cut -d' ' -f2-)+$last_command=$?
     fi
     fun_echo "Error in command: '$last_command' (exit code: $error_code). Retry (r), Skip (s), or Quit (q)?" "💥" 31
     read -r choice
