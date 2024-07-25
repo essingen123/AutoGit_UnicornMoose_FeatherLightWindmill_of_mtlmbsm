@@ -20,15 +20,16 @@ fun_echo() { echo -e "\e[1;${3:-32}m$2 $1 \e[0m"; }
 
 # Enhanced error handling with retry and skip options
 handle_error() {
-    fun_echo "Error: $?" "💥" 31
+    echo "Error: $?" "💥" 31
     read -r choice
     case "$choice" in
         r|R) eval "trap - ERR" ;;
         s|S) return 0 ;;
         q|Q) exit 1 ;;
-        *) fun_echo "Invalid choice. Exiting." "🚫" 31; exit 1 ;;
+        *) echo "Invalid choice. Exiting." "🚫" 31; exit 1 ;;
     esac
 }
+
 
 
 
