@@ -4,27 +4,24 @@ set303a=y
 #Verbose
 set303i=y
 #reponame(a new name makes a new repo, empty for this folders paths name)
-set303b=AutoGitUnicornMooseFeatherLightWindmillofmtlmbsm3
+set303b=AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm3
 #public
 set303c=n
 #gen html page
 set303d=y
 #tags
-set303e=default_value
+set303e=
 #desc
-set303f=default_value
+set303f=
 #website
-set303g=default_value
+set303g=
 #GithubPartywebpageLink
-set303h=indexhtml
+set303h=index.html
 #Branch (a new name makes a new branch)
 set303j=master
 #autocommit message ~date ~data is auto generating relevant things
-set303k=Automated date data
+set303k=Automated ~date ~data
 # Change ownership of all files to current user
 set303l=y
 
 # DONT EDIT OUT THIS LAST LINE
-set303e=default_value
-set303f=default_value
-set303g=default_value
