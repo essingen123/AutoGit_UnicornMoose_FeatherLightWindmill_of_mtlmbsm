@@ -36,7 +36,7 @@ handle_error() {
 }
 
 
-trap 'handle_error' ERR
+#trap 'handle_error' ERR
 
 # Developer mode and core directory check
 developer_mode_file=kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG.txt
