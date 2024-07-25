@@ -35,7 +35,7 @@ handle_error() {
     esac
 }
 
-
+#SKIP FOR NOW WHILE DEVELOPING
 #trap 'handle_error' ERR
 
 # Developer mode and core directory check
@@ -44,7 +44,7 @@ developer_mode=n
 main_script_file="auto_git_unicorn_moose_feather_light_windmill_4_bash.sh"
 YES_THIS_IS_THE_UNICORN_MOOSE_HOLY_MOLY_CORE_DIR=n
 
-if [[ -f "$developer_mode_file" ]]; then
+if [[ -f "$main_script_file" ]]; then
     source "$developer_mode_file"
     developer_mode=$(grep -E '^kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG=' "$developer_mode_file" | cut -d'=' -f2)
 fi
