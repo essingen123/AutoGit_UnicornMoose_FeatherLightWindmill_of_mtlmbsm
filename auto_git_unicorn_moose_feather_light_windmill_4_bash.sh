@@ -1,5 +1,5 @@
 #!/bin/bash
-#filename:auto_git_unicorn_moose_feather_light_windmill_4_bash.sh (<-please keep this name is it is now please)
+#filename:auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
 # Code of Conduct: USER EMPOWERMENT, CREATIVE GENIUS, NO HALT ON ERRORS, CENTRALIZED CONTROL, MINIMALISTIC, MAX PERFORMANCE & FUN, NO MODULE OVERHEAD OR EXCESS COMMENTS
 # Update if exists.. and create if a new name is given etc; the logic is quite evident here :)
 
@@ -39,43 +39,30 @@ read_kigit_config() {
     local config_file=kigit.txt
     if [[ ! -f "$config_file" ]]; then
         cat > "$config_file" <<EOL
-# This is a config file for the auto_git_unicorn_moose_feather .. 🦄
-# File: kigit.txt
-
-# 💻 Update(💡)
+# config file (kigit.txt)
+#Update(💡)
 set303a=y
-
-# 💬 Verbose, output for each terminal run, y for yes and n for no
+#Verbose
 set303i=y
-
-# 📝 git-reponame (empty for current folder name, 'random' for a random name)
+#reponame(a new name makes a new repo, empty for this folders paths name)
 set303b=$(basename "$PWD")
-
-# 🔒 public git, y for yes n for no, standard no
+#public
 set303c=n
-
-# 📄 auto generate HTML page, y for yes and n for no
+#gen html page
 set303d=y
-
-# 🗑️ tags, separated by commas
-set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
-
-# 📝 description
+#tags
+set303e=Git, Bash, Automation, Automagic
+#desc
 set303f=A work in progress with automation testing for Git leveraging python, bash etc
-
-# 🌐 website URL
+#website
 set303g=
-
-# 🎉 GithubPartywebpageLink
+#GithubPartywebpageLink
 set303h=index.html
-
-# 🌳 Branch to commit to, 'main' or a new branch name
+#Branch (a new name makes a new branch)
 set303j=master
-
-# 💬 Default commit message (use ~date and ~data for auto-generated content)
+#autocommit message ~date ~data is auto generating relevant things
 set303k=Automated ~date ~data
-
-# 🔧 Change ownership of all files to current user
+# Change ownership of all files to current user
 set303l=y
 
 # DONT EDIT OUT THIS LAST LINE
@@ -84,17 +71,9 @@ EOL
         exit 0
     else
         while IFS='=' read -r key value; do
-            # Skip empty lines or lines starting with '#'
             [[ -z "$key" || "$key" =~ ^#.*$ ]] && continue
             key=$(echo "$key" | tr -d '[:space:]')
             value=$(echo "$value" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
-            
-            # Normalize yes/no values
-            case "$value" in
-                [yY]*|[fF]orce:[yY]*) value="y" ;;
-                [nN]*|[fF]orce:[nN]*) value="n" ;;
-            esac
-
             config["$key"]="${value:-}"
         done < "$config_file"
     fi
@@ -110,19 +89,7 @@ change_ownership() {
 setup_git() {
     [[ -d .git ]] || { git init; fun_echo "Initialized a new Git repository!" "🌟" 33; }
     if [[ ! -f .gitignore ]]; then
-        cat > .gitignore <<EOL
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/
-.env
-build/
-dist/
-*.o
-*.exe
-*.dll
-*.so
-EOL
+        echo -e ".DS_Store\nThumbs.db\n.idea/\n.vscode/\n.env\nbuild/\ndist/\n*.o\n*.exe\n*.dll\n*.so" > .gitignore
         git add .gitignore && git commit -m "Add .gitignore" || true
         fun_echo "Created and added .gitignore!" "📄" 32
     fi
@@ -131,15 +98,15 @@ EOL
 # Check if repo exists
 repo_exists() {
     local repo_name=$1
-    local owner="${GITHUB_USER:-$(git config github.user)}"
+    local owner="${GITHUB_USER:-$(git config user.name)}"
     echo "Checking if repo exists: $owner/$repo_name"
     gh repo view "$owner/$repo_name" &>/dev/null
-    echo "Repo check result: $?"
+    return $?
 }
 
 handle_repository() {
     local repo_name=${config[set303b]}
-    local owner="${GITHUB_USER:-$(git config github.user)}"
+    local owner="${GITHUB_USER:-$(git config user.name)}"
     local visibility="--private"
     [[ ${config[set303c]} =~ ^[Yy]$ ]] && visibility="--public"
 
@@ -160,13 +127,12 @@ handle_repository() {
 
 update_repo() {
     local repo_name=${config[set303b]}
-    local owner="${GITHUB_USER:-$(git config github.user)}"
+    local owner="${GITHUB_USER:-$(git config user.name)}"
     echo "Updating GitHub repo: $owner/$repo_name"
     
     if gh repo edit "$owner/$repo_name" --description "${config[set303f]}" --homepage "${config[set303g]}" --add-topic "${config[set303e]//,/ --add-topic }"; then
         fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
         
-        # Fetch and update local config if not forced
         local repo_data
         repo_data=$(gh repo view "$owner/$repo_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
         IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
@@ -193,7 +159,7 @@ ensure_branch() {
 
 # Update files based on config with flair
 update_files() {
-    if [[ ! -f README.md ]]; then
+    if [[ ! -f README.md ]] || [[ ${config[set303a]} =~ ^[Yy]$ ]]; then
         cat > README.md <<EOL
 # ${config[set303b]}
 
@@ -218,10 +184,6 @@ MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe h
 ## License 📜
 This project is licensed under the MIT License.
 EOL
-        git add README.md && git commit -m "Create README.md" || true
-        fun_echo "README.md has been created!" "📖" 34
-    elif [[ ${config[set303a]} =~ ^[Yy]$ ]]; then
-        # Update README.md content here if needed
         git add README.md && git commit -m "Update README.md" || true
         fun_echo "README.md has been updated!" "📖" 34
     else

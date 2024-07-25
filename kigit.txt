@@ -1,4 +1,4 @@
-# config file
+# config file (kigit.txt)
 #Update(💡)
 set303a=y
 #Verbose
