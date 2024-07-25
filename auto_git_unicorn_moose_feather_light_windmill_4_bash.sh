@@ -7,6 +7,10 @@
 # Avoid chaos by minimizing errors and filled context windows.
 # NOTE: The script sanitizes input values for internal processing (e.g., trimming spaces) but does not modify or sanitize the 'kigit.txt' file itself. This ensures user inputs are preserved as originally written.
 
+# Declare globals
+declare -gA kilian_air_autogit_unicornmoose_303_temp_global
+declare -g repo_full_name
+
 # Check for required commands and install if missing
 command -v gh > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/"; exit 1; }
 command -v pip > /dev/null && pip install markdown 2>/dev/null
@@ -71,8 +75,6 @@ fetch_github_token() {
     fi
 }
 
-# Declare the config array as global
-declare -gA kilian_air_autogit_unicornmoose_303_temp_global
 
 # Read or create kigit.txt with pizzazz
 read_kigit_config() {
@@ -175,18 +177,22 @@ EOL
     fi
 }
 
+
+
 # Check if repo exists
 repo_exists() {
     local repo_name=$1
     local owner="${GITHUB_USER:-$(git config github.user)}"
-    echo "Checking if repo exists: $owner/$repo_name"
-    gh repo view "$owner/$repo_name" &>/dev/null
+    echo "Checking if repo exists: $repo_full_name"
+    gh repo view "$repo_full_name" &>/dev/null
     echo "Repo check result: $?"
 }
 
 handle_repository() {
     local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
     local owner="${GITHUB_USER:-$(git config github.user)}"
+    repo_full_name="$owner/$repo_name"
+
     local visibility="--private"
     [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303c]} =~ ^[Yy]$ ]] && visibility="--public"
 
@@ -208,14 +214,14 @@ handle_repository() {
 update_repo() {
     local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
     local owner="${GITHUB_USER:-$(git config github.user)}"
-    echo "Updating GitHub repo: $owner/$repo_name"
+    echo "Updating GitHub repo: $repo_full_name"
 
-    if gh repo edit "$owner/$repo_name" --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}" --add-topic "${kilian_air_autogit_unicornmoose_303_temp_global[set303e]//,/ --add-topic }"; then
+    if gh repo edit "$repo_full_name" --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}" --add-topic "${kilian_air_autogit_unicornmoose_303_temp_global[set303e]//,/ --add-topic }"; then
         fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
 
         # Fetch and update local config if not forced
         local repo_data
-        repo_data=$(gh repo view "$owner/$repo_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
+        repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
         IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
 
         [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303f]} != force:* ]] && kilian_air_autogit_unicornmoose_303_temp_global[set303f]=$fetched_description
