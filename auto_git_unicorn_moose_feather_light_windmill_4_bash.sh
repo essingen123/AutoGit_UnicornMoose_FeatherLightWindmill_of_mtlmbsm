@@ -130,13 +130,16 @@ EOL
 repo_exists() {
     local repo_name=$1
     local owner="${GITHUB_USER:-$(git config github.user)}"
-    gh repo view "$owner/$repo_name" --json name --jq '.name' &>/dev/null
+    echo "Checking if repo exists: $owner/$repo_name"
+    gh repo view "$owner/$repo_name" &>/dev/null
+    echo "Repo check result: $?"
 }
 
 # Fetch data from GitHub repo to kigit.txt with style
 fetch_github_data() {
     local repo_name=${config[set303b]}
     local owner="${GITHUB_USER:-$(git config github.user)}"
+    echo "Fetching GitHub data for repo: $owner/$repo_name"
     if repo_exists "$repo_name"; then
         local repo_data
         repo_data=$(gh repo view "$owner/$repo_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
@@ -159,21 +162,25 @@ create_repo() {
     local repo_name=${config[set303b]}
     local visibility="--private"
     [[ ${config[set303c]} =~ ^[Yy]$ ]] && visibility="--public"
+    echo "Creating GitHub repo: $repo_name with visibility $visibility"
     if ! gh repo create "$repo_name" $visibility --description "${config[set303f]}" --homepage "${config[set303g]}"; then
-        fun_echo "Failed to create repository with name $repo_name. Generating new name..." "⚠️" 33
-        repo_name="${repo_name}_$(date +%Y%m%d%H%M%S)"
-        config[set303b]=$repo_name
-        gh repo create "$repo_name" $visibility --description "${config[set303f]}" --homepage "${config[set303g]}" || { fun_echo "Failed to create GitHub repository" "❌" 31; exit 1; }
+        fun_echo "Failed to create repository with name $repo_name. Attempting update instead." "⚠️" 33
+        update_repo
+    else
+        fun_echo "Created GitHub repository: $repo_name" "🚀" 32
     fi
-    fun_echo "Created GitHub repository: $repo_name" "🚀" 32
 }
 
 # Update GitHub repository with pizzazz
 update_repo() {
     local repo_name=${config[set303b]}
     local owner="${GITHUB_USER:-$(git config github.user)}"
-    gh repo edit "$owner/$repo_name" --description "${config[set303f]}" --homepage "${config[set303g]}" --add-topic "${config[set303e]//,/ --add-topic }" || { fun_echo "Failed to update GitHub repository" "❌" 31; exit 1; }
-    fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
+    echo "Updating GitHub repo: $owner/$repo_name with description ${config[set303f]} and homepage ${config[set303g]}"
+    if ! gh repo edit "$owner/$repo_name" --description "${config[set303f]}" --homepage "${config[set303g]}" --add-topic "${config[set303e]//,/ --add-topic }"; then
+        fun_echo "Failed to update GitHub repository" "❌" 31
+    else
+        fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
+    fi
 }
 
 # Ensure the correct branch with style
