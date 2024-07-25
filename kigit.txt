@@ -4,7 +4,7 @@ set303a=y
 #Verbose
 set303i=y
 #reponame(a new name makes a new repo, empty for this folders paths name)
-set303b=AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm2
+set303b=AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm3
 #public
 set303c=n
 #gen html page
