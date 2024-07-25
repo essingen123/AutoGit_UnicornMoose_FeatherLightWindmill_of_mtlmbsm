@@ -296,7 +296,7 @@ sync_repo() {
 
 # Create HTML page if needed with pizzazz
 create_html_page() {
-    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303d]} =~ ^[Yy]$ ]] && python3 -c "
+    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303d]} =~ ^force:?[Yy]$ ]] && python3 -c "
 import os, markdown
 readme_path = 'README.md'
 if os.path.exists(readme_path):
