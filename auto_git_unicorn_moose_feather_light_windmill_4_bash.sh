@@ -258,6 +258,5 @@ update_files
 sync_repo
 create_html_page
 update_kigit_txt
-
+ 
 fun_echo "Script executed successfully! Have a magical day! 🌈✨" "🎉" 36
-#nice :)
