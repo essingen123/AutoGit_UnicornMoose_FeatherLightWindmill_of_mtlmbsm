@@ -20,32 +20,8 @@ set303h=index.html
 #Branch (a new name makes a new branch)
 set303j=master
 #autocommit message ~date ~data is auto generating relevant things
-set303k=Automated commit message.
+set303k=Automated ~date ~data
 # Change ownership of all files to current user
 set303l=y
 
 # DONT EDIT OUT THIS LAST LINE
-set303a=default
-set303i=default
-set303b=default
-set303c=default
-set303d=default
-set303e=default
-set303f=default
-set303g=default
-set303h=default
-set303j=default
-set303k=default
-set303l=default
-set303a=default
-set303i=default
-set303b=default
-set303c=default
-set303d=default
-set303e=default
-set303f=default
-set303g=default
-set303h=default
-set303j=default
-set303k=default
-set303l=default

@@ -1,21 +1,11 @@
 #!/bin/bash
-#filename:auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
-# Code of Conduct: USER EMPOWERMENT, CREATIVE GENIUS, NO HALT ON ERRORS, CENTRALIZED CONTROL, MINIMALISTIC, MAX PERFORMANCE & FUN, NO MODULE OVERHEAD OR EXCESS COMMENTS
+# filename: auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
 
 command -v gh > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/"; exit 1; }
 command -v pip > /dev/null && pip install markdown 2>/dev/null
 
 # Fun and colorful output with emojis
 fun_echo() { echo -e "\e[1;${3:-32}m$2 $1 \e[0m"; }
-
-# Error handling with style
-handle_error() {
-    local error_code=$? last_command=$(history 1 | sed 's/^ *[0-9]* *//')
-    fun_echo "Oops! Error in: '$last_command' (code: $error_code). Continue? (y/n)" "💥" 31
-    read -r choice
-    [[ $choice =~ ^[Yy]$ ]] || exit 1
-}
-trap 'handle_error' ERR
 
 # Fun greetings and initialization
 fun_echo "Welcome to the Auto Git Unicorn Moose Feather Light Windmill Script! 🦄🦌💨" "🎉" 35
@@ -39,10 +29,12 @@ fetch_github_token() {
     fi
 }
 
+# Declare the config array as global
+declare -gA config
+
 # Read or create kigit.txt with pizzazz
 read_kigit_config() {
     local config_file=kigit.txt
-    declare -A config
     if [[ ! -f "$config_file" ]]; then
         cat > "$config_file" <<EOL
 # This is a config file for the auto_git_unicorn_moose_feather .. 🦄
@@ -89,13 +81,22 @@ EOL
         fun_echo "Created default kigit.txt. Please edit and rerun the script." "✨" 35
         exit 0
     else
-        while IFS= read -r line; do
-            [[ "$line" =~ ^#.*$ ]] && continue
-            key=$(echo "$line" | cut -d'=' -f1 | tr -d '[:space:]')
-            value=$(echo "$line" | cut -d'=' -f2- | sed 's/^[[:space:]]*//')
-            config["$key"]="${value:-default_value}"
+        while IFS='=' read -r key value; do
+            # Skip empty lines or lines starting with '#'
+            [[ -z "$key" || "$key" =~ ^#.*$ ]] && continue
+            key=$(echo "$key" | tr -d '[:space:]')
+            value=$(echo "$value" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+            
+            # Normalize yes/no values
+            case "$value" in
+                [yY]*|[fF]orce:[yY]*) value="y" ;;
+                [nN]*|[fF]orce:[nN]*) value="n" ;;
+            esac
+
+            config["$key"]="${value:-}"
         done < "$config_file"
     fi
+    declare -p config
 }
 
 # Change ownership with style
@@ -127,39 +128,59 @@ EOL
 
 # Fetch data from GitHub repo to kigit.txt with style
 fetch_github_data() {
-    local repo_name=${config[set303b]} repo_exists
-    repo_exists=$(gh repo view "$repo_name" --json name --jq '.name' 2>/dev/null)
+    local repo_name=${config[set303b]}
+    local owner="${GITHUB_USER:-$(git config github.user)}"
+    local repo_exists
+    repo_exists=$(gh repo view "$owner/$repo_name" --json name --jq '.name' 2>/dev/null)
     if [[ -n "$repo_exists" ]]; then
-        local repo_data=$(gh repo view "$repo_name" --json description,homepage,topics --jq '.description + "|||" + .homepage + "|||" + (.topics | join(","))')
+        local repo_data
+        repo_data=$(gh repo view "$owner/$repo_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
         IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
-        [[ -z ${config[set303f]} ]] && config[set303f]=$fetched_description
-        [[ -z ${config[set303g]} ]] && config[set303g]=$fetched_homepage
-        [[ -z ${config[set303e]} ]] && config[set303e]=$fetched_topics
-        fun_echo "Fetched data from GitHub repo: $repo_name" "📦" 34
+        
+        # Update kigit.txt unless forced
+        [[ ${config[set303f]} != force:* ]] && config[set303f]=$fetched_description
+        [[ ${config[set303g]} != force:* ]] && config[set303g]=$fetched_homepage
+        [[ ${config[set303e]} != force:* ]] && config[set303e]=$fetched_topics
+        
+        fun_echo "Fetched data from existing GitHub repo: $repo_name" "📦" 34
+        update_repo
     else
-        fun_echo "Creating new GitHub repo: $repo_name" "✨" 35
-        create_or_update_repo
+        create_repo
     fi
 }
 
-# Create or update GitHub repository with pizzazz
-create_or_update_repo() {
-    local repo_name=${config[set303b]} repo_exists
-    repo_exists=$(gh repo view "$repo_name" --json name --jq '.name' 2>/dev/null)
-    if [[ -z "$repo_exists" ]]; then
-        gh repo create "$repo_name" --${config[set303c]:-private} --description "${config[set303f]}" --homepage "${config[set303g]}" || { fun_echo "Failed to create GitHub repository" "❌" 31; exit 1; }
-        fun_echo "Created GitHub repository: $repo_name" "🚀" 32
-    else
-        gh repo edit "$repo_name" --description "${config[set303f]}" --homepage "${config[set303g]}" --add-topic "${config[set303e]//,/ --add-topic }" || { fun_echo "Failed to update GitHub repository" "❌" 31; exit 1; }
-        fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
+# Create GitHub repository with pizzazz
+create_repo() {
+    local repo_name=${config[set303b]}
+    local visibility="--private"
+    [[ ${config[set303c]} =~ ^[Yy]$ ]] && visibility="--public"
+    if ! gh repo create "$repo_name" $visibility --description "${config[set303f]}" --homepage "${config[set303g]}"; then
+        fun_echo "Failed to create repository with name $repo_name. Generating new name..." "⚠️" 33
+        repo_name="${repo_name}_$(date +%Y%m%d%H%M%S)"
+        config[set303b]=$repo_name
+        gh repo create "$repo_name" $visibility --description "${config[set303f]}" --homepage "${config[set303g]}" || { fun_echo "Failed to create GitHub repository" "❌" 31; exit 1; }
     fi
+    fun_echo "Created GitHub repository: $repo_name" "🚀" 32
+}
+
+# Update GitHub repository with pizzazz
+update_repo() {
+    local repo_name=${config[set303b]}
+    local owner="${GITHUB_USER:-$(git config github.user)}"
+    gh repo edit "$owner/$repo_name" --description "${config[set303f]}" --homepage "${config[set303g]}" --add-topic "${config[set303e]//,/ --add-topic }" || { fun_echo "Failed to update GitHub repository" "❌" 31; exit 1; }
+    fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
 }
 
 # Ensure the correct branch with style
 ensure_branch() {
     local branch=${config[set303j]:-master}
-    git checkout -b "$branch" 2>/dev/null || git checkout "$branch"
-    fun_echo "Switched to branch: $branch!" "🌿" 32
+    if ! git rev-parse --verify "$branch" &>/dev/null; then
+        git checkout -b "$branch"
+        fun_echo "Created and switched to new branch: $branch" "🌿" 32
+    else
+        git checkout "$branch"
+        fun_echo "Switched to existing branch: $branch" "🌿" 32
+    fi
 }
 
 # Update files based on config with flair
@@ -217,16 +238,36 @@ else:
 " && fun_echo "HTML page created from README.md!" "🌐" 35
 }
 
+# Update kigit.txt with current settings
+update_kigit_txt() {
+    local config_file=kigit.txt
+    local temp_file=$(mktemp)
+    while IFS='=' read -r key value; do
+        if [[ -n "$key" && ! "$key" =~ ^#.*$ ]]; then
+            key=$(echo "$key" | tr -d '[:space:]')
+            if [[ -n "${config[$key]}" ]]; then
+                echo "$key=${config[$key]}"
+            else
+                echo "$key=$value"
+            fi
+        else
+            echo "$key=$value"
+        fi
+    done < "$config_file" > "$temp_file"
+    mv "$temp_file" "$config_file"
+    fun_echo "Updated kigit.txt with current settings" "📝" 35
+}
+
 # Main script execution with flair
 fetch_github_token
 read_kigit_config
 change_ownership
 setup_git
 fetch_github_data
-create_or_update_repo
 ensure_branch
 update_files
 sync_repo
 create_html_page
+update_kigit_txt
 
 fun_echo "Script executed successfully! Have a magical day! 🌈✨" "🎉" 36
