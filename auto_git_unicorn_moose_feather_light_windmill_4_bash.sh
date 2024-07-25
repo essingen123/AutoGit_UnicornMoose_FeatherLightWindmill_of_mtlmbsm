@@ -297,16 +297,19 @@ sync_repo() {
 # Create HTML page if needed with pizzazz
 create_html_page() {
     [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303d]} =~ ^force:?[Yy]$ ]] && python3 -c "
-import os, markdown
-readme_path = 'README.md'
-if os.path.exists(readme_path):
-    with open(readme_path, 'r') as f, open('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}', 'w') as h:
-        h.write(f\"<html><head><title>${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
-    print('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html} created successfully.')
-else:
-    print('README.md not found. Cannot create ${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}.')
+    import os, markdown
+    readme_path = 'README.md'
+    if os.path.exists(readme_path):
+        with open(readme_path, 'r') as f, open('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}', 'w') as h:
+            h.write(f\"<html><head><title>${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
+        print('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html} created successfully.')
+    elif os.path.exists('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}'):
+        echo 'HTML file already exists. Skipping creation.'
+    else:
+        print('README.md not found. Cannot create ${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}.')
 " && fun_echo "HTML page created from README.md!" "🌐" 35
 }
+
 
 # Update kigit.txt with current settings
 update_kigit_txt() {
