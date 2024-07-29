@@ -338,12 +338,16 @@ _overwrite_html_file() {
             with open('$readme_path', 'r') as f, open('$html_file', 'w') as h:
                 h.write(f\"<html><head><title>{kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
             print('$html_file overwritten successfully.')
-        " && git add "$html_file" && git commit -m "Update $html_file" || true
+        " &&
+        git add "$html_file" &&
+        git commit -m "Update $html_file" ||
+        true
         fun_echo "$html_file has been overwritten!" "🌐" 35
     else
         fun_echo "README.md not found. Cannot overwrite $html_file." "🚫" 31
     fi
 }
+
 
 
 # Update kigit.txt with current settings
