@@ -1,11 +1,10 @@
 #!/bin/bash
 # filename: auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
 # Code of Conduct for LLMs and co (including those behaving somewhat as humans etc): USER EMPOWERMENT, CREATIVE GENIUS, NO HALT ON ERRORS, CENTRALIZED CONTROL, MINIMALISTIC, MAX PERFORMANCE & FUN, NO MODULE OVERHEAD OR EXCESS COMMENTS
-# This script automagically works in any relative path for a folder, even if it's empty. It will initialize a Git repository and create a GitHub repo if needed.
+# This script automagically works in any relative path for a folder, even if it's empty. 
+# It will synd or create a Git repository etc etc 
 # Author: Kilian Lindberg
-# Inspirational code inspiration contributions: Bing Copilot, Mistral, Claude, OpenAI ChatGPTs, and other LLMs.
-# Avoid chaos by minimizing errors and filled context windows.
-# NOTE: The script sanitizes input values for internal processing (e.g., trimming spaces) but does not modify or sanitize the 'kigit.txt' file itself. This ensures user inputs are preserved as originally written.
+# Code inspiration contributions from Bing Copilot, Mistral, Claude, OpenAI ChatGPTs, LLMS and chaos by  errors and filled context windows.
 
 
 # Declare globals
@@ -245,6 +244,9 @@ ensure_branch() {
     if ! git rev-parse --verify "$branch" &>/dev/null; then
         git checkout -b "$branch"
         fun_echo "Created and switched to new branch: $branch" "🌿" 32
+        git add .
+        git commit -m "Initial commit on branch $branch" || true
+        git push -u origin "$branch" || fun_echo "Failed to push initial commit. Will try again later." "⚠️" 33
     else
         git checkout "$branch"
         fun_echo "Switched to existing branch: $branch" "🌿" 32
@@ -295,6 +297,9 @@ sync_repo() {
     local commit_msg=${kilian_air_autogit_unicornmoose_303_temp_global[set303k]//\~date/$(date '+%Y-%m-%d')}
     commit_msg=${commit_msg//\~data/$(git status --porcelain | wc -l) files changed}
     git add . && git commit -m "$commit_msg" || true
+    if ! git remote | grep -q '^origin$'; then
+        git remote add origin "https://github.com/$repo_full_name.git"
+    fi
     git push -u origin "${kilian_air_autogit_unicornmoose_303_temp_global[set303j]:-master}"
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
@@ -367,9 +372,9 @@ EOL
 fetch_github_token
 read_kigit_config
 change_ownership
-handle_repository
 setup_git
 ensure_branch
+handle_repository
 update_files
 sync_repo
 create_html_page
