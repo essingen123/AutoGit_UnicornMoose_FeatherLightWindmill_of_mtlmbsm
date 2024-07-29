@@ -1,11 +1,15 @@
 #!/bin/bash
 # filename: auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
 # Code of Conduct for LLMs and co (including those behaving somewhat as humans etc): USER EMPOWERMENT, CREATIVE GENIUS, NO HALT ON ERRORS, CENTRALIZED CONTROL, MINIMALISTIC, MAX PERFORMANCE & FUN, NO MODULE OVERHEAD OR EXCESS COMMENTS
-# This script automagically works in any relative path for a folder, even if it's empty. It will initialize a Git repository and create a GitHub repo if needed.
+# This script automagically works in any relative path for a folder, even if it's empty. 
+# It will synd or create a Git repository etc etc 
 # Author: Kilian Lindberg
-# Inspirational code inspiration contributions: Bing Copilot, Mistral, Claude, OpenAI ChatGPTs, and other LLMs.
-# Avoid chaos by minimizing errors and filled context windows.
-# NOTE: The script sanitizes input values for internal processing (e.g., trimming spaces) but does not modify or sanitize the 'kigit.txt' file itself. This ensures user inputs are preserved as originally written.
+# Code inspiration contributions from Bing Copilot, Mistral, Claude, OpenAI ChatGPTs, LLMS and chaos by  errors and filled context windows.
+
+
+# Declare globals
+declare -gA kilian_air_autogit_unicornmoose_303_temp_global
+declare -g repo_full_name
 
 # Check for required commands and install if missing
 command -v gh > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/"; exit 1; }
@@ -18,6 +22,9 @@ fun_echo() { echo -e "\e[1;${3:-32}m$2 $1 \e[0m"; }
 handle_error() {
     local error_code=$?
     local last_command=$(history | tail -n 2 | head -n 1 | sed 's/^ *[0-9]* *//')
+    if [ -z "$last_command" ]; then
+        last_command=$(fc -ln -1 | cut -d' ' -f2-)+$last_command=$?
+    fi
     fun_echo "Error in command: '$last_command' (exit code: $error_code). Retry (r), Skip (s), or Quit (q)?" "💥" 31
     read -r choice
     case "$choice" in
@@ -28,7 +35,8 @@ handle_error() {
     esac
 }
 
-trap 'handle_error' ERR
+#SKIP FOR NOW WHILE DEVELOPING
+#trap 'handle_error' ERR
 
 # Developer mode and core directory check
 developer_mode_file=kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG.txt
@@ -36,7 +44,7 @@ developer_mode=n
 main_script_file="auto_git_unicorn_moose_feather_light_windmill_4_bash.sh"
 YES_THIS_IS_THE_UNICORN_MOOSE_HOLY_MOLY_CORE_DIR=n
 
-if [[ -f "$developer_mode_file" ]]; then
+if [[ -f "$main_script_file" ]]; then
     source "$developer_mode_file"
     developer_mode=$(grep -E '^kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG=' "$developer_mode_file" | cut -d'=' -f2)
 fi
@@ -71,8 +79,6 @@ fetch_github_token() {
     fi
 }
 
-# Declare the config array as global
-declare -gA kilian_air_autogit_unicornmoose_303_temp_global
 
 # Read or create kigit.txt with pizzazz
 read_kigit_config() {
@@ -136,14 +142,25 @@ EOL
 
             kilian_air_autogit_unicornmoose_303_temp_global["$key"]="${value:-}"
         done < "$config_file"
+        local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
+        local owner="${GITHUB_USER:-$(git config user.name)}"
+        repo_full_name="$owner/$repo_name"
     fi
     declare -p kilian_air_autogit_unicornmoose_303_temp_global
 }
 
 # Change ownership with style
 change_ownership() {
-    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303l]} =~ ^[Yy]$ ]] && { sudo chown -R $(whoami) .; fun_echo "Changed ownership to $(whoami)!" "🔧" 36; }
+    if [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303l]} =~ ^[Nn]$ ]]
+    then
+        return 0
+    elif [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303l]} =~ ^[Yy]$ ]]
+    then
+        sudo chown -R $(whoami) .; fun_echo "Changed ownership to $(whoami)!" "🔧" 36;
+    fi
 }
+
+
 
 # Setup Git repository with flair
 setup_git() {
@@ -167,18 +184,22 @@ EOL
     fi
 }
 
+
+
 # Check if repo exists
 repo_exists() {
-    local repo_name=$1
-    local owner="${GITHUB_USER:-$(git config github.user)}"
-    echo "Checking if repo exists: $owner/$repo_name"
-    gh repo view "$owner/$repo_name" &>/dev/null
+    # local repo_name=$1
+    # local owner="${GITHUB_USER:-$(git config user.name)}"
+    echo "Checking if repo exists: $repo_full_name"
+    gh repo view "$repo_full_name" &>/dev/null
     echo "Repo check result: $?"
 }
 
 handle_repository() {
     local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
-    local owner="${GITHUB_USER:-$(git config github.user)}"
+    local owner="${GITHUB_USER:-$(git config user.name)}"
+    repo_full_name="$owner/$repo_name"
+
     local visibility="--private"
     [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303c]} =~ ^[Yy]$ ]] && visibility="--public"
 
@@ -198,16 +219,15 @@ handle_repository() {
 }
 
 update_repo() {
-    local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
-    local owner="${GITHUB_USER:-$(git config github.user)}"
-    echo "Updating GitHub repo: $owner/$repo_name"
+    
+    echo "Updating GitHub repo: $repo_full_name"
 
-    if gh repo edit "$owner/$repo_name" --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}" --add-topic "${kilian_air_autogit_unicornmoose_303_temp_global[set303e]//,/ --add-topic }"; then
+    if gh repo edit "$repo_full_name" --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}" --add-topic "${kilian_air_autogit_unicornmoose_303_temp_global[set303e]//,/ --add-topic }"; then
         fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
 
         # Fetch and update local config if not forced
         local repo_data
-        repo_data=$(gh repo view "$owner/$repo_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
+        repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
         IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
 
         [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303f]} != force:* ]] && kilian_air_autogit_unicornmoose_303_temp_global[set303f]=$fetched_description
@@ -224,6 +244,9 @@ ensure_branch() {
     if ! git rev-parse --verify "$branch" &>/dev/null; then
         git checkout -b "$branch"
         fun_echo "Created and switched to new branch: $branch" "🌿" 32
+        git add .
+        git commit -m "Initial commit on branch $branch" || true
+        git push -u origin "$branch" || fun_echo "Failed to push initial commit. Will try again later." "⚠️" 33
     else
         git checkout "$branch"
         fun_echo "Switched to existing branch: $branch" "🌿" 32
@@ -243,19 +266,20 @@ Tags: ${kilian_air_autogit_unicornmoose_303_temp_global[set303e]}
 ![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)
 
 ## What is MTLMBSM? 🤔
-MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe how this script simplifies and automates aspects of version control and GitHub interactions.
+MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe how 
+this script simplifies and automates aspects of version control and GitHub interactions; which also serves as a filter; since if this is yet not automagically enforcing a smile near the observer, this script may not be suitable at all; almost like an admin requirement certification wise thing. 
 
 ## Features 🎉
-- Automagic operation (unless there's an error or missing configuration)
+- Automagic operation (YES, PREFERABLY even if there's an error or missing configuration, in authentic unicorn moose manners! )
 - Flexible configuration through kigit.txt
-- Repository creation and management
-- Automatic README.md and .gitignore generation
-- HTML page generation from README.md
-- Customizable commit messages
-- And much more!
+- Repository creation & management
+- Automatic README.md & .gitignore generation etc intended
+- (Yet to be more arty) web page generative actions from README.md etc
+- Customizable commit messages (-ish)
+- And much more, and perhaps even quite differently so (not so awesome) when LLMs misinterpret the "enhance" statement!
 
 ## License 📜
-This project is licensed under a license not written here yet.
+This project is licensed under a license not written here yet.. but sure, this has probably taken out a 100 hours of LLM discoteque ettiqeuette etc.
 EOL
         git add README.md && git commit -m "Create README.md" || true
         fun_echo "README.md has been created!" "📖" 34
@@ -273,23 +297,29 @@ sync_repo() {
     local commit_msg=${kilian_air_autogit_unicornmoose_303_temp_global[set303k]//\~date/$(date '+%Y-%m-%d')}
     commit_msg=${commit_msg//\~data/$(git status --porcelain | wc -l) files changed}
     git add . && git commit -m "$commit_msg" || true
+    if ! git remote | grep -q '^origin$'; then
+        git remote add origin "https://github.com/$repo_full_name.git"
+    fi
     git push -u origin "${kilian_air_autogit_unicornmoose_303_temp_global[set303j]:-master}"
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
 
 # Create HTML page if needed with pizzazz
 create_html_page() {
-    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303d]} =~ ^[Yy]$ ]] && python3 -c "
-import os, markdown
-readme_path = 'README.md'
-if os.path.exists(readme_path):
-    with open(readme_path, 'r') as f, open('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}', 'w') as h:
-        h.write(f\"<html><head><title>${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
-    print('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html} created successfully.')
-else:
-    print('README.md not found. Cannot create ${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}.')
+    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303d]} =~ ^force:?[Yy]$ ]] && python3 -c "
+    import os, markdown
+    readme_path = 'README.md'
+    if os.path.exists(readme_path):
+        with open(readme_path, 'r') as f, open('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}', 'w') as h:
+            h.write(f\"<html><head><title>${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
+        print('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html} created successfully.')
+    elif os.path.exists('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}'):
+        echo 'HTML file already exists. Skipping creation.'
+    else:
+        print('README.md not found. Cannot create ${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}.')
 " && fun_echo "HTML page created from README.md!" "🌐" 35
 }
+
 
 # Update kigit.txt with current settings
 update_kigit_txt() {
@@ -343,8 +373,8 @@ fetch_github_token
 read_kigit_config
 change_ownership
 setup_git
-handle_repository
 ensure_branch
+handle_repository
 update_files
 sync_repo
 create_html_page
