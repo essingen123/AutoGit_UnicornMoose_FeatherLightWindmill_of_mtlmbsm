@@ -378,7 +378,7 @@ ensure_branch
 handle_repository
 update_files
 sync_repo
-# create_html_page
+create_html_page
 update_kigit_txt
 create_g_first_run
 
