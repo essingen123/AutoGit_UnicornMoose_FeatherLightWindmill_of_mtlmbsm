@@ -7,7 +7,6 @@
 # Avoid chaos by minimizing errors and filled context windows.
 # NOTE: The script sanitizes input values for internal processing (e.g., trimming spaces) but does not modify or sanitize the 'kigit.txt' file itself. This ensures user inputs are preserved as originally written.
 
-
 # Declare globals
 declare -gA kilian_air_autogit_unicornmoose_303_temp_global
 declare -g repo_full_name
@@ -80,7 +79,6 @@ fetch_github_token() {
     fi
 }
 
-
 # Read or create kigit.txt with pizzazz
 read_kigit_config() {
     local config_file=kigit.txt
@@ -105,10 +103,10 @@ set303c=n
 set303d=y
 
 # 🗑️ tags, separated by commas
-set303e=Code
+set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
 
 # 📝 description
-set303f=A work in progress
+set303f=A work in progress with automation testing for Git leveraging python, bash etc
 
 # 🌐 website URL
 set303g=
@@ -117,13 +115,13 @@ set303g=
 set303h=index.html
 
 # 🌳 Branch to commit to, 'main' or a new branch name
-set303j=main
+set303j=master
 
 # 💬 Default commit message (use ~date and ~data for auto-generated content)
 set303k=Automated ~date ~data
 
 # 🔧 Change ownership of all files to current user
-set303l=n
+set303l=y
 
 # DONT EDIT OUT THIS LAST LINE
 EOL
@@ -161,8 +159,6 @@ change_ownership() {
     fi
 }
 
-
-
 # Setup Git repository with flair
 setup_git() {
     [[ -d .git ]] || { git init; fun_echo "Initialized a new Git repository!" "🌟" 33; }
@@ -184,7 +180,6 @@ EOL
         fun_echo "Created and added .gitignore!" "📄" 32
     fi
 }
-
 
 # Check if repo exists
 repo_exists() {
@@ -218,9 +213,7 @@ handle_repository() {
     fi
 }
 
-
 update_repo() {
-    
     echo "Updating GitHub repo: $repo_full_name"
 
     if gh repo edit "$repo_full_name" --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}" --add-topic "${kilian_air_autogit_unicornmoose_303_temp_global[set303e]//,/ --add-topic }"; then
@@ -249,6 +242,7 @@ ensure_branch() {
         git checkout "$branch"
         fun_echo "Switched to existing branch: $branch" "🌿" 32
     fi
+    git add . && git commit -m "Initial commit on branch $branch" || true
 }
 
 # Update files based on config with flair
@@ -261,7 +255,20 @@ ${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}
 
 Tags: ${kilian_air_autogit_unicornmoose_303_temp_global[set303e]}
 
-![A repo image](repo_image.webp)
+![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)
+
+## What is MTLMBSM? 🤔
+MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe how
+this script simplifies and automates aspects of version control and GitHub interactions; which also serves as a filter; since if this is yet not automagically enforcing a smile near the observer, this script may not be suitable at all; almost like an admin requirement certification wise thing.
+
+## Features 🎉
+- Automagic operation (YES, PREFERABLY even if there's an error or missing configuration, in authentic unicorn moose manners! )
+- Flexible configuration through kigit.txt
+- Repository creation & management
+- Automatic README.md & .gitignore generation etc intended
+- (Yet to be more arty) web page generative actions from README.md etc
+- Customizable commit messages (-ish)
+- And much more, and perhaps even quite differently so (not so awesome) when LLMs misinterpret the "enhance" statement!
 
 ## License 📜
 This project is licensed under a license not written here yet.. but sure, this has probably taken out a 100 hours of LLM discoteque ettiqeuette etc.
@@ -301,7 +308,6 @@ create_html_page() {
         print('README.md not found. Cannot create ${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}.')
 " && fun_echo "HTML page created from README.md!" "🌐" 35
 }
-
 
 # Update kigit.txt with current settings
 update_kigit_txt() {
