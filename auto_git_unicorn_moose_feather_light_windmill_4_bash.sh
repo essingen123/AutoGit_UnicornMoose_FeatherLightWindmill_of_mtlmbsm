@@ -7,6 +7,7 @@
 # Avoid chaos by minimizing errors and filled context windows.
 # NOTE: The script sanitizes input values for internal processing (e.g., trimming spaces) but does not modify or sanitize the 'kigit.txt' file itself. This ensures user inputs are preserved as originally written.
 
+
 # Declare globals
 declare -gA kilian_air_autogit_unicornmoose_303_temp_global
 declare -g repo_full_name
@@ -22,6 +23,9 @@ fun_echo() { echo -e "\e[1;${3:-32}m$2 $1 \e[0m"; }
 handle_error() {
     local error_code=$?
     local last_command=$(history | tail -n 2 | head -n 1 | sed 's/^ *[0-9]* *//')
+    if [ -z "$last_command" ]; then
+        last_command=$(fc -ln -1 | cut -d' ' -f2-)+$last_command=$?
+    fi
     fun_echo "Error in command: '$last_command' (exit code: $error_code). Retry (r), Skip (s), or Quit (q)?" "💥" 31
     read -r choice
     case "$choice" in
@@ -32,7 +36,8 @@ handle_error() {
     esac
 }
 
-trap 'handle_error' ERR
+#SKIP FOR NOW WHILE DEVELOPING
+#trap 'handle_error' ERR
 
 # Developer mode and core directory check
 developer_mode_file=kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG.txt
@@ -40,7 +45,7 @@ developer_mode=n
 main_script_file="auto_git_unicorn_moose_feather_light_windmill_4_bash.sh"
 YES_THIS_IS_THE_UNICORN_MOOSE_HOLY_MOLY_CORE_DIR=n
 
-if [[ -f "$developer_mode_file" ]]; then
+if [[ -f "$main_script_file" ]]; then
     source "$developer_mode_file"
     developer_mode=$(grep -E '^kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG=' "$developer_mode_file" | cut -d'=' -f2)
 fi
@@ -138,6 +143,9 @@ EOL
 
             kilian_air_autogit_unicornmoose_303_temp_global["$key"]="${value:-}"
         done < "$config_file"
+        local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
+        local owner="${GITHUB_USER:-$(git config user.name)}"
+        repo_full_name="$owner/$repo_name"
     fi
     declare -p kilian_air_autogit_unicornmoose_303_temp_global
 }
@@ -182,7 +190,7 @@ EOL
 # Check if repo exists
 repo_exists() {
     local repo_name=$1
-    local owner="${GITHUB_USER:-$(git config github.user)}"
+    local owner="${GITHUB_USER:-$(git config user.name)}"
     echo "Checking if repo exists: $repo_full_name"
     gh repo view "$repo_full_name" &>/dev/null
     echo "Repo check result: $?"
@@ -190,7 +198,7 @@ repo_exists() {
 
 handle_repository() {
     local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
-    local owner="${GITHUB_USER:-$(git config github.user)}"
+    local owner="${GITHUB_USER:-$(git config user.name)}"
     repo_full_name="$owner/$repo_name"
 
     local visibility="--private"
@@ -212,8 +220,7 @@ handle_repository() {
 }
 
 update_repo() {
-    local repo_name=${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}
-    local owner="${GITHUB_USER:-$(git config github.user)}"
+    
     echo "Updating GitHub repo: $repo_full_name"
 
     if gh repo edit "$repo_full_name" --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}" --add-topic "${kilian_air_autogit_unicornmoose_303_temp_global[set303e]//,/ --add-topic }"; then
@@ -294,17 +301,20 @@ sync_repo() {
 
 # Create HTML page if needed with pizzazz
 create_html_page() {
-    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303d]} =~ ^[Yy]$ ]] && python3 -c "
-import os, markdown
-readme_path = 'README.md'
-if os.path.exists(readme_path):
-    with open(readme_path, 'r') as f, open('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}', 'w') as h:
-        h.write(f\"<html><head><title>${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
-    print('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html} created successfully.')
-else:
-    print('README.md not found. Cannot create ${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}.')
+    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303d]} =~ ^force:?[Yy]$ ]] && python3 -c "
+    import os, markdown
+    readme_path = 'README.md'
+    if os.path.exists(readme_path):
+        with open(readme_path, 'r') as f, open('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}', 'w') as h:
+            h.write(f\"<html><head><title>${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
+        print('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html} created successfully.')
+    elif os.path.exists('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}'):
+        echo 'HTML file already exists. Skipping creation.'
+    else:
+        print('README.md not found. Cannot create ${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}.')
 " && fun_echo "HTML page created from README.md!" "🌐" 35
 }
+
 
 # Update kigit.txt with current settings
 update_kigit_txt() {
@@ -356,15 +366,15 @@ EOL
 # Main script execution with flair
 fetch_github_token
 read_kigit_config
-change_ownership
+#change_ownership
 setup_git
 handle_repository
-ensure_branch
+#ensure_branch
 update_files
 sync_repo
-create_html_page
-update_kigit_txt
-create_g_first_run
+#create_html_page
+#update_kigit_txt
+#create_g_first_run
 
 fun_echo "Script executed successfully! Have a magical day! 🌈✨" "🎉" 36
 # Cleanup and unset global array at the end of the script
