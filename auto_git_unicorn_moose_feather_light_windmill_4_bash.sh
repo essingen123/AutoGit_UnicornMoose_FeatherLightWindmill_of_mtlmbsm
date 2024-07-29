@@ -1,11 +1,10 @@
 #!/bin/bash
 # filename: auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
 # Code of Conduct for LLMs and co (including those behaving somewhat as humans etc): USER EMPOWERMENT, CREATIVE GENIUS, NO HALT ON ERRORS, CENTRALIZED CONTROL, MINIMALISTIC, MAX PERFORMANCE & FUN, NO MODULE OVERHEAD OR EXCESS COMMENTS
-# This script automagically works in any relative path for a folder, even if it's empty. It will initialize a Git repository and create a GitHub repo if needed.
+# This script automagically works in any relative path for a folder, even if it's empty. 
+# It will sync or create a Git repository etc etc 
 # Author: Kilian Lindberg
-# Inspirational code inspiration contributions: Bing Copilot, Mistral, Claude, OpenAI ChatGPTs, and other LLMs.
-# Avoid chaos by minimizing errors and filled context windows.
-# NOTE: The script sanitizes input values for internal processing (e.g., trimming spaces) but does not modify or sanitize the 'kigit.txt' file itself. This ensures user inputs are preserved as originally written.
+# Code inspiration contributions from Bing Copilot, Mistral, Claude, OpenAI ChatGPTs, LLMS and chaos by  errors and filled context windows.
 
 
 # Declare globals

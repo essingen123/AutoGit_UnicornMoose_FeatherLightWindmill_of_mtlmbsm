@@ -1,20 +1,11 @@
-# Ignore OS-specific files
 .DS_Store
 Thumbs.db
-# Ignore IDE files
-*.iml
-.idea
-.vscode
-# Ignore sensitive files
+.idea/
+.vscode/
 .env
-*.pem
-# Ignore log and build files
-*.log
 build/
 dist/
 *.o
 *.exe
 *.dll
 *.so
-
-.git_very_secret_and_ignored_file_token
