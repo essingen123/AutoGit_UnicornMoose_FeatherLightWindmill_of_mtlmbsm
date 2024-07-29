@@ -1,4 +1,4 @@
-![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)
+![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill.webp)
 
 ## What is MTLMBSM? 🤔
 MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe how 
