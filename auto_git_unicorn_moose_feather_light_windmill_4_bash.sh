@@ -198,17 +198,16 @@ handle_repository() {
     local owner="${GITHUB_USER:-$(git config user.name)}"
     repo_full_name="$owner/$repo_name"
 
-    local visibility="--private"
-    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303c]} =~ ^[Yy]$ ]] && visibility="--public"
+    local visibility=${kilian_air_autogit_unicornmoose_303_temp_global[set303c]} =~ ^[Yy]$ && "--public" || "--private"
 
     if repo_exists; then
         fun_echo "Repository $repo_name already exists. Updating..." "📦" 34
         update_repo
     else
         fun_echo "Creating new repository: $repo_name" "🚀" 32
-        if gh repo create "$repo_full_name" $visibility --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}"; then
+        if gh repo create "${repo_full_name}" ${visibility} --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}"; then
             fun_echo "Created GitHub repository: $repo_name" "🚀" 32
-            git remote add origin "https://github.com/$repo_full_name.git"
+            git remote add origin "https://github.com/${repo_full_name}.git"
             update_repo
         else
             fun_echo "Failed to create repository. Please check your permissions and try again." "❌" 31
