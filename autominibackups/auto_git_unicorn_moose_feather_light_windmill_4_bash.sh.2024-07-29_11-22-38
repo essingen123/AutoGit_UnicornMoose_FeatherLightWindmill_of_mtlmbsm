@@ -290,6 +290,9 @@ EOL
     fi
 }
 
+
+
+
 # Sync changes with GitHub in style
 sync_repo() {
     local commit_msg=${kilian_air_autogit_unicornmoose_303_temp_global[set303k]//\~date/$(date '+%Y-%m-%d')}

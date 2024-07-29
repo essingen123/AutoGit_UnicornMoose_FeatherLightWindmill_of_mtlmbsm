@@ -1,0 +1,8 @@
+# Enter files to watch (one per line):
+# Example: /path/to/file1.txt
+# Example: file2.py
+# Example: ./file3.md
+autominibackups.sh
+auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
+
+#keep this last line please
