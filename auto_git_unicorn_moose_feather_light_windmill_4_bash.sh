@@ -242,7 +242,7 @@ ensure_branch() {
         git checkout "$branch"
         fun_echo "Switched to existing branch: $branch" "🌿" 32
     fi
-    git add . && git commit -m "Initial commit on branch $branch" || true
+    # git add . && git commit -m "Initial commit on branch $branch" || true
 }
 
 # Update files based on config with flair
@@ -292,6 +292,7 @@ sync_repo() {
     git push -u origin "${kilian_air_autogit_unicornmoose_303_temp_global[set303j]:-master}"
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
+
 # Create HTML page if needed with pizzazz
 create_html_page() {
     local html_file=${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}
@@ -319,7 +320,7 @@ _create_html_file() {
             import os, markdown
             with open('$readme_path', 'r') as f, open('$html_file', 'w') as h:
                 h.write(f\"<html><head><title>{kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
-            print('$html_file created successfully.')
+                print('$html_file created successfully.')
         " &&
         git add "$html_file" &&
         git commit -m "Create $html_file" ||
@@ -329,6 +330,7 @@ _create_html_file() {
         fun_echo "README.md not found. Cannot create $html_file." "🚫" 31
     fi
 }
+
 
 _overwrite_html_file() {
     local readme_path=$1
@@ -349,6 +351,8 @@ _overwrite_html_file() {
         fun_echo "README.md not found. Cannot overwrite $html_file." "🚫" 31
     fi
 }
+
+
 
 # Update kigit.txt with current settings
 update_kigit_txt() {
