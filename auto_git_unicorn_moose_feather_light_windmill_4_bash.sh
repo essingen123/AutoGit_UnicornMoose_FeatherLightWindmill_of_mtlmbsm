@@ -198,7 +198,10 @@ handle_repository() {
     local owner="${GITHUB_USER:-$(git config user.name)}"
     repo_full_name="$owner/$repo_name"
 
-    local visibility=${kilian_air_autogit_unicornmoose_303_temp_global[set303c]} =~ ^[Yy]$ && "--public" || "--private"
+    local visibility="--private"
+    if [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303c]} =~ ^[Yy]$ ]]; then
+        visibility="--public"
+    fi
 
     if repo_exists; then
         fun_echo "Repository $repo_name already exists. Updating..." "📦" 34
