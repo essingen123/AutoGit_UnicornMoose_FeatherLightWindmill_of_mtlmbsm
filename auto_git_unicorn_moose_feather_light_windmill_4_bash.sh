@@ -242,7 +242,7 @@ ensure_branch() {
         git checkout "$branch"
         fun_echo "Switched to existing branch: $branch" "🌿" 32
     fi
-    # git add . && git commit -m "Initial commit on branch $branch" || true
+    git add . && git commit -m "Branch $branch" || true
 }
 
 # Update files based on config with flair
@@ -410,7 +410,7 @@ handle_repository
 ensure_branch
 update_files
 sync_repo
-create_html_page
+#create_html_page
 update_kigit_txt
 create_g_first_run
 
