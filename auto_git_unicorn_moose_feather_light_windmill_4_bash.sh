@@ -187,12 +187,10 @@ EOL
 
 
 # Check if repo exists
+# Check if repo exists
 repo_exists() {
-    # local repo_name=$1
-    # local owner="${GITHUB_USER:-$(git config user.name)}"
-    echo "Checking if repo exists: $repo_full_name"
     gh repo view "$repo_full_name" &>/dev/null
-    echo "Repo check result: $?"
+    return $?
 }
 
 handle_repository() {
@@ -203,13 +201,14 @@ handle_repository() {
     local visibility="--private"
     [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303c]} =~ ^[Yy]$ ]] && visibility="--public"
 
-    if repo_exists "$repo_name"; then
+    if repo_exists; then
         fun_echo "Repository $repo_name already exists. Updating..." "📦" 34
         update_repo
     else
         fun_echo "Creating new repository: $repo_name" "🚀" 32
-        if gh repo create "$repo_name" $visibility --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}"; then
+        if gh repo create "$repo_full_name" $visibility --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}"; then
             fun_echo "Created GitHub repository: $repo_name" "🚀" 32
+            git remote add origin "https://github.com/$repo_full_name.git"
             update_repo
         else
             fun_echo "Failed to create repository. Please check your permissions and try again." "❌" 31
@@ -219,23 +218,32 @@ handle_repository() {
 }
 
 update_repo() {
-    
     echo "Updating GitHub repo: $repo_full_name"
 
-    if gh repo edit "$repo_full_name" --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}" --add-topic "${kilian_air_autogit_unicornmoose_303_temp_global[set303e]//,/ --add-topic }"; then
-        fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
-
-        # Fetch and update local config if not forced
-        local repo_data
-        repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
-        IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
-
-        [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303f]} != force:* ]] && kilian_air_autogit_unicornmoose_303_temp_global[set303f]=$fetched_description
-        [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303g]} != force:* ]] && kilian_air_autogit_unicornmoose_303_temp_global[set303g]=$fetched_homepage
-        [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303e]} != force:* ]] && kilian_air_autogit_unicornmoose_303_temp_global[set303e]=$fetched_topics
+    # Update repo details
+    if gh repo edit "$repo_full_name" --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}"; then
+        fun_echo "Updated GitHub repository details: $repo_name" "🔄" 33
     else
-        fun_echo "Failed to update GitHub repository" "❌" 31
+        fun_echo "Failed to update GitHub repository details" "⚠️" 33
     fi
+
+    # Update topics
+    IFS=',' read -ra topics <<< "${kilian_air_autogit_unicornmoose_303_temp_global[set303e]}"
+    for topic in "${topics[@]}"; do
+        gh repo edit "$repo_full_name" --add-topic "$(echo "$topic" | tr -d '[:space:]')"
+    done
+    fun_echo "Updated GitHub repository topics" "🏷️" 33
+
+    # Fetch and update local config if not forced
+    local repo_data
+    repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics[].name | join(","))')
+    IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
+
+    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303f]} != force:* ]] && kilian_air_autogit_unicornmoose_303_temp_global[set303f]=$fetched_description
+    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303g]} != force:* ]] && kilian_air_autogit_unicornmoose_303_temp_global[set303g]=$fetched_homepage
+    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303e]} != force:* ]] && kilian_air_autogit_unicornmoose_303_temp_global[set303e]=$fetched_topics
+
+    fun_echo "Local configuration updated with remote data" "🔄" 33
 }
 
 # Ensure the correct branch with style
