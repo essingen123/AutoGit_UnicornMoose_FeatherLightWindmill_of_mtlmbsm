@@ -7,6 +7,7 @@
 # Avoid chaos by minimizing errors and filled context windows.
 # NOTE: The script sanitizes input values for internal processing (e.g., trimming spaces) but does not modify or sanitize the 'kigit.txt' file itself. This ensures user inputs are preserved as originally written.
 
+
 # Declare globals
 declare -gA kilian_air_autogit_unicornmoose_303_temp_global
 declare -g repo_full_name
@@ -78,6 +79,7 @@ fetch_github_token() {
         fun_echo "GitHub token saved securely!" "🔐" 32
     fi
 }
+
 
 # Read or create kigit.txt with pizzazz
 read_kigit_config() {
@@ -159,6 +161,8 @@ change_ownership() {
     fi
 }
 
+
+
 # Setup Git repository with flair
 setup_git() {
     [[ -d .git ]] || { git init; fun_echo "Initialized a new Git repository!" "🌟" 33; }
@@ -180,6 +184,8 @@ EOL
         fun_echo "Created and added .gitignore!" "📄" 32
     fi
 }
+
+
 
 # Check if repo exists
 repo_exists() {
@@ -214,6 +220,7 @@ handle_repository() {
 }
 
 update_repo() {
+    
     echo "Updating GitHub repo: $repo_full_name"
 
     if gh repo edit "$repo_full_name" --description "${kilian_air_autogit_unicornmoose_303_temp_global[set303f]}" --homepage "${kilian_air_autogit_unicornmoose_303_temp_global[set303g]}" --add-topic "${kilian_air_autogit_unicornmoose_303_temp_global[set303e]//,/ --add-topic }"; then
@@ -242,7 +249,6 @@ ensure_branch() {
         git checkout "$branch"
         fun_echo "Switched to existing branch: $branch" "🌿" 32
     fi
-    git add . && git commit -m "Initial commit on branch $branch" || true
 }
 
 # Update files based on config with flair
@@ -258,8 +264,8 @@ Tags: ${kilian_air_autogit_unicornmoose_303_temp_global[set303e]}
 ![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)
 
 ## What is MTLMBSM? 🤔
-MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe how
-this script simplifies and automates aspects of version control and GitHub interactions; which also serves as a filter; since if this is yet not automagically enforcing a smile near the observer, this script may not be suitable at all; almost like an admin requirement certification wise thing.
+MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe how 
+this script simplifies and automates aspects of version control and GitHub interactions; which also serves as a filter; since if this is yet not automagically enforcing a smile near the observer, this script may not be suitable at all; almost like an admin requirement certification wise thing. 
 
 ## Features 🎉
 - Automagic operation (YES, PREFERABLY even if there's an error or missing configuration, in authentic unicorn moose manners! )
@@ -295,63 +301,19 @@ sync_repo() {
 
 # Create HTML page if needed with pizzazz
 create_html_page() {
-    local html_file=${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}
-    local readme_path=README.md
-
-    if [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303d]} =~ ^[Yy]$ ]]; then
-        if [[ ! -f "$html_file" ]]; then
-            _create_html_file "$readme_path" "$html_file"
-        elif [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303d]} == "force:y" ]]; then
-            _overwrite_html_file "$readme_path" "$html_file"
-        else
-            fun_echo "$html_file already exists. Skipping creation." "ℹ️" 33
-        fi
-    else
-        fun_echo "HTML page generation is not enabled. Skipping." "ℹ️" 33
-    fi
+    [[ ${kilian_air_autogit_unicornmoose_303_temp_global[set303d]} =~ ^force:?[Yy]$ ]] && python3 -c "
+    import os, markdown
+    readme_path = 'README.md'
+    if os.path.exists(readme_path):
+        with open(readme_path, 'r') as f, open('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}', 'w') as h:
+            h.write(f\"<html><head><title>${kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
+        print('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html} created successfully.')
+    elif os.path.exists('${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}'):
+        echo 'HTML file already exists. Skipping creation.'
+    else:
+        print('README.md not found. Cannot create ${kilian_air_autogit_unicornmoose_303_temp_global[set303h]:-index.html}.')
+" && fun_echo "HTML page created from README.md!" "🌐" 35
 }
-
-_create_html_file() {
-    local readme_path=$1
-    local html_file=$2
-
-    if [[ -f "$readme_path" ]]; then
-        python3 -c "
-            import os, markdown
-            with open('$readme_path', 'r') as f, open('$html_file', 'w') as h:
-                h.write(f\"<html><head><title>{kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
-                print('$html_file created successfully.')
-        " &&
-        git add "$html_file" &&
-        git commit -m "Create $html_file" ||
-        true
-        fun_echo "$html_file has been created!" "🌐" 35
-    else
-        fun_echo "README.md not found. Cannot create $html_file." "🚫" 31
-    fi
-}
-
-
-_overwrite_html_file() {
-    local readme_path=$1
-    local html_file=$2
-
-    if [[ -f "$readme_path" ]]; then
-        python3 -c "
-            import os, markdown
-            with open('$readme_path', 'r') as f, open('$html_file', 'w') as h:
-                h.write(f\"<html><head><title>{kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
-            print('$html_file overwritten successfully.')
-        " &&
-        git add "$html_file" &&
-        git commit -m "Update $html_file" ||
-        true
-        fun_echo "$html_file has been overwritten!" "🌐" 35
-    else
-        fun_echo "README.md not found. Cannot overwrite $html_file." "🚫" 31
-    fi
-}
-
 
 
 # Update kigit.txt with current settings
@@ -405,8 +367,8 @@ EOL
 fetch_github_token
 read_kigit_config
 change_ownership
-setup_git
 handle_repository
+setup_git
 ensure_branch
 update_files
 sync_repo
