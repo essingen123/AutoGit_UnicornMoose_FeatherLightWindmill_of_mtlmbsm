@@ -186,7 +186,6 @@ EOL
 }
 
 
-
 # Check if repo exists
 repo_exists() {
     local repo_name=$1
@@ -218,6 +217,7 @@ handle_repository() {
         fi
     fi
 }
+
 
 update_repo() {
     
