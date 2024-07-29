@@ -245,6 +245,9 @@ ensure_branch() {
     if ! git rev-parse --verify "$branch" &>/dev/null; then
         git checkout -b "$branch"
         fun_echo "Created and switched to new branch: $branch" "🌿" 32
+        git add .
+        git commit -m "Initial commit on branch $branch" || true
+        git push -u origin "$branch" || fun_echo "Failed to push initial commit. Will try again later." "⚠️" 33
     else
         git checkout "$branch"
         fun_echo "Switched to existing branch: $branch" "🌿" 32
@@ -295,6 +298,9 @@ sync_repo() {
     local commit_msg=${kilian_air_autogit_unicornmoose_303_temp_global[set303k]//\~date/$(date '+%Y-%m-%d')}
     commit_msg=${commit_msg//\~data/$(git status --porcelain | wc -l) files changed}
     git add . && git commit -m "$commit_msg" || true
+    if ! git remote | grep -q '^origin$'; then
+        git remote add origin "https://github.com/$repo_full_name.git"
+    fi
     git push -u origin "${kilian_air_autogit_unicornmoose_303_temp_global[set303j]:-master}"
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
@@ -367,9 +373,9 @@ EOL
 fetch_github_token
 read_kigit_config
 change_ownership
-handle_repository
 setup_git
 ensure_branch
+handle_repository
 update_files
 sync_repo
 create_html_page
