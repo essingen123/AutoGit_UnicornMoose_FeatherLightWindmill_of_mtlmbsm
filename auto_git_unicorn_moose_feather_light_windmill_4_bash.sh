@@ -315,21 +315,21 @@ _create_html_file() {
     local readme_path=$1
     local html_file=$2
 
-    if [[ -f "$readme_path" ]]; then
-        python3 -c "
-            import os
-            import markdown
-            with open('$readme_path', 'r') as f, open('$html_file', 'w') as h:
-                h.write(f\"<html><head><title>{kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
-                print('$html_file created successfully.')
-        " &&
-        git add "$html_file" &&
-        git commit -m "Create $html_file" ||
-        true
-        fun_echo "$html_file has been created!" "🌐" 35
-    else
-        fun_echo "README.md not found. Cannot create $html_file." "🚫" 31
-    fi
+if [[ -f "$readme_path" ]]; then
+python3 -c "
+import os
+import markdown
+with open('$readme_path', 'r') as f, open('$html_file', 'w') as h:
+    h.write(f\"<html><head><title>{kilian_air_autogit_unicornmoose_303_temp_global[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
+    print('$html_file created successfully.')
+" &&
+git add "$html_file" &&
+git commit -m "Create $html_file" ||
+true
+fun_echo "$html_file has been created!" "🌐" 35
+else
+fun_echo "README.md not found. Cannot create $html_file." "🚫" 31
+fi
 }
 
 
