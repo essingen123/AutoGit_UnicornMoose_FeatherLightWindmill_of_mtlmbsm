@@ -297,7 +297,6 @@ update_repo() {
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
 
-
 # Ensure the correct branch with style
 ensure_branch() {
     local branch=${autogit_global_a[set303j]:-master}
