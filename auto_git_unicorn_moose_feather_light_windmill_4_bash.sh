@@ -262,29 +262,6 @@ update_repo() {
     done
     fun_echo "Updated GitHub repository topics" "🏷️" 33
 
-    # Fetch and update local config if not forced
-    local repo_data
-    repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics[].name | join(","))')
-    IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
-
-    # Debug statements to check fetched values
-    fun_echo "Fetched description: $fetched_description" "🔍" 33
-    fun_echo "Fetched homepage: $fetched_homepage" "🔍" 33
-    fun_echo "Fetched topics: $fetched_topics" "🔍" 33
-
-    # Only update local config if the fetched values are not empty and not forced
-    if [[ -n "$fetched_description" && ${autogit_global_a[set303f]} != force:* ]]; then
-        autogit_global_a[set303f]=$fetched_description
-    fi
-    if [[ -n "$fetched_homepage" && ${autogit_global_a[set303g]} != force:* ]]; then
-        autogit_global_a[set303g]=$fetched_homepage
-    fi
-    if [[ -n "$fetched_topics" && ${autogit_global_a[set303e]} != force:* ]]; then
-        autogit_global_a[set303e]=$fetched_topics
-    fi
-
-    fun_echo "Local configuration updated with remote data" "🔄" 33
-
     # Ensure the local branch is up-to-date with the remote branch
     local branch=${autogit_global_a[set303j]:-master}
     git pull origin "$branch" --allow-unrelated-histories
@@ -294,7 +271,7 @@ update_repo() {
     fi
 
     # Push the latest changes to the remote branch
-    git push origin "$branch"
+    git push origin "$branch" --force
     if [[ $? -ne 0 ]]; then
         fun_echo "Failed to push the latest changes to the remote branch. Please check the branch and try again." "⚠️" 33
         exit 1
@@ -302,6 +279,7 @@ update_repo() {
 
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
+
 
 
 # Ensure the correct branch with style
