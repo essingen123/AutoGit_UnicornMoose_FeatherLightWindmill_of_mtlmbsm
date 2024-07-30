@@ -1,0 +1,27 @@
+# config file (kigit.txt)
+#Update(💡)
+set303a=
+#Verbose
+set303i=
+#reponame(a new name makes a new repo, empty for this folders paths name)
+set303b=
+#public
+set303c=
+#gen html page
+set303d=
+#tags
+set303e=
+#desc
+set303f=
+#website
+set303g=
+#GithubPartywebpageLink
+set303h=
+#Branch (a new name makes a new branch)
+set303j=
+#autocommit message ~date ~data is auto generating relevant things
+set303k=
+# Change ownership of all files to current user
+set303l=
+
+# DONT EDIT OUT THIS LAST LINE
