@@ -1,14 +1,14 @@
 # config file (kigit.txt)
 #Update(💡)
-set303a=y
+set303a=
 #Verbose
-set303i=y
+set303i=
 #reponame(a new name makes a new repo, empty for this folders paths name)
-set303b=AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm3
+set303b=
 #public
-set303c=n
+set303c=
 #gen html page
-set303d=y
+set303d=
 #tags
 set303e=
 #desc
@@ -16,12 +16,12 @@ set303f=
 #website
 set303g=
 #GithubPartywebpageLink
-set303h=index.html
+set303h=
 #Branch (a new name makes a new branch)
-set303j=master
+set303j=
 #autocommit message ~date ~data is auto generating relevant things
-set303k=Automated ~date ~data
+set303k=
 # Change ownership of all files to current user
-set303l=n
+set303l=
 
 # DONT EDIT OUT THIS LAST LINE
