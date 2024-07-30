@@ -267,6 +267,23 @@ update_repo() {
     fi
 
     fun_echo "Local configuration updated with remote data" "🔄" 33
+
+    # Ensure the local branch is up-to-date with the remote branch
+    local branch=${autogit_global_a[set303j]:-master}
+    git pull origin "$branch"
+    if [[ $? -ne 0 ]]; then
+        fun_echo "Failed to pull the latest changes from the remote branch. Please resolve conflicts and try again." "⚠️" 33
+        exit 1
+    fi
+
+    # Push the latest changes to the remote branch
+    git push origin "$branch"
+    if [[ $? -ne 0 ]]; then
+        fun_echo "Failed to push the latest changes to the remote branch. Please check the branch and try again." "⚠️" 33
+        exit 1
+    fi
+
+    fun_echo "Changes synced with GitHub!" "🌍" 32
 }
 
 # Ensure the correct branch with style
