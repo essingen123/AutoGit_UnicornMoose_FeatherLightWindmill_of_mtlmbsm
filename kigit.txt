@@ -17,10 +17,10 @@ set303c=n
 set303d=y
 
 # 🗑️ tags, separated by commas
-set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
+set303e=
 
 # 📝 description
-set303f=A work in progress with automation testing for Git leveraging python, bash etc
+set303f=
 
 # 🌐 website URL
 set303g=
