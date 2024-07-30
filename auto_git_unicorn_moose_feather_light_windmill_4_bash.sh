@@ -250,9 +250,21 @@ update_repo() {
     repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics[].name | join(","))')
     IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
 
-    [[ ${autogit_global_a[set303f]} != force:* ]] && autogit_global_a[set303f]=$fetched_description
-    [[ ${autogit_global_a[set303g]} != force:* ]] && autogit_global_a[set303g]=$fetched_homepage
-    [[ ${autogit_global_a[set303e]} != force:* ]] && autogit_global_a[set303e]=$fetched_topics
+    # Debug statements to check fetched values
+    fun_echo "Fetched description: $fetched_description" "🔍" 33
+    fun_echo "Fetched homepage: $fetched_homepage" "🔍" 33
+    fun_echo "Fetched topics: $fetched_topics" "🔍" 33
+
+    # Only update local config if the fetched values are not empty and not forced
+    if [[ -n "$fetched_description" && ${autogit_global_a[set303f]} != force:* ]]; then
+        autogit_global_a[set303f]=$fetched_description
+    fi
+    if [[ -n "$fetched_homepage" && ${autogit_global_a[set303g]} != force:* ]]; then
+        autogit_global_a[set303g]=$fetched_homepage
+    fi
+    if [[ -n "$fetched_topics" && ${autogit_global_a[set303e]} != force:* ]]; then
+        autogit_global_a[set303e]=$fetched_topics
+    fi
 
     fun_echo "Local configuration updated with remote data" "🔄" 33
 }
