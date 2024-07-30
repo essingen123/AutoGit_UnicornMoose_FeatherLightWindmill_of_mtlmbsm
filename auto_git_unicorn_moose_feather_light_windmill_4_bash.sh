@@ -151,6 +151,7 @@ EOL
             esac
 
             autogit_global_a["$key"]="${value:-}"
+            fun_echo "Read config: $key=$value" "🔍" 33
         done < "$config_file"
         local repo_name=${autogit_global_a[set303b]}
         local owner="${GITHUB_USER:-$(git config user.name)}"
@@ -231,6 +232,11 @@ handle_repository() {
 update_repo() {
     echo "Updating GitHub repo: $repo_full_name"
 
+    # Debug statements to check values from kigit.txt
+    fun_echo "Description from kigit.txt: ${autogit_global_a[set303f]}" "🔍" 33
+    fun_echo "Homepage from kigit.txt: ${autogit_global_a[set303g]}" "🔍" 33
+    fun_echo "Topics from kigit.txt: ${autogit_global_a[set303e]}" "🔍" 33
+
     # Update repo details
     if gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]}" --homepage "${autogit_global_a[set303g]}"; then
         fun_echo "Updated GitHub repository details: $repo_name" "🔄" 33
@@ -296,6 +302,7 @@ update_repo() {
 
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
+
 
 # Ensure the correct branch with style
 ensure_branch() {
