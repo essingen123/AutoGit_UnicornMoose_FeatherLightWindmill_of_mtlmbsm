@@ -17,10 +17,10 @@ set303c=n
 set303d=y
 
 # 🗑️ tags, separated by commas
-set303e=
+set303e=Git automation
 
 # 📝 description
-set303f=
+set303f=Userful stuff
 
 # 🌐 website URL
 set303g=
