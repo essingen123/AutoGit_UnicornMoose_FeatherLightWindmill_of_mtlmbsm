@@ -238,10 +238,21 @@ update_repo() {
         fun_echo "Failed to update GitHub repository details" "⚠️" 33
     fi
 
-    # Update topics
+    # Validate and sanitize topics
     IFS=',' read -ra topics <<< "${autogit_global_a[set303e]}"
+    valid_topics=()
     for topic in "${topics[@]}"; do
-        gh repo edit "$repo_full_name" --add-topic "$(echo "$topic" | tr -d '[:space:]')"
+        sanitized_topic=$(echo "$topic" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+        if [[ $sanitized_topic =~ ^[a-z0-9][a-z0-9-]{0,49}$ ]]; then
+            valid_topics+=("$sanitized_topic")
+        else
+            fun_echo "Invalid topic: $topic. Topics must start with a lowercase letter or number, consist of 50 characters or less, and can include hyphens." "❌" 31
+        fi
+    done
+
+    # Add valid topics
+    for topic in "${valid_topics[@]}"; do
+        gh repo edit "$repo_full_name" --add-topic "$topic"
     done
     fun_echo "Updated GitHub repository topics" "🏷️" 33
 
@@ -270,7 +281,7 @@ update_repo() {
 
     # Ensure the local branch is up-to-date with the remote branch
     local branch=${autogit_global_a[set303j]:-master}
-    git pull origin "$branch"
+    git pull origin "$branch" --allow-unrelated-histories
     if [[ $? -ne 0 ]]; then
         fun_echo "Failed to pull the latest changes from the remote branch. Please resolve conflicts and try again." "⚠️" 33
         exit 1
@@ -285,6 +296,7 @@ update_repo() {
 
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
+
 
 # Ensure the correct branch with style
 ensure_branch() {
