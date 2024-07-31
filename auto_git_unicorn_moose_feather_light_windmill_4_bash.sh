@@ -262,15 +262,8 @@ update_repo() {
     done
     fun_echo "Updated GitHub repository topics" "🏷️" 33
 
-    # Ensure the local branch is up-to-date with the remote branch
-    local branch=${autogit_global_a[set303j]:-master}
-    git pull origin "$branch" --allow-unrelated-histories
-    if [[ $? -ne 0 ]]; then
-        fun_echo "Failed to pull the latest changes from the remote branch. Please resolve conflicts and try again." "⚠️" 33
-        exit 1
-    fi
-
     # Push the latest changes to the remote branch
+    local branch=${autogit_global_a[set303j]:-master}
     git push origin "$branch" --force
     if [[ $? -ne 0 ]]; then
         fun_echo "Failed to push the latest changes to the remote branch. Please check the branch and try again." "⚠️" 33
@@ -279,6 +272,7 @@ update_repo() {
 
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
+
 
 
 

@@ -11,7 +11,7 @@ set303i=y
 set303b=github_bashrc_integration_kilian
 
 # 🔒 public git, y for yes n for no, standard no
-set303c=n
+set303c=y
 
 # 📄 auto generate HTML page, y for yes and n for no
 set303d=y
