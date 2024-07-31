@@ -1,0 +1,10 @@
+# Enter files to watch (one per line):
+# Example: /path/to/file1.txt
+/home/koji/Desktop/github_bashrc_integration_kilian/auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
+/home/koji/Desktop/github_bashrc_integration_kilian/autominibackups_file_watch_config.txt
+/home/koji/Desktop/github_bashrc_integration_kilian/g_first_run.py
+/home/koji/Desktop/github_bashrc_integration_kilian/index.html
+/home/koji/Desktop/github_bashrc_integration_kilian/kigit.txt
+/home/koji/Desktop/github_bashrc_integration_kilian/kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG.txt
+/home/koji/Desktop/github_bashrc_integration_kilian/README.md
+/home/koji/Desktop/github_bashrc_integration_kilian/transp_x_auto_git_unicorn_moose_feather_light_windmill.webp

@@ -1,0 +1,5 @@
+# Enter files to watch (one per line):
+# Example: /path/to/file1.txt
+/home/koji/Desktop/github_bashrc_integration_kilian/auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
+/home/koji/Desktop/github_bashrc_integration_kilian/kigit.txt
+/home/koji/Desktop/github_bashrc_integration_kilian/README.md
