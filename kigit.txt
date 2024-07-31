@@ -20,7 +20,7 @@ set303d=y
 set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
 
 # 📝 description
-set303f=A Git DevOps tool, work in progress with automation testing for Git leveraging python, bash etc
+set303f=force:A Git DevOps tool, work in progress with automation testing for Git leveraging python, bash etc
 
 # 🌐 website URL
 set303g=
