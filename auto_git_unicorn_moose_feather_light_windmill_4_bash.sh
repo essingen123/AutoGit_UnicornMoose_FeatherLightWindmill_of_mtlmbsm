@@ -22,8 +22,8 @@ declare -gA autogit_global_a
 declare -g repo_full_name
 
 # Check for required commands and install if missing
-command -v gh > /dev/null || command -v markdown > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/ or markdown"; exit 1; }
-command -v pip > /dev/null && pip install --quiet markdown 2>/dev/null
+command -v gh > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/"; exit 1; }
+command -v pip > /dev/null && pip install markdown 2>/dev/null
 
 # Fun and colorful output with emojis
 fun_echo() { echo -e "\e[1;${3:-32}m$2 $1 \e[0m"; }
@@ -54,10 +54,7 @@ developer_mode=n
 main_script_file="auto_git_unicorn_moose_feather_light_windmill_4_bash.sh"
 YES_THIS_IS_THE_UNICORN_MOOSE_HOLY_MOLY_CORE_DIR=n
 
-if [[ ! -f "$developer_mode_file" ]]; then
-    touch "$developer_mode_file"
-    echo "kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG=false" >> "$developer_mode_file"
-else
+if [[ -f "$main_script_file" ]]; then
     source "$developer_mode_file"
     developer_mode=$(grep -E '^kigit_UNICORN_MOOSE_DEVELOPER_MODE_CONFIG=' "$developer_mode_file" | cut -d'=' -f2)
 fi
@@ -95,12 +92,50 @@ fetch_github_token() {
 
 # Read or create kigit.txt with pizzazz
 read_kigit_config() {
-    local config_file=a_STANDARD_kigit.txt
-    local script_dir=$(dirname "${BASH_SOURCE[0]}")
-    config_file=$script_dir/$config_file
+    local config_file=kigit.txt
     if [[ ! -f "$config_file" ]]; then
-        fun_echo "Creating default config file from a_STANDARD_kigit.txt..." "✨" 35
-        cp "$script_dir/a_STANDARD_kigit.txt" "$config_file"
+        cat > "$config_file" <<EOL
+# This is a config file for the auto_git_unicorn_moose_feather .. 🦄
+# File: kigit.txt
+
+# 💻 Update(💡)
+set303a=y
+
+# 💬 Verbose, output for each terminal run, y for yes and n for no
+set303i=y
+
+# 📝 git-reponame (empty for current folder name, 'random' for a random name)
+set303b=$(basename "$PWD")
+
+# 🔒 public git, y for yes n for no, standard no
+set303c=n
+
+# 📄 auto generate HTML page, y for yes and n for no
+set303d=y
+
+# 🗑️ tags, separated by commas
+set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
+
+# 📝 description
+set303f=A work in progress with automation testing for Git leveraging python, bash etc
+
+# 🌐 website URL
+set303g=
+
+# 🎉 GithubPartywebpageLink
+set303h=index.html
+
+# 🌳 Branch to commit to, 'main' or a new branch name
+set303j=master
+
+# 💬 Default commit message (use ~date and ~data for auto-generated content)
+set303k=Automated ~date ~data
+
+# 🔧 Change ownership of all files to current user
+set303l=y
+
+# DONT EDIT OUT THIS LAST LINE
+EOL
         fun_echo "Created default kigit.txt. Please edit and rerun the script." "✨" 35
         exit 0
     else
@@ -122,7 +157,7 @@ read_kigit_config() {
         local owner="${GITHUB_USER:-$(git config user.name)}"
         repo_full_name="$owner/$repo_name"
     fi
-    #declare -p autogit_global_a
+    declare -p autogit_global_a
 }
 
 # Change ownership with style
@@ -141,19 +176,32 @@ change_ownership() {
 # Setup Git repository with flair
 setup_git() {
     [[ -d .git ]] || { git init; fun_echo "Initialized a new Git repository!" "🌟" 33; }
-    local script_dir=$(dirname "${BASH_SOURCE[0]}")
-    local gitignore_file=$script_dir/a_STANDARD_gitignore.txt
     if [[ ! -f .gitignore ]]; then
-        cp "$gitignore_file" .gitignore
+        cat > .gitignore <<EOL
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.env
+build/
+dist/
+*.o
+*.exe
+*.dll
+*.so
+EOL
         git add .gitignore && git commit -m "Add .gitignore" || true
-        fun_echo "Created and added .gitignore from a_STANDARD_gitignore.txt!" "📄" 32
+        fun_echo "Created and added .gitignore!" "📄" 32
     fi
 }
 
 
+
 # Check if repo exists
 repo_exists() {
+    echo $repo_full_name
     gh repo view "$repo_full_name" &>/dev/null
+    #exit
     return $?
 }
 
@@ -255,16 +303,23 @@ ${autogit_global_a[set303f]}
 
 Tags: ${autogit_global_a[set303e]}
 
-![Standard](standard_git.webp)
+![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)
 
-## Purpose
-- Automation
+## What is MTLMBSM? 🤔
+MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe how 
+this script simplifies and automates aspects of version control and GitHub interactions; which also serves as a filter; since if this is yet not automagically enforcing a smile near the observer, this script may not be suitable at all; almost like an admin requirement certification wise thing. 
 
 ## Features 🎉
-- Stuff
+- Automagic operation (YES, PREFERABLY even if there's an error or missing configuration, in authentic unicorn moose manners! )
+- Flexible configuration through kigit.txt
+- Repository creation & management
+- Automatic README.md & .gitignore generation etc intended
+- (Yet to be more arty) web page generative actions from README.md etc
+- Customizable commit messages (-ish)
+- And much more, and perhaps even quite differently so (not so awesome) when LLMs misinterpret the "enhance" statement!
 
 ## License 📜
-This project is licensed under a license not written here yet. 
+This project is licensed under a license not written here yet.. but sure, this has probably taken out a 100 hours of LLM discoteque ettiqeuette etc.
 EOL
         git add README.md && git commit -m "Create README.md" || true
         fun_echo "README.md has been created!" "📖" 34
