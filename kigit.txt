@@ -5,7 +5,7 @@
 set303a=y
 
 # 💬 Verbose, output for each terminal run, y for yes and n for no
-set303i=y
+set303i=n
 
 # 📝 git-reponame (empty for current folder name, 'random' for a random name)
 set303b=github_bashrc_integration_kilian
