@@ -1,0 +1,40 @@
+# This is a config file for the auto_git_unicorn_moose_feather .. 🦄
+# File: kigit.txt
+
+# 💻 Update(💡)
+set303a=y
+
+# 💬 Verbose, output for each terminal run, y for yes and n for no
+set303i=y
+
+# 📝 git-reponame (empty for current folder name, 'random' for a random name)
+set303b=$(basename "$PWD")
+
+# 🔒 public git, y for yes n for no, standard no
+set303c=n
+
+# 📄 auto generate HTML page, y for yes and n for no
+set303d=y
+
+# 🗑️ tags, separated by commas
+set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
+
+# 📝 description
+set303f=A work in progress with automation testing for Git leveraging python, bash etc
+
+# 🌐 website URL
+set303g=
+
+# 🎉 GithubPartywebpageLink
+set303h=index.html
+
+# 🌳 Branch to commit to, 'main' or a new branch name
+set303j=master
+
+# 💬 Default commit message (use ~date and ~data for auto-generated content)
+set303k=Automated ~date ~data
+
+# 🔧 Change ownership of all files to current user
+set303l=y
+
+# DONT EDIT OUT THIS LAST LINE
