@@ -6,16 +6,16 @@
 # Author: Kilian Lindberg
 # Code inspiration contributions from Bing Copilot, Mistral, Claude, OpenAI ChatGPTs, LLMS and chaos by  errors and filled context windows.
 
-note_these_works_and_maybe_not_others= '''
-#these works, maybe not others:
-gh repo view --json owner --jq '.owner.login'
-gh repo view --json name --jq '.name'
-gh repo view --json description --jq '.description'
-gh repo view --json owner,name,description --jq '.owner.login, .name, .description'
-git config --get remote.origin.url
-git rev-parse --show-toplevel | xargs basename
-git config --get user.name
-'''
+# note_these_works_and_maybe_not_others= '''
+# #these works, maybe not others:
+# gh repo view --json owner --jq '.owner.login'
+# gh repo view --json name --jq '.name'
+# gh repo view --json description --jq '.description'
+# gh repo view --json owner,name,description --jq '.owner.login, .name, .description'
+# git config --get remote.origin.url
+# git rev-parse --show-toplevel | xargs basename
+# git config --get user.name
+# '''
 
 # Declare globals
 declare -gA autogit_global_a
