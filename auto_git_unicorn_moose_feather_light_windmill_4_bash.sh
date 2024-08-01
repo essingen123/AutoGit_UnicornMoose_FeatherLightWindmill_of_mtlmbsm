@@ -304,28 +304,18 @@ update_files() {
     if [[ ! -f README.md ]]; then
         cat > README.md <<EOL
 # ${autogit_global_a[set303b]}
+<!-- ![Image](github_repo_image.webp) -->
 
+## Description 🤔
 ${autogit_global_a[set303f]}
 
 Tags: ${autogit_global_a[set303e]}
 
-![Auto Git Unicorn Moose Feather Light Windmill](auto_git_unicorn_moose_feather_light_windmill_of_mtlmbsm.webp)
-
-## What is MTLMBSM? 🤔
-MTLMBSM stands for "Meh To Less Meh But Still Meh," a humorous way to describe how 
-this script simplifies and automates aspects of version control and GitHub interactions; which also serves as a filter; since if this is yet not automagically enforcing a smile near the observer, this script may not be suitable at all; almost like an admin requirement certification wise thing. 
-
 ## Features 🎉
-- Automagic operation (YES, PREFERABLY even if there's an error or missing configuration, in authentic unicorn moose manners! )
-- Flexible configuration through kigit.txt
-- Repository creation & management
-- Automatic README.md & .gitignore generation etc intended
-- (Yet to be more arty) web page generative actions from README.md etc
-- Customizable commit messages (-ish)
-- And much more, and perhaps even quite differently so (not so awesome) when LLMs misinterpret the "enhance" statement!
+- Automagic ...
 
 ## License 📜
-This project is licensed under a license not written here yet.. but sure, this has probably taken out a 100 hours of LLM discoteque ettiqeuette etc.
+This project is licensed under a license not written here yet.. 
 EOL
         git add README.md && git commit -m "Create README.md" || true
         fun_echo "README.md has been created!" "📖" 34
@@ -350,23 +340,74 @@ sync_repo() {
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
 
-# Create HTML page if needed with pizzazz
+# # Create HTML page if needed with pizzazz
+# create_html_page() {
+#     [[ ${autogit_global_a[set303d]} =~ ^force:?[Yy]$ ]] && python3 -c "
+#     import os, markdown
+#     readme_path = 'README.md'
+#     if os.path.exists(readme_path):
+#         with open(readme_path, 'r') as f, open('${autogit_global_a[set303h]:-index.html}', 'w') as h:
+#             h.write(f\"<html><head><title>${autogit_global_a[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
+#         print('${autogit_global_a[set303h]:-index.html} created successfully.')
+#     elif os.path.exists('${autogit_global_a[set303h]:-index.html}'):
+#         echo 'HTML file already exists. Skipping creation.'
+#     else:
+#         print('README.md not found. Cannot create ${autogit_global_a[set303h]:-index.html}.')
+# " && fun_echo "HTML page created from README.md!" "🌐" 35
+# }
+
 create_html_page() {
-    [[ ${autogit_global_a[set303d]} =~ ^force:?[Yy]$ ]] && python3 -c "
-    import os, markdown
-    readme_path = 'README.md'
-    if os.path.exists(readme_path):
-        with open(readme_path, 'r') as f, open('${autogit_global_a[set303h]:-index.html}', 'w') as h:
-            h.write(f\"<html><head><title>${autogit_global_a[set303b]}</title></head><body>{markdown.markdown(f.read())}</body></html>\")
-        print('${autogit_global_a[set303h]:-index.html} created successfully.')
-    elif os.path.exists('${autogit_global_a[set303h]:-index.html}'):
-        echo 'HTML file already exists. Skipping creation.'
+    local repo_name=${autogit_global_a[set303b]}
+    local owner="${GITHUB_USER:-$(git config user.name)}"
+    local repo_full_name="$owner/$repo_name"
+    local token_file=~/.git_very_secret_and_ignored_file_token
+    local github_token
+
+    if [[ -f $token_file ]]; then
+        github_token=$(<$token_file)
+    else
+        fun_echo "GitHub token not found. Please set it in your environment variables or save it in the specified file." "❌" 31
+        return 1
+    fi
+
+    python3 -c "
+import os
+import markdown
+import requests
+import sys
+
+def create_html_page(repo_name):
+    if os.path.exists('README.md'):
+        with open('README.md', 'r') as readme_file:
+            readme_content = readme_file.read()
+        html = markdown.markdown(readme_content)
+        full_html = f\"\"\"<html><head><title>{repo_name}</title></head><body>{html}</body></html>\"\"\"
+        with open('index.html', 'w') as html_file:
+            html_file.write(full_html)
+        print('index.html created successfully.')
     else:
-        print('README.md not found. Cannot create ${autogit_global_a[set303h]:-index.html}.')
-" && fun_echo "HTML page created from README.md!" "🌐" 35
+        print('README.md not found.')
+
+def check_github_pages(repo_name, token):
+    headers = {'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'}
+    response = requests.get(f'https://api.github.com/repos/{repo_name}/pages', headers=headers)
+    if response.status_code == 404:
+        setup_github_pages(repo_name, token)
+
+def setup_github_pages(repo_name, token):
+    headers = {'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'}
+    data = {'source': {'branch': 'master', 'path': '/'}}
+    response = requests.post(f'https://api.github.com/repos/{repo_name}/pages', headers=headers, json=data)
+    if response.status_code == 201:
+        print('GitHub Pages has been set up.')
+    else:
+        print('Failed to set up GitHub Pages.')
+
+create_html_page('${repo_full_name}')
+check_github_pages('${repo_full_name}', '${github_token}')
+" &&
+    fun_echo "HTML page created from README.md!" "" 35
 }
-
-
 # Update kigit.txt with current settings
 update_kigit_txt() {
     local config_file=kigit.txt
