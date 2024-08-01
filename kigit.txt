@@ -21,7 +21,7 @@ set303d=y
 set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
 
 # 📝 description
-set303f=DevOps Life simplification step alpha 0.0001 ;-)
+set303f=DevOps Automation mini GitHub & Git sync
 
 # 🌐 website URL
 set303g=https://essingen123.github.io/AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
