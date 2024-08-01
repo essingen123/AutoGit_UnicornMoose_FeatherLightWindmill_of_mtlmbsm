@@ -358,7 +358,7 @@ EOL
 
 # Sync changes with GitHub in style
 sync_repo() {
-    local commit_msg=${autogit_global_a[set303k]//\~date/$(date '+%Y%m%d%H%i%s')}
+    local commit_msg=${autogit_global_a[set303k]//\~date/$(date '+%Y%m%d%H%M%s')}
     commit_msg=${commit_msg//\~data/$(git status --porcelain | wc -l) files changed}
     git add . && git commit -m "$commit_msg" || true
     if ! git remote | grep -q '^origin$'; then
