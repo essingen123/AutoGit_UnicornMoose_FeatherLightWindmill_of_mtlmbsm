@@ -161,6 +161,11 @@ EOL
         local repo_name=${autogit_global_a[set303b]}
         local owner="${GITHUB_USER:-$(git config user.name)}"
         repo_full_name="$owner/$repo_name"
+        # NOT SURE IF THIS IS A SMART PLACE BUT ALRIGHT:
+        homepage_githubpages_standard="https://$owner.github.io/$repo_name"
+        echo "**************";
+        echo $homepage_githubpages_standard
+        echo "**************";
     fi
     #just debug info: 
     #declare -p autogit_global_a
@@ -421,6 +426,8 @@ create_html_page('${repo_full_name}')
 check_github_pages('${repo_full_name}', '${github_token}')
 " &&
     fun_echo "HTML page created from README.md!" "" 35
+
+    
 }
 # Update kigit.txt with current settings
 update_kigit_txt() {
