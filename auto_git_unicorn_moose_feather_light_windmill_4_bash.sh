@@ -256,7 +256,7 @@ update_repo() {
   [[ ${autogit_global_a[set303f]} != force:* ]] && autogit_global_a[set303f]=$(gh repo view "$repo_full_name" --json description --jq '.description')
 
   # homepageUrl --homepage -h --homepage URL(???)
-  gh_repo_edit_field_with homepageUrl ${autogit_global_a[set303g]}
+  gh_repo_edit_field_with 'homepage URL' ${autogit_global_a[set303g]}
   [[ ${autogit_global_a[set303g]} != force:* ]] && autogit_global_a[set303g]=$(gh repo view "$repo_full_name" --json homepageUrl --jq '.homepageUrl')
 
   # Topics
