@@ -20,6 +20,7 @@
 # Declare globals
 declare -gA autogit_global_a
 declare -g repo_full_name
+declare -g homepage_githubpages_standard
 
 # Check for required commands and install if missing
 command -v gh > /dev/null || command -v markdown > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/ or markdown"; exit 1; }
@@ -125,7 +126,7 @@ set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
 set303f=A work in progress with automation testing for Git leveraging python, bash etc
 
 # 🌐 website URL
-set303g=
+set303g=$("$homepage_githubpages_standard")
 
 # 🎉 GithubPartywebpageLink
 set303h=index.html
@@ -274,6 +275,14 @@ update_repo() {
     # Validate and sanitize topics
     IFS=',' read -ra topics <<< "${autogit_global_a[set303e]}"
     valid_topics=()
+
+    local fetched_homepage=${autogit_global_a[set303g]}
+    if [[ -z $fetched_homepage ]]; then
+        if [[ ${autogit_global_a[set303g]} != force:* ]]; then
+            autogit_global_a[set303g]=$homepage_githubpages_standard
+        fi
+    fi
+
     for topic in "${topics[@]}"; do
         sanitized_topic=$(echo "$topic" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
         if [[ $sanitized_topic =~ ^[a-z0-9][a-z0-9-]{0,49}$ ]]; then
