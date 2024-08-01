@@ -18,10 +18,10 @@ set303c=y
 set303d=y
 
 # 🗑️ tags, separated by commas
-set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
+set303e=
 
 # 📝 description
-set303f=DevOps Automation mini GitHub & Git sync
+set303f=DevOps
 
 # 🌐 website URL
 set303g=https://essingen123.github.io/AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm

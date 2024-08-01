@@ -256,11 +256,11 @@ update_repo() {
   [[ ${autogit_global_a[set303f]} != force:* ]] && autogit_global_a[set303f]=$(gh repo view "$repo_full_name" --json description --jq '.description')
 
   # homepageUrl --homepage -h --homepage URL(???)
-  gh_repo_edit_field_with homepage ${autogit_global_a[set303g]}
+  gh_repo_edit_field_with homepageUrl ${autogit_global_a[set303g]}
   [[ ${autogit_global_a[set303g]} != force:* ]] && autogit_global_a[set303g]=$(gh repo view "$repo_full_name" --json homepageUrl --jq '.homepageUrl')
 
   # Topics
-  gh_repo_edit_field_with topics ${autogit_global_a[set303e]//,/ --add-topic }
+  gh_repo_edit_field_with add-topics ${autogit_global_a[set303e]//,/ --add-topic }
   [[ ${autogit_global_a[set303e]} != force:* ]] && autogit_global_a[set303e]=$(gh repo view "$repo_full_name" --json repositoryTopics --jq '.repositoryTopics | join(",")')
 
   # Fetch and update local config if not forced
