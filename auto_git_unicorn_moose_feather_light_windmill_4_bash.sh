@@ -246,24 +246,21 @@ update_repo() {
   fun_echo "Updating GitHub repository: $repo_full_name" "🔄" 33
   fun_echo "Repository AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm already exists. Updating..." 
 
-    # Description
-  gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]}"
+  # Description
+  gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]#force:}"
   fun_echo "Updated GitHub repository description: $repo_name" "🔄" 33
-  [[ ${autogit_global_a[set303f]} != force:* ]] && autogit_global_a[set303f]=$(gh repo view "$repo_full_name" --json description --jq '.description')
 
   # Homepage
-  gh repo edit "$repo_full_name" --homepage "${autogit_global_a[set303g]}"
+  gh repo edit "$repo_full_name" --homepage "${autogit_global_a[set303g]#force:}"
   fun_echo "Updated GitHub repository homepage: $repo_name" "🔄" 33
-  [[ ${autogit_global_a[set303g]} != force:* ]] && autogit_global_a[set303g]=$(gh repo view "$repo_full_name" --json homepageUrl --jq '.homepageUrl')
 
   # Topics
-  gh repo edit "$repo_full_name" ${autogit_global_a[set303e]//,/ --add-topic }
-  fun_echo "Updated GitHub repository topics: $repo_name" "🔄" 33
-  [[ ${autogit_global_a[set303e]} != force:* ]] && autogit_global_a[set303e]=$(gh repo view "$repo_full_name" --json repositoryTopics --jq '.repositoryTopics | join(",")')
+  if [[ -n ${autogit_global_a[set303e]} ]]; then
+    gh repo edit "$repo_full_name" ${autogit_global_a[set303e]#force://,/ --add-topic }
+    fun_echo "Updated GitHub repository topics: $repo_name" "🔄" 33
+  fi
 
-
-
-    # Fetch and update local config if not forced
+  # Fetch and update local config if not forced
   local repo_data
   repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
   IFS='|||' read -r fetched_description fetched_homepageUrl fetched_topics <<< "$repo_data"
@@ -304,7 +301,6 @@ update_repo() {
   fun_echo "Changes synced with GitHub!" "🌍" 32
   return 0
 }
-
 
 # Ensure the correct branch with style
 ensure_branch() {
