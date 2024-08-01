@@ -20,7 +20,7 @@
 # Declare globals
 declare -gA autogit_global_a
 declare -g repo_full_name
-declare -g homepage_githubpages_standard
+declare -g homepageUrl_githubpages_standard
 
 # Check for required commands and install if missing
 command -v gh > /dev/null || command -v markdown > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/ or markdown"; exit 1; }
@@ -126,7 +126,7 @@ set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
 set303f=A work in progress with automation testing for Git leveraging python, bash etc
 
 # 🌐 website URL
-set303g=$("$homepage_githubpages_standard")
+set303g=$("$homepageUrl_githubpages_standard")
 
 # 🎉 GithubPartywebpageLink
 set303h=index.html
@@ -163,9 +163,9 @@ EOL
         local owner="${GITHUB_USER:-$(git config user.name)}"
         repo_full_name="$owner/$repo_name"
         # NOT SURE IF THIS IS A SMART PLACE BUT ALRIGHT:
-        homepage_githubpages_standard="https://$owner.github.io/$repo_name"
+        homepageUrl_githubpages_standard="https://$owner.github.io/$repo_name"
         echo "**************";
-        echo $homepage_githubpages_standard
+        echo $homepageUrl_githubpages_standard
         echo "**************";
     fi
     #just debug info: 
@@ -232,7 +232,7 @@ handle_repository() {
         update_repo
     else
         fun_echo "Creating new repository: $repo_name" "🚀" 32
-        if gh repo create "${repo_full_name}" ${visibility} --description "${autogit_global_a[set303f]}" --homepage "${autogit_global_a[set303g]}"; then
+        if gh repo create "${repo_full_name}" ${visibility} --description "${autogit_global_a[set303f]}" --h "${autogit_global_a[set303g]}"; then
             fun_echo "Created GitHub repository: $repo_name" "🚀" 32
             git remote add origin "https://github.com/${repo_full_name}.git"
             update_repo
@@ -244,69 +244,65 @@ handle_repository() {
 }
 
 update_repo() {
-    echo "Updating GitHub repo: $repo_full_name"
+  fun_echo "Updating GitHub repository: $repo_full_name" "🔄" 33
 
-    # Debug statements to check values from kigit.txt
-    fun_echo "Description from kigit.txt: ${autogit_global_a[set303f]}" "🔍" 33
-    fun_echo "Homepage from kigit.txt: ${autogit_global_a[set303g]}" "🔍" 33
-    fun_echo "Topics from kigit.txt: ${autogit_global_a[set303e]}" "🔍" 33
+  gh_repo_edit_field_with() { 
+    fun_echo "Updating GitHub repository $repo_name field $1 with $2" "🔄" 33
+    local f=$1; local v=$2; [[ -n $v ]] && gh repo edit "$repo_full_name" --$f "$v" && fun_echo "Updated GitHub repository $f: $repo_name" "🔄" 33 && repo_data=$(gh repo view "$repo_full_name" --json $f --jq ".$f") && [[ $v != force:* ]] && v=$repo_data; 
+  }
 
-    if gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]}" --homepage "${autogit_global_a[set303g]}" --add-topic "${autogit_global_a[set303e]//,/ --add-topic }"; then
-        fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
+  # Description
+  gh_repo_edit_field_with description ${autogit_global_a[set303f]}
+  [[ ${autogit_global_a[set303f]} != force:* ]] && autogit_global_a[set303f]=$(gh repo view "$repo_full_name" --json description --jq '.description')
 
-        # Fetch and update local config if not forced
-        local repo_data
-        repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
-        IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
+  # homepageUrl --homepage -h --homepage URL(???)
+  gh_repo_edit_field_with homepage ${autogit_global_a[set303g]}
+  [[ ${autogit_global_a[set303g]} != force:* ]] && autogit_global_a[set303g]=$(gh repo view "$repo_full_name" --json homepageUrl --jq '.homepageUrl')
 
-        [[ ${autogit_global_a[set303f]} != force:* ]] && autogit_global_a[set303f]=$fetched_description
-        [[ ${autogit_global_a[set303g]} != force:* ]] && autogit_global_a[set303g]=$fetched_homepage
-        [[ ${autogit_global_a[set303e]} != force:* ]] && autogit_global_a[set303e]=$fetched_topics
+  # Topics
+  gh_repo_edit_field_with topics ${autogit_global_a[set303e]//,/ --add-topic }
+  [[ ${autogit_global_a[set303e]} != force:* ]] && autogit_global_a[set303e]=$(gh repo view "$repo_full_name" --json repositoryTopics --jq '.repositoryTopics | join(",")')
+
+  # Fetch and update local config if not forced
+  local repo_data
+  repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
+  IFS='|||' read -r fetched_description fetched_homepageUrl fetched_topics <<< "$repo_data"
+
+  # Validate and sanitize topics
+  IFS=',' read -ra topics <<< "${autogit_global_a[set303e]}"
+  valid_topics=()
+
+  local fetched_homepageUrl=${autogit_global_a[set303g]}
+  if [[ -z $fetched_homepageUrl ]]; then
+    if [[ ${autogit_global_a[set303g]} != force:* ]]; then
+      autogit_global_a[set303g]=$homepageUrl_githubpages_standard
+    fi
+  fi
+
+  for topic in "${topics[@]}"; do
+    sanitized_topic=$(echo "$topic" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+    if [[ $sanitized_topic =~ ^[a-z0-9][a-z0-9-]{0,49}$ ]]; then
+      valid_topics+=("$sanitized_topic")
     else
-        fun_echo "Failed to update GitHub repository" "❌" 31
+      fun_echo "Invalid topic: $topic. Topics must start with a lowercase letter or number, consist of 50 characters or less, and can include hyphens." "❌" 31
     fi
-    # Update repo details
-    if gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]}" --homepage "${autogit_global_a[set303g]}"; then
-        fun_echo "Updated GitHub repository details: $repo_name" "🔄" 33
-    else
-        fun_echo "Failed to update GitHub repository details" "⚠️" 33
-    fi
+  done
 
-    # Validate and sanitize topics
-    IFS=',' read -ra topics <<< "${autogit_global_a[set303e]}"
-    valid_topics=()
+  # Add valid topics
+  for topic in "${valid_topics[@]}"; do
+    gh repo edit "$repo_full_name" --add-topic "$topic"
+  done
+  fun_echo "Updated GitHub repository topics" "🏷️" 33
 
-    local fetched_homepage=${autogit_global_a[set303g]}
-    if [[ -z $fetched_homepage ]]; then
-        if [[ ${autogit_global_a[set303g]} != force:* ]]; then
-            autogit_global_a[set303g]=$homepage_githubpages_standard
-        fi
-    fi
-
-    for topic in "${topics[@]}"; do
-        sanitized_topic=$(echo "$topic" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
-        if [[ $sanitized_topic =~ ^[a-z0-9][a-z0-9-]{0,49}$ ]]; then
-            valid_topics+=("$sanitized_topic")
-        else
-            fun_echo "Invalid topic: $topic. Topics must start with a lowercase letter or number, consist of 50 characters or less, and can include hyphens." "❌" 31
-        fi
-    done
-
-    # Add valid topics
-    for topic in "${valid_topics[@]}"; do
-        gh repo edit "$repo_full_name" --add-topic "$topic"
-    done
-    fun_echo "Updated GitHub repository topics" "🏷️" 33
-
-    # Push the latest changes to the remote branch
-    local branch=${autogit_global_a[set303j]:-main}
-    git push origin "$branch" --force
-    if [[ $? -ne 0 ]]; then
-        fun_echo "Failed to push the latest changes to the remote branch. Please check the branch and try again." "⚠️" 33
-        exit 1
-    fi
-
-    fun_echo "Changes synced with GitHub!" "🌍" 32
+  # Push the latest changes to the remote branch
+  local branch=${autogit_global_a[set303j]:-main}
+  git push origin "$branch" --force
+  if [[ $? -ne 0 ]]; then
+    fun_echo "Failed to push the latest changes to the remote branch. Please check the branch and try again." "⚠️" 33
+    exit 1
+  fi
+  fun_echo "Changes synced with GitHub!" "🌍" 32
+  return 0
 }
 
 
