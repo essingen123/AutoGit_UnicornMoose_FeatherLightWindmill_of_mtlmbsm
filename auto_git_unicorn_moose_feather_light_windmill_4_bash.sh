@@ -245,12 +245,35 @@ update_repo() {
     fun_echo "Homepage from kigit.txt: ${autogit_global_a[set303g]}" "🔍" 33
     fun_echo "Topics from kigit.txt: ${autogit_global_a[set303e]}" "🔍" 33
 
+
     # Update repo details
     if gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]}" --homepage "${autogit_global_a[set303g]}"; then
         fun_echo "Updated GitHub repository details: $repo_name" "🔄" 33
     else
         fun_echo "Failed to update GitHub repository details" "⚠️" 33
     fi
+
+
+    
+    echo "Updating GitHub repo: $repo_full_name"
+
+    if gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]}" --homepage "${autogit_global_a[set303g]}" --add-topic "${autogit_global_a[set303e]//,/ --add-topic }"; then
+        fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
+
+        # Fetch and update local config if not forced
+        local repo_data
+        repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
+        IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
+
+        [[ ${autogit_global_a[set303f]} != force:* ]] && autogit_global_a[set303f]=$fetched_description
+        [[ ${autogit_global_a[set303g]} != force:* ]] && autogit_global_a[set303g]=$fetched_homepage
+        [[ ${autogit_global_a[set303e]} != force:* ]] && autogit_global_a[set303e]=$fetched_topics
+    else
+        fun_echo "Failed to update GitHub repository" "❌" 31
+    fi
+
+
+
 
     # Validate and sanitize topics
     IFS=',' read -ra topics <<< "${autogit_global_a[set303e]}"

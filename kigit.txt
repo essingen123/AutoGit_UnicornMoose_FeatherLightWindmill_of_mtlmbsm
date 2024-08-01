@@ -8,7 +8,8 @@ set303a=y
 set303i=y
 
 # 📝 git-reponame (empty for current folder name, 'random' for a random name)
-set303b=AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm3
+set303b=AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm
+#set303b=AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm3
 
 # 🔒 public git, y for yes n for no, standard no
 set303c=y
