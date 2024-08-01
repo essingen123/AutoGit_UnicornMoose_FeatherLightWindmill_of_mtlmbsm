@@ -132,7 +132,7 @@ set303g=$("$homepage_githubpages_standard")
 set303h=index.html
 
 # 🌳 Branch to commit to, 'main' or a new branch name
-set303j=master
+set303j=main
 
 # 💬 Default commit message (use ~date and ~data for auto-generated content)
 set303k=Automated ~date ~data
@@ -251,20 +251,20 @@ update_repo() {
     fun_echo "Homepage from kigit.txt: ${autogit_global_a[set303g]}" "🔍" 33
     fun_echo "Topics from kigit.txt: ${autogit_global_a[set303e]}" "🔍" 33
 
-    # if gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]}" --homepage "${autogit_global_a[set303g]}" --add-topic "${autogit_global_a[set303e]//,/ --add-topic }"; then
-    #     fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
+    if gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]}" --homepage "${autogit_global_a[set303g]}" --add-topic "${autogit_global_a[set303e]//,/ --add-topic }"; then
+        fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
 
-    #     # Fetch and update local config if not forced
-    #     local repo_data
-    #     repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
-    #     IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
+        # Fetch and update local config if not forced
+        local repo_data
+        repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
+        IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
 
-    #     [[ ${autogit_global_a[set303f]} != force:* ]] && autogit_global_a[set303f]=$fetched_description
-    #     [[ ${autogit_global_a[set303g]} != force:* ]] && autogit_global_a[set303g]=$fetched_homepage
-    #     [[ ${autogit_global_a[set303e]} != force:* ]] && autogit_global_a[set303e]=$fetched_topics
-    # else
-    #     fun_echo "Failed to update GitHub repository" "❌" 31
-    # fi
+        [[ ${autogit_global_a[set303f]} != force:* ]] && autogit_global_a[set303f]=$fetched_description
+        [[ ${autogit_global_a[set303g]} != force:* ]] && autogit_global_a[set303g]=$fetched_homepage
+        [[ ${autogit_global_a[set303e]} != force:* ]] && autogit_global_a[set303e]=$fetched_topics
+    else
+        fun_echo "Failed to update GitHub repository" "❌" 31
+    fi
     # Update repo details
     if gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]}" --homepage "${autogit_global_a[set303g]}"; then
         fun_echo "Updated GitHub repository details: $repo_name" "🔄" 33
@@ -299,7 +299,7 @@ update_repo() {
     fun_echo "Updated GitHub repository topics" "🏷️" 33
 
     # Push the latest changes to the remote branch
-    local branch=${autogit_global_a[set303j]:-master}
+    local branch=${autogit_global_a[set303j]:-main}
     git push origin "$branch" --force
     if [[ $? -ne 0 ]]; then
         fun_echo "Failed to push the latest changes to the remote branch. Please check the branch and try again." "⚠️" 33
@@ -314,7 +314,7 @@ update_repo() {
 
 # Ensure the correct branch with style
 ensure_branch() {
-    local branch=${autogit_global_a[set303j]:-master}
+    local branch=${autogit_global_a[set303j]:-main}
     if ! git rev-parse --verify "$branch" &>/dev/null; then
         git checkout -b "$branch"
         fun_echo "Created and switched to new branch: $branch" "🌿" 32
@@ -364,7 +364,7 @@ sync_repo() {
     if ! git remote | grep -q '^origin$'; then
         git remote add origin "https://github.com/$repo_full_name.git"
     fi
-    git push -u origin "${autogit_global_a[set303j]:-master}"
+    git push -u origin "${autogit_global_a[set303j]:-main}"
     fun_echo "Changes synced with GitHub!" "🌍" 32
 }
 
@@ -424,7 +424,7 @@ def check_github_pages(repo_name, token):
 
 def setup_github_pages(repo_name, token):
     headers = {'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'}
-    data = {'source': {'branch': 'master', 'path': '/'}}
+    data = {'source': {'branch': 'main', 'path': '/'}}
     response = requests.post(f'https://api.github.com/repos/{repo_name}/pages', headers=headers, json=data)
     if response.status_code == 201:
         print('GitHub Pages has been set up.')
