@@ -18,7 +18,7 @@ set303c=y
 set303d=y
 
 # 🗑️ tags, separated by commas
-set303e=
+set303e=Git, Automation, Unicorn
 
 # 📝 description
 set303f=DevOps

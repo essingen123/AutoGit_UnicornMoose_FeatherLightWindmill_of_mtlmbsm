@@ -306,8 +306,6 @@ update_repo() {
 }
 
 
-
-
 # Ensure the correct branch with style
 ensure_branch() {
     local branch=${autogit_global_a[set303j]:-main}
