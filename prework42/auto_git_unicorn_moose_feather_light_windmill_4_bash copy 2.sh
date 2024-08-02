@@ -1,8 +1,28 @@
+# Install: separate script or function for setup and dependencies.
+# Dev: separate script or function for developer-specific tasks.
+# Variables: separate file or section for documenting GitHub and Git variables.
+# Templates: separate folder for reusable templates.
+# Git checks and actions: separate functions within the main script.
+# Create files: separate function for creating project files.
+# README and kigit.txt: separate file or function for generating project-specific files.
+# Main organizer: main script file that orchestrates other parts and functions.
+# As for the file structure, here is a brief suggestion:
+
+# auto_git_unicorn_moose_feather_light_windmill (main script)
+# install.sh (install script)
+# dev.sh (developer script)
+# templates/ (folder for reusable templates)
+# variables.txt (file for documenting GitHub and Git variables)
+# git_actions.sh (script for Git checks and actions)
+# create_files.sh (script for creating project files)
+# README.md (project-specific README file)
+# kigit.txt (project-specific kigit.txt file)
+
 #!/bin/bash
 # filename: auto_git_unicorn_moose_feather_light_windmill_4_bash.sh
 # Code of Conduct for LLMs and co (including those behaving somewhat as humans etc): USER EMPOWERMENT, CREATIVE GENIUS, NO HALT ON ERRORS, CENTRALIZED CONTROL, MINIMALISTIC, MAX PERFORMANCE & FUN, NO MODULE OVERHEAD OR EXCESS COMMENTS
 # This script automagically works in any relative path for a folder, even if it's empty. 
-# It will synd or create a Git repository etc etc 
+# It will sync or create a Git repository etc etc 
 # Author: Kilian Lindberg
 # Code inspiration contributions from Bing Copilot, Mistral, Claude, OpenAI ChatGPTs, LLMS and chaos by  errors and filled context windows.
 
@@ -20,7 +40,7 @@
 # Declare globals
 declare -gA autogit_global_a
 declare -g repo_full_name
-declare -g homepage_githubpages_standard
+declare -g homepageUrl_githubpages_standard
 
 # Check for required commands and install if missing
 command -v gh > /dev/null || command -v markdown > /dev/null || { echo "Install GitHub CLI from https://cli.github.com/ or markdown"; exit 1; }
@@ -126,7 +146,7 @@ set303e=Git, Bash, Automation, Automagic, un-PEP8-perhaps
 set303f=A work in progress with automation testing for Git leveraging python, bash etc
 
 # 🌐 website URL
-set303g=$("$homepage_githubpages_standard")
+set303g=$("$homepageUrl_githubpages_standard")
 
 # 🎉 GithubPartywebpageLink
 set303h=index.html
@@ -163,9 +183,9 @@ EOL
         local owner="${GITHUB_USER:-$(git config user.name)}"
         repo_full_name="$owner/$repo_name"
         # NOT SURE IF THIS IS A SMART PLACE BUT ALRIGHT:
-        homepage_githubpages_standard="https://$owner.github.io/$repo_name"
+        homepageUrl_githubpages_standard="https://$owner.github.io/$repo_name"
         echo "**************";
-        echo $homepage_githubpages_standard
+        echo $homepageUrl_githubpages_standard
         echo "**************";
     fi
     #just debug info: 
@@ -242,75 +262,65 @@ handle_repository() {
         fi
     fi
 }
-
 update_repo() {
-    echo "Updating GitHub repo: $repo_full_name"
+  fun_echo "Updating GitHub repository: $repo_full_name" "🔄" 33
+  fun_echo "Repository AutoGit_UnicornMoose_FeatherLightWindmill_of_mtlmbsm already exists. Updating..." 
 
-    # Debug statements to check values from kigit.txt
-    fun_echo "Description from kigit.txt set303f: ${autogit_global_a[set303f]}" "🔍" 33
-    fun_echo "Homepage from kigit.txt set303g ${autogit_global_a[set303g]}" "🔍" 33
-    fun_echo "Topics from kigit.txt set303e: ${autogit_global_a[set303e]}" "🔍" 33
+  # Description
+  gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]#force:}"
+  fun_echo "Updated GitHub repository description: $repo_name" "🔄" 33
 
-    if gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]}" --homepage "${autogit_global_a[set303g]}" --add-topic "${autogit_global_a[set303e]//,/ --add-topic }"; then
-        fun_echo "Updated GitHub repository: $repo_name" "🔄" 33
+  # Homepage
+  gh repo edit "$repo_full_name" --homepage "${autogit_global_a[set303g]#force:}"
+  fun_echo "Updated GitHub repository homepage: $repo_name" "🔄" 33
 
-        # Fetch and update local config if not forced
-        local repo_data
-        repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
-        IFS='|||' read -r fetched_description fetched_homepage fetched_topics <<< "$repo_data"
+  # Topics
+  if [[ -n ${autogit_global_a[set303e]} ]]; then
+    gh repo edit "$repo_full_name" ${autogit_global_a[set303e]#force://,/ --add-topic }
+    fun_echo "Updated GitHub repository topics: $repo_name" "🔄" 33
+  fi
 
-        [[ ${autogit_global_a[set303f]} != force:* ]] && autogit_global_a[set303f]=$fetched_description
-        [[ ${autogit_global_a[set303g]} != force:* ]] && autogit_global_a[set303g]=$fetched_homepage
-        [[ ${autogit_global_a[set303e]} != force:* ]] && autogit_global_a[set303e]=$fetched_topics
+  # Fetch and update local config if not forced
+  local repo_data
+  repo_data=$(gh repo view "$repo_full_name" --json description,homepageUrl,repositoryTopics --jq '.description + "|||" + .homepageUrl + "|||" + (.repositoryTopics | join(","))')
+  IFS='|||' read -r fetched_description fetched_homepageUrl fetched_topics <<< "$repo_data"
+
+  # Validate and sanitize topics
+  IFS=',' read -ra topics <<< "${autogit_global_a[set303e]}"
+  valid_topics=()
+
+  local fetched_homepageUrl=${autogit_global_a[set303g]}
+  if [[ -z $fetched_homepageUrl ]]; then
+    if [[ ${autogit_global_a[set303g]} != force:* ]]; then
+      autogit_global_a[set303g]=$homepageUrl_githubpages_standard
+    fi
+  fi
+
+  for topic in "${topics[@]}"; do
+    sanitized_topic=$(echo "$topic" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+    if [[ $sanitized_topic =~ ^[a-z0-9][a-z0-9-]{0,49}$ ]]; then
+      valid_topics+=("$sanitized_topic")
     else
-        fun_echo "Failed to update GitHub repository" "❌" 31
+      fun_echo "Invalid topic: $topic. Topics must start with a lowercase letter or number, consist of 50 characters or less, and can include hyphens." "❌" 31
     fi
-    # Update repo details
-    if gh repo edit "$repo_full_name" --description "${autogit_global_a[set303f]}" --homepage "${autogit_global_a[set303g]}"; then
-        fun_echo "Updated GitHub repository details: $repo_name" "🔄" 33
-    else
-        fun_echo "Failed to update GitHub repository details" "⚠️" 33
-    fi
+  done
 
-    # Validate and sanitize topics
-    IFS=',' read -ra topics <<< "${autogit_global_a[set303e]}"
-    valid_topics=()
+  # Add valid topics
+  for topic in "${valid_topics[@]}"; do
+    gh repo edit "$repo_full_name" --add-topic "$topic"
+  done
+  fun_echo "Updated GitHub repository topics" "🏷️" 33
 
-    local fetched_homepage=${autogit_global_a[set303g]}
-    if [[ -z $fetched_homepage ]]; then
-        if [[ ${autogit_global_a[set303g]} != force:* ]]; then
-            autogit_global_a[set303g]=$homepage_githubpages_standard
-        fi
-    fi
-
-    for topic in "${topics[@]}"; do
-        sanitized_topic=$(echo "$topic" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
-        if [[ $sanitized_topic =~ ^[a-z0-9][a-z0-9-]{0,49}$ ]]; then
-            valid_topics+=("$sanitized_topic")
-        else
-            fun_echo "Invalid topic: $topic. Topics must start with a lowercase letter or number, consist of 50 characters or less, and can include hyphens." "❌" 31
-        fi
-    done
-
-    # Add valid topics
-    for topic in "${valid_topics[@]}"; do
-        gh repo edit "$repo_full_name" --add-topic "$topic"
-    done
-    fun_echo "Updated GitHub repository topics" "🏷️" 33
-
-    # Push the latest changes to the remote branch
-    local branch=${autogit_global_a[set303j]:-main}
-    git push origin "$branch" --force
-    if [[ $? -ne 0 ]]; then
-        fun_echo "Failed to push the latest changes to the remote branch. Please check the branch and try again." "⚠️" 33
-        exit 1
-    fi
-
-    fun_echo "Changes synced with GitHub!" "🌍" 32
+  # Push the latest changes to the remote branch
+  local branch=${autogit_global_a[set303j]:-main}
+  git push origin "$branch" --force
+  if [[ $? -ne 0 ]]; then
+    fun_echo "Failed to push the latest changes to the remote branch. Please check the branch and try again." "⚠️" 33
+    exit 1
+  fi
+  fun_echo "Changes synced with GitHub!" "🌍" 32
+  return 0
 }
-
-
-
 
 # Ensure the correct branch with style
 ensure_branch() {
@@ -501,3 +511,7 @@ create_g_first_run
 fun_echo "Script executed successfully! Have a magical day! 🌈✨" "🎉" 36
 # Cleanup and unset global array at the end of the script
 unset autogit_global_a
+
+
+print("REVERSE THE RUN WITH:")
+print("rm -r .git && rm kigit.txt && rm .gitignore")
