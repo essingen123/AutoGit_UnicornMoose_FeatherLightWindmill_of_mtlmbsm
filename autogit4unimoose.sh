@@ -513,5 +513,5 @@ fun_echo "Script executed successfully! Have a magical day! 🌈✨" "🎉" 36
 unset global_conf
 
 
-print("REVERSE THE RUN WITH:")
-print("rm -r .git && rm kigit.txt && rm .gitignore")
+echo "REVERSE THE RUN WITH:"
+echo "rm -r .git && rm kigit.txt && rm .gitignore"
